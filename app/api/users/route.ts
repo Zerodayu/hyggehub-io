@@ -33,7 +33,11 @@ export async function GET(request: Request) {
   try {
     const users = await prisma.users.findMany({
       include: {
-        shop: true // Include related shop data
+        shops: {
+          include: {
+            shop: true
+          }
+        }
       }
     });
     return new Response(JSON.stringify(users), {
@@ -104,17 +108,26 @@ export async function POST(request: Request) {
     const salt = genSaltSync(10);
     const hashedPassword = hashSync(password, salt);
 
-    // Create new user with hashed password
+    // Create new user with hashed password and connect to shop
     const newUser = await prisma.users.create({
       data: {
         name,
         email: email.toLowerCase(),
         bdate: new Date(bdate),
         password: hashedPassword,
-        shopCode,
+        shops: {
+          create: {
+            shopCode,
+            joinedAt: new Date()
+          }
+        }
       },
       include: {
-        shop: true
+        shops: {
+          include: {
+            shop: true
+          }
+        }
       }
     });
 

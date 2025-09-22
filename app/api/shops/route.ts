@@ -2,7 +2,15 @@ import prisma from '@/prisma/PrismaClient'
 
 export async function GET(request: Request) {
   try {
-    const shops = await prisma.shops.findMany();
+    const shops = await prisma.shops.findMany({
+      include: {
+        users: {
+          include: {
+            user: true
+          }
+        }
+      }
+    });
     return new Response(JSON.stringify(shops), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
@@ -30,13 +38,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create new shop
+    // Create new shop with optional user connection
     const newShop = await prisma.shops.create({
       data: {
         name,
         message,
         location,
         code,
+      },
+      include: {
+        users: {
+          include: {
+            user: true
+          }
+        }
       }
     });
 

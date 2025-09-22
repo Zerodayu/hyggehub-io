@@ -16,22 +16,31 @@ datasource db {
 
 
 model Shops {
-  id          Int       @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
   message     String
   location    String
-  code        String    @unique
-  users       Users[]   // Relation to Users
+  code        String        @unique
+  users       UserShops[]   // Updated relation
 }
 
 model Users {
-  id        Int      @id @default(autoincrement())
+  id        Int           @id @default(autoincrement())
   name      String
-  email     String   @unique
-  bdate     DateTime @db.Date // Changed to store date only
+  email     String        @unique
+  bdate     DateTime      @db.Date
   password  String
-  shopCode  String   // Foreign key to Shops
-  shop      Shops    @relation(fields: [shopCode], references: [code])
+  shops     UserShops[]   // Updated relation
+}
 
+// New join table for many-to-many relationship
+model UserShops {
+  user      Users     @relation(fields: [userId], references: [id])
+  userId    Int
+  shop      Shops     @relation(fields: [shopCode], references: [code])
+  shopCode  String
+  joinedAt  DateTime  @default(now())
+
+  @@id([userId, shopCode])
   @@index([shopCode])
 }
