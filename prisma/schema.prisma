@@ -21,5 +21,16 @@ model Shops {
   message     String
   location    String
   code        String    @unique
+  users       Users[]   // Relation to Users
+}
 
+model Users {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  shopCode  String   // Foreign key to Shops
+  shop      Shops    @relation(fields: [shopCode], references: [code])
+
+  @@index([shopCode])
 }
