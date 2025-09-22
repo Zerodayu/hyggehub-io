@@ -1,4 +1,5 @@
 import prisma from '@/prisma/PrismaClient'
+import { genSaltSync, hashSync } from "bcrypt-ts";
 
 // Validation utility functions
 const isValidEmail = (email: string): boolean => {
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate email format
+    // Validate email format and password strength
     if (!isValidEmail(email)) {
       return new Response(
         JSON.stringify({ error: 'Invalid email format' }), {
@@ -62,7 +63,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate password strength
     if (!isValidPassword(password)) {
       return new Response(
         JSON.stringify({ 
@@ -74,12 +74,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create new user
+    // Hash password before storing
+    const salt = genSaltSync(10);
+    const hashedPassword = hashSync(password, salt);
+
+    // Create new user with hashed password
     const newUser = await prisma.users.create({
       data: {
         name,
-        email: email.toLowerCase(), // Store email in lowercase
-        password,
+        email: email.toLowerCase(),
+        password: hashedPassword, // Store the hashed password instead of plain text
         shopCode,
       },
       include: {
