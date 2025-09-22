@@ -16,7 +16,14 @@ export async function GET(
     }
 
     const shop = await prisma.shops.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        users: {
+          include: {
+            user: true
+          }
+        }
+      }
     })
 
     if (!shop) {
