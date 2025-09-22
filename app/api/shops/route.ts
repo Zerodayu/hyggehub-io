@@ -18,10 +18,10 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, description, location, code } = body;
+    const { name, message, location, code } = body;
 
     // Validate required fields
-    if (!name || !description || !location || !code) {
+    if (!name || !message || !location || !code) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }), {
           status: 400,
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const newShop = await prisma.shops.create({
       data: {
         name,
-        description,
+        message,
         location,
         code,
       }
