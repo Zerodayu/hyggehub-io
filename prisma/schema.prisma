@@ -28,6 +28,7 @@ model Users {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
+  bdate     DateTime @db.Date // Changed to store date only
   password  String
   shopCode  String   // Foreign key to Shops
   shop      Shops    @relation(fields: [shopCode], references: [code])

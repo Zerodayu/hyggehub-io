@@ -19,6 +19,16 @@ const isValidPassword = (password: string): boolean => {
          hasNumber;
 };
 
+const isValidDate = (dateStr: string): boolean => {
+  // Check if the date string matches YYYY-MM-DD format
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(dateStr)) return false;
+
+  // Check if it's a valid date
+  const date = new Date(dateStr);
+  return date instanceof Date && !isNaN(date.getTime());
+};
+
 export async function GET(request: Request) {
   try {
     const users = await prisma.users.findMany({
@@ -41,22 +51,38 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, password, shopCode } = body;
+    const { name, email, bdate, password, shopCode } = body;
 
-    // Validate required fields
-    if (!name || !email || !password || !shopCode) {
+    // Validate required fields and their types
+    if (!name || !email || !bdate || !password || !shopCode) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields' }), {
+        JSON.stringify({ 
+          error: 'Missing required fields',
+          details: 'All fields (name, email, bdate, password, shopCode) are required'
+        }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' }
         }
       );
     }
 
-    // Validate email format and password strength
+    // Validate email format
     if (!isValidEmail(email)) {
       return new Response(
         JSON.stringify({ error: 'Invalid email format' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Validate date format
+    if (!isValidDate(bdate)) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid date format',
+          details: 'Date must be in YYYY-MM-DD format'
+        }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' }
         }
@@ -83,11 +109,12 @@ export async function POST(request: Request) {
       data: {
         name,
         email: email.toLowerCase(),
-        password: hashedPassword, // Store the hashed password instead of plain text
+        bdate: new Date(bdate),
+        password: hashedPassword,
         shopCode,
       },
       include: {
-        shop: true // Include related shop data in response
+        shop: true
       }
     });
 
