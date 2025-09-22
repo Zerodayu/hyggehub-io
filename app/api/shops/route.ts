@@ -40,7 +40,10 @@ export async function POST(request: Request) {
       }
     });
 
-    return new Response(JSON.stringify(newShop), {
+    return new Response(JSON.stringify({
+      message: `${newShop.name} shop created successfully`,
+      data: newShop
+    }), {
       status: 201,
       headers: { 'Content-Type': 'application/json' }
     });
