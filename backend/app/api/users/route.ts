@@ -55,10 +55,10 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, bdate, password, shopCode } = body;
+    const { username, email, bdate, password, shopCode } = body;
 
     // Validate required fields and their types
-    if (!name || !email || !bdate || !password || !shopCode) {
+    if (!username || !email || !bdate || !password || !shopCode) {
       return new Response(
         JSON.stringify({ 
           error: 'Missing required fields',
@@ -104,17 +104,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hash password before storing
-    const salt = genSaltSync(10);
-    const hashedPassword = hashSync(password, salt);
-
     // Create new user with hashed password and connect to shop
     const newUser = await prisma.users.create({
       data: {
-        name,
+        username,
+        clerkId: "",
         email: email.toLowerCase(),
         bdate: new Date(bdate),
-        password: hashedPassword,
         shops: {
           create: {
             shopCode,
@@ -132,7 +128,7 @@ export async function POST(request: Request) {
     });
 
     return new Response(JSON.stringify({
-      message: `${newUser.name} created successfully`,
+      message: `${newUser.username} created successfully`,
       data: newUser
     }), {
       status: 201,
