@@ -16,6 +16,7 @@ datasource db {
 
 
 model Shops {
+  shopId      Int         @id @default(autoincrement())
   clerkOrgId  String      @unique
   name        String
   message     String?
@@ -25,6 +26,7 @@ model Shops {
 }
 
 model Users {
+  userId    Int           @id @default(autoincrement())
   clerkId   String        @unique
   username  String
   email     String        @unique
