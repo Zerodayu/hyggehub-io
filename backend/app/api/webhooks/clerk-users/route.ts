@@ -3,6 +3,20 @@ import { NextRequest } from 'next/server'
 import prisma from "@/prisma/PrismaClient"
 
 
+export async function GET(req: NextRequest) {
+  try {
+    const users = await prisma.users.findMany()
+    return new Response(JSON.stringify(users), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+
+  } catch (err) {
+    console.error('Error fetching users:', err)
+    return new Response('Error fetching users', { status: 400 })
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const evt = await verifyWebhook(req)
