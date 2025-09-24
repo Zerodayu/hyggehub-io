@@ -65,7 +65,7 @@ export async function DELETE(req: NextRequest) {
 
       if (user) {
         await prisma.users.deleteMany({
-          where: { userId: user.userId },
+          where: { userId: user.userId, clerkId: id },
         })
       }
     }
