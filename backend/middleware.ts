@@ -5,7 +5,11 @@ export function middleware(req: NextRequest) {
   const apiKey = req.headers.get('x-api-key');
   const validKey = process.env.API_KEY;
 
-  if (req.nextUrl.pathname.startsWith('/api')) {
+  // Exclude Clerk webhook route from API key check
+  if (
+    req.nextUrl.pathname.startsWith('/api') &&
+    !req.nextUrl.pathname.startsWith('/api/webhooks/clerk-users')
+  ) {
     if (!apiKey || apiKey !== validKey) {
       return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
