@@ -57,19 +57,25 @@ export async function DELETE(req: NextRequest) {
     if (evt.type === 'user.deleted') {
       const { id } = evt.data
 
-      // Find userId by clerkId
-      const user = await prisma.users.findUnique({
+      // Mark user as deleted
+      await prisma.users.update({
         where: { clerkId: id },
-        select: { userId: true },
+        data: { userDel: true },
       })
-
-      if (user) {
-        await prisma.users.deleteMany({
-          where: { userId: user.userId, clerkId: id },
-        })
-      }
     }
 
+    // Find all users marked as deleted and remove them
+    const deletedUsers = await prisma.users.findMany({
+      where: { userDel: true },
+    })
+
+    for (const user of deletedUsers) {
+      await prisma.users.delete({
+        where: { userId: user.userId },
+      })
+    }
+
+    return new Response('User(s) deleted', { status: 200 })
   } catch (err) {
     console.error('Error verifying webhook:', err)
     return new Response('Error verifying webhook', { status: 400 })
