@@ -49,3 +49,23 @@ export async function POST(req: NextRequest) {
     return new Response('Error verifying webhook', { status: 400 })
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const evt = await verifyWebhook(req)
+
+    if (evt.type === 'user.deleted') {
+      const { id } = evt.data
+
+      // Delete user from database
+      await prisma.users.delete({
+        where: { clerkId: id },
+      })
+    }
+
+    return new Response('Webhook received', { status: 200 })
+  } catch (err) {
+    console.error('Error verifying webhook:', err)
+    return new Response('Error verifying webhook', { status: 400 })
+  }
+}
