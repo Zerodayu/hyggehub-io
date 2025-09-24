@@ -57,27 +57,19 @@ export async function DELETE(req: NextRequest) {
     if (evt.type === 'user.deleted') {
       const { id } = evt.data
 
-      // Find user by clerkId to get userId
+      // Find userId by clerkId
       const user = await prisma.users.findUnique({
         where: { clerkId: id },
+        select: { userId: true },
       })
 
-      console.log('User found:', user)
-
-      if (!user) {
-        console.log('User not found for clerkId:', id)
-        return new Response('User not found', { status: 404 })
+      if (user) {
+        await prisma.users.delete({
+          where: { userId: user.userId },
+        })
       }
-
-      // Delete user by userId
-      await prisma.users.delete({
-        where: { userId: user.userId },
-      })
-
-      console.log('User deleted:', user.userId)
     }
 
-    return new Response('Webhook received', { status: 200 })
   } catch (err) {
     console.error('Error verifying webhook:', err)
     return new Response('Error verifying webhook', { status: 400 })
