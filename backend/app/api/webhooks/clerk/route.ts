@@ -62,7 +62,10 @@ export async function DELETE(req: NextRequest) {
         where: { clerkId: id },
       })
 
+      console.log('User found:', user)
+
       if (!user) {
+        console.log('User not found for clerkId:', id)
         return new Response('User not found', { status: 404 })
       }
 
@@ -70,6 +73,8 @@ export async function DELETE(req: NextRequest) {
       await prisma.users.delete({
         where: { userId: user.userId },
       })
+
+      console.log('User deleted:', user.userId)
     }
 
     return new Response('Webhook received', { status: 200 })
