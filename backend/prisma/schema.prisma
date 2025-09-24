@@ -26,7 +26,7 @@ model Shops {
 
 model Users {
   clerkId   String        @unique
-  username      String
+  username  String
   email     String        @unique
   bdate     DateTime      @db.Date
   shops     ShopSubscription[]
