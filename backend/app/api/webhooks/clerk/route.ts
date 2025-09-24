@@ -27,13 +27,18 @@ export async function POST(req: NextRequest) {
       const { id, username, email_addresses, public_metadata } = evt.data
       const birthday = public_metadata?.birthday as string | undefined
 
-      // Update user in database
+      // Fetch current user from DB
+      const existingUser = await prisma.users.findUnique({
+        where: { clerkId: id },
+      })
+
+      // Update user in database, fallback to existing values if Clerk omits them
       await prisma.users.update({
         where: { clerkId: id },
         data: {
-          username: username || '',
-          email: email_addresses[0]?.email_address || '',
-          bdate: birthday,
+          username: username ?? existingUser?.username ?? '',
+          email: email_addresses?.[0]?.email_address ?? existingUser?.email ?? '',
+          bdate: birthday ?? existingUser?.bdate,
         },
       })
     }
