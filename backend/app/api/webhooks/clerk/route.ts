@@ -57,9 +57,18 @@ export async function DELETE(req: NextRequest) {
     if (evt.type === 'user.deleted') {
       const { id } = evt.data
 
-      // Delete user from database
-      await prisma.users.delete({
+      // Find user by clerkId to get userId
+      const user = await prisma.users.findUnique({
         where: { clerkId: id },
+      })
+
+      if (!user) {
+        return new Response('User not found', { status: 404 })
+      }
+
+      // Delete user by userId
+      await prisma.users.delete({
+        where: { userId: user.userId },
       })
     }
 
