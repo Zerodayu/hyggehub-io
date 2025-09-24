@@ -20,7 +20,6 @@ export default function MyClerkProvider({ children }: { children: React.ReactNod
           colorNeutral: "var(--color-neutral)",
           colorRing: "var(--color-ring)",
           colorShadow: "var(--color-shadow)",
-          colorModalBackdrop: "var(--color-modal-backdrop)",
         }
       }}
     >
