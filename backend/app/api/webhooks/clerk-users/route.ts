@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import prisma from "@/prisma/PrismaClient"
 
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const users = await prisma.users.findMany()
     return new Response(JSON.stringify(users), {
