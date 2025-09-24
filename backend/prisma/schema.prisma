@@ -16,31 +16,31 @@ datasource db {
 
 
 model Shops {
-  id          Int           @id @default(autoincrement())
+  clerkOrgId  String      @unique
   name        String
-  message     String
-  location    String
-  code        String        @unique
-  users       UserShops[]   // Updated relation
+  message     String?
+  location    String?
+  code        String       @unique
+  users       ShopSubscription[]
 }
 
 model Users {
-  id        Int           @id @default(autoincrement())
-  name      String
+  clerkId   String        @unique
+  username      String
   email     String        @unique
   bdate     DateTime      @db.Date
-  password  String
-  shops     UserShops[]   // Updated relation
+  shops     ShopSubscription[]
 }
 
 // New join table for many-to-many relationship
-model UserShops {
-  user      Users     @relation(fields: [userId], references: [id])
-  userId    Int
-  shop      Shops     @relation(fields: [shopCode], references: [code])
-  shopCode  String
-  joinedAt  DateTime  @default(now())
+model ShopSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  shopId    String
+  createdAt DateTime @default(now())
 
-  @@id([userId, shopCode])
-  @@index([shopCode])
+  user Users @relation(fields: [userId], references: [clerkId])
+  shop Shops @relation(fields: [shopId], references: [clerkOrgId])
+
+  @@unique([userId, shopId])
 }

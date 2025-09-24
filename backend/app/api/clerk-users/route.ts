@@ -15,25 +15,26 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
- 
-    const user = await clerkClient.users.createUser({
-      emailAddress: [body.emailAddress], // Changed to array of strings
-      password: body.password,
+
+    // Handle both email/password and OAuth sign-ups
+    const createUserParams: any = {
+      externalAccounts: body.externalAccounts || [], // For OAuth providers
+      emailAddress: body.emailAddress ? [body.emailAddress] : [],
       username: body.username
-    })
-    return NextResponse.json({ message: 'User created', user })
-  } catch (error: any) {
-    // Handle Clerk-specific errors
-    if (error.errors) {
-      return NextResponse.json({ 
-        error: error.errors[0].message,
-        details: error.errors
-      }, { status: 400 })
     }
+
+    // Only add password for email/password signup
+    if (body.password) {
+      createUserParams.password = body.password
+    }
+
+    const user = await clerkClient.users.createUser(createUserParams)
+    return NextResponse.json({ message: 'User created', user })
     
-    return NextResponse.json({ 
-      error: 'Error creating user',
-      message: error.message 
-    }, { status: 500 })
+  } catch (error: any) {
+    if (error.errors) {
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 })
+    }
+    return NextResponse.json({ error: 'Error creating user' }, { status: 500 })
   }
 }
