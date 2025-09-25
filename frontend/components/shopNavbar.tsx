@@ -1,7 +1,7 @@
 import { Button } from "./ui/button"
-import Dropdown from "./comp-368"
+import Dropdown from "./postCoupon"
 
-export default function ShopSidebar() {
+export default function ShopNavbar() {
     return (
         <section className="fixed py-6 px-8">
             <div className="flex bg-muted/20 backdrop-blur-xs items-start justify-start w-content outline outline-muted rounded-full px-4 py-2 gap-4">
