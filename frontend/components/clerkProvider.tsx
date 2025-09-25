@@ -9,7 +9,7 @@ export default function MyClerkProvider({ children }: { children: React.ReactNod
           colorPrimaryForeground: "var(--color-primary-foreground)",
           colorText: "var(--color-foreground)",
           colorBackground: "var(--color-background)",
-          colorBorder: "var(--color-border)",
+          colorBorder: "var(--color-foreground)",
           colorInputBackground: "var(--color-input-background)",
           fontFamily: "var(--font-geist-sans)",
           colorDanger: "var(--color-danger)",
