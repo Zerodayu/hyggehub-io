@@ -21,18 +21,12 @@ export async function POST(req: NextRequest) {
 
     // Organization created
     if (evt.type === 'organization.created') {
-      const { id, name, public_metadata } = evt.data
-      const message = public_metadata?.message as string | undefined
-      const location = public_metadata?.location as string | undefined
-      const code = public_metadata?.code as string | undefined
+      const { id, name } = evt.data
 
       await prisma.shops.create({
         data: {
           clerkOrgId: id,
           name: name || '',
-          message,
-          location,
-          code: code || id, // fallback to org id if no code
         },
       })
     }
