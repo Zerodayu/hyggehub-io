@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import MyClerkProvider from '@/components/clerkProvider'
 import { Geist, Geist_Mono } from 'next/font/google'
-import Navbar from '@/components/Navbar'
 import './globals.css'
 
 const geistSans = Geist({
@@ -28,7 +27,6 @@ export default function RootLayout({
     <MyClerkProvider>
       <html lang="en" className="dark">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <Navbar />
           {children}
         </body>
       </html>

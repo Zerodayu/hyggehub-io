@@ -14,7 +14,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Minus, CircleAlert } from "lucide-react"
+import { Minus, CircleAlert, TicketSlash, CalendarFold } from "lucide-react"
+import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
 
 
 export default async function Page({
@@ -27,6 +29,7 @@ export default async function Page({
 
   return (
     <section className="flex flex-col items-center justify-start min-h-screen pt-25 px-4 gap-6">
+      <Navbar />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-auto md:max-w-6xl">
         <div className="flex flex-col items-start w-full">
           <h1 className="text-xl font-mono font-bold text-muted-foreground">hello</h1>
@@ -39,6 +42,16 @@ export default async function Page({
               <p>4 following</p>
               <p>1 coupons</p>
             </div>
+          </div>
+          <div className="flex gap-6 w-full items-center justify-center pt-4">
+            <Button className="font-mono">
+              <TicketSlash />
+              Enter Shop Code
+            </Button>
+            <Button variant="secondary" className="font-mono">
+              <CalendarFold />
+              Set your Birthday
+            </Button>
           </div>
         </div>
 
