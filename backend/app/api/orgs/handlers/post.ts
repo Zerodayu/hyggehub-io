@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const { orgId, shopCode } = await req.json();
 
     const client = await clerkClient();
-    const org = await client.organizations.getOrganization(orgId);
+    const org = await client.organizations.getOrganization({ organizationId: orgId });
     const metadata = org.publicMetadata || {};
 
     // Only allow one shopCode per org
