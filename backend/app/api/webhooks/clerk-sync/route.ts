@@ -16,7 +16,7 @@ type ClerkUserEventData = {
 type ClerkOrgEventData = {
   id: string
   name: string
-  logo_url?: string | null // <-- Add this line
+  image_url?: string | null // <-- Add this line
   public_metadata?: {
     message?: string
     location?: string
@@ -98,19 +98,19 @@ async function handleUserUpdated(data: ClerkUserEventData) {
 
 // Organization Handlers
 async function handleOrgCreated(data: ClerkOrgEventData) {
-  const { id, name, logo_url } = data
+  const { id, name, image_url } = data
 
   await prisma.shops.create({
     data: {
       clerkOrgId: id,
       name: name || '',
-      imgUrl: logo_url || null, // <-- Save org image URL
+      imgUrl: image_url || null, // <-- Save org image URL
     },
   })
 }
 
 async function handleOrgUpdated(data: ClerkOrgEventData) {
-  const { id, name, public_metadata, logo_url } = data
+  const { id, name, public_metadata, image_url } = data
   const message = public_metadata?.message
   const location = public_metadata?.location
   const code = public_metadata?.code
@@ -126,7 +126,7 @@ async function handleOrgUpdated(data: ClerkOrgEventData) {
       message: message ?? existingShop?.message,
       location: location ?? existingShop?.location,
       code: code ?? existingShop?.code ?? id,
-      imgUrl: logo_url ?? existingShop?.imgUrl ?? null, // <-- Update org image URL
+      imgUrl: image_url ?? existingShop?.imgUrl ?? null, // <-- Update org image URL
     },
   })
 }
