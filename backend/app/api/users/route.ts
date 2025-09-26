@@ -73,7 +73,22 @@ export async function DELETE(req: NextRequest) {
   });
 
   if (!shop) {
-    return Response.json({ success: false, error: "Shop not found" }, { status: 404 });
+    // Fallback: Remove code from Clerk metadata even if shop doesn't exist in DB
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const existingMetadata = user.publicMetadata || {};
+    const currentShopCodes = Array.isArray(existingMetadata.shopCodes) ? existingMetadata.shopCodes : [];
+
+    const updatedShopCodes = currentShopCodes.filter((code: string) => code !== shopCode);
+
+    await client.users.updateUserMetadata(userId, {
+      publicMetadata: {
+        ...existingMetadata,
+        shopCodes: updatedShopCodes,
+      },
+    });
+
+    return Response.json({ success: false, error: "Shop not found in database, but removed from metadata" }, { status: 200 });
   }
 
   // Delete the ShopSubscription entry
