@@ -135,7 +135,7 @@ export default function ShopCardSection() {
                                                     <Textarea id="desc-1" placeholder="Type your message here." defaultValue="Default description" />
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="desc-1">Date & Time</Label>
+                                                    <Label htmlFor="desc-1">Expiration Date</Label>
                                                     <DatetimeInput />
                                                 </div>
                                             </div>

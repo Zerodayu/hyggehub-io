@@ -1,5 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server";
-import ShopNavbar from "@/components/shopNavbar";
+
 import ShopCardSection from "@/components/shopCardSection";
 import ShopUsersDay from "@/components/shopUsersDay";
 import Navbar from "@/components/Navbar";
@@ -14,7 +13,6 @@ export default async function Page({
 
     return (
         <section className="flex flex-col items-center justify-start min-h-screen px-4 gap-6">
-            <ShopNavbar />
             <Navbar />
             <div className="flex gap-12 pt-25 max-w-auto md:max-w-6xl w-full">
                 <div className="grid col-span-1.5">

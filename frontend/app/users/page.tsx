@@ -19,10 +19,14 @@ import {
 import { Minus, CircleAlert } from "lucide-react"
 import Navbar from "@/components/Navbar";
 import UsersShopCodeInput from "@/components/usersShopCode";
+import { useUserShops } from "@/api/get-user-followings";
+import { Button } from "@/components/ui/button";
 
 
 export default function Page() {
   const { user } = useUser();
+  const clerkId = user?.id;
+  const { data: followedShops, isLoading } = useUserShops(clerkId);
 
   return (
     <section className="flex flex-col items-center justify-start min-h-screen pt-25 px-4 gap-6">
@@ -36,7 +40,11 @@ export default function Page() {
           <div className="w-full flex flex-row justify-center items-center text-xs text-muted-foreground gap-6 py-2">
             <div className="flex-1 w-auto h-0.5 rounded bg-accent shadow-sm" />
             <div className="flex flex-row items-center gap-6">
-              <p>4 following</p>
+              <Button variant="link" className="text-xs">
+                {isLoading
+                  ? "Loading..."
+                  : `${followedShops?.length || 0} following`}
+              </Button>
               <p>1 coupons</p>
             </div>
           </div>
