@@ -35,7 +35,12 @@ export async function PATCH(req: NextRequest) {
       create: { userId, shopId: shop.clerkOrgId },
     });
 
-    return Response.json({ success: true, shopCodes });
+    return Response.json({ 
+      success: true, 
+      message: "Shop code added successfully.", 
+      shopCodes,
+      birthday: metadata.birthday || null
+    });
   } catch (error: string | unknown) {
     return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
   }
