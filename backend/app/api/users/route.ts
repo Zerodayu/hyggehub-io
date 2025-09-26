@@ -1,70 +1,38 @@
-import { NextRequest } from "next/server"
-import { clerkClient } from "@clerk/nextjs/server"
-import prisma from "@/prisma/PrismaClient"
+import { NextRequest } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import prisma from "@/prisma/PrismaClient";
 
-// --- Global Helpers ---
-const getClerkClient = async () => await clerkClient();
-const getClerkUser = async (client: any, userId: string) => await client.users.getUser(userId);
-
-const getUserMetadata = (user: any) => user.publicMetadata || {};
-const getShopCodes = (metadata: any): string[] =>
-  Array.isArray(metadata.shopCodes) ? metadata.shopCodes : [];
-
-const getShopByCode = async (shopCode: string) =>
-  await prisma.shops.findUnique({
-    where: { code: shopCode },
-    select: { clerkOrgId: true },
-  });
-
-const upsertShopSubscription = async (userId: string, shopId: string) =>
-  await prisma.shopSubscription.upsert({
-    where: { userId_shopId: { userId, shopId } },
-    update: {},
-    create: { userId, shopId },
-  });
-
-// --- POST: Accepts a single shopCode string, stores as array ---
+// --- POST: Add birthday and/or shopCode ---
 export async function POST(req: NextRequest) {
   const { birthday, userId, shopCode } = await req.json();
 
-  // Convert birthday string to Date object
-  const birthdayDate = birthday ? new Date(birthday) : null;
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  const metadata = user.publicMetadata || {};
+  const shopCodes: string[] = Array.isArray(metadata.shopCodes) ? metadata.shopCodes : [];
 
-  // Clerk user and metadata
-  const client = await getClerkClient();
-  const user = await getClerkUser(client, userId);
-  const existingMetadata = getUserMetadata(user);
-  const existingShopCodes = getShopCodes(existingMetadata);
-
-  // Validation: shopCode must be a string
-  if (typeof shopCode !== "string" || !shopCode.trim()) {
-    return Response.json({ success: false, error: "shopCode must be a non-empty string" }, { status: 400 });
+  // Validate shopCode uniqueness
+  if (shopCode && shopCodes.includes(shopCode)) {
+    return Response.json({ success: false, error: "Code already exists", shopCodes }, { status: 400 });
   }
 
-  // Validation: Check if shopCode already exists
-  if (existingShopCodes.includes(shopCode)) {
-    return Response.json({ success: false, error: "Code already exists", shopCodes: existingShopCodes }, { status: 400 });
-  }
+  // Add shopCode if provided
+  const updatedShopCodes = shopCode ? [...shopCodes, shopCode] : shopCodes;
 
-  // Always store as array
-  const updatedShopCodes = [...existingShopCodes, shopCode];
-
-  // Prepare new metadata, merging with existing
+  // Prepare new metadata
   const newMetadata = {
-    ...existingMetadata,
+    ...metadata,
     ...(birthday !== undefined && {
-      birthday: birthdayDate ? birthdayDate.toISOString().split('T')[0] : null,
+      birthday: birthday ? new Date(birthday).toISOString().split("T")[0] : null,
     }),
-    shopCodes: updatedShopCodes,
+    ...(shopCode !== undefined && { shopCodes: updatedShopCodes }),
   };
 
   // Update Clerk metadata
-  await client.users.updateUserMetadata(userId, {
-    publicMetadata: newMetadata,
-  });
+  await client.users.updateUserMetadata(userId, { publicMetadata: newMetadata });
 
-  // Save birthday to database
-  if (birthday !== undefined && birthdayDate) {
+  // Save birthday to DB
+  if (birthday) {
     await prisma.users.update({
       where: { clerkId: userId },
       data: { bdate: birthday },
@@ -72,53 +40,56 @@ export async function POST(req: NextRequest) {
   }
 
   // Save shopCode to ShopSubscription
-  const shop = await getShopByCode(shopCode);
-  if (shop) {
-    await upsertShopSubscription(userId, shop.clerkOrgId);
+  if (shopCode) {
+    const shop = await prisma.shops.findUnique({
+      where: { code: shopCode },
+      select: { clerkOrgId: true },
+    });
+    if (shop) {
+      await prisma.shopSubscription.upsert({
+        where: { userId_shopId: { userId, shopId: shop.clerkOrgId } },
+        update: {},
+        create: { userId, shopId: shop.clerkOrgId },
+      });
+    }
   }
 
   return Response.json({ success: true, shopCodes: updatedShopCodes });
 }
 
-// --- PATCH: Add a shopCode to existing shopCodes array ---
+// --- PATCH: Add a shopCode to shopCodes array ---
 export async function PATCH(req: NextRequest) {
   const { userId, shopCode } = await req.json();
 
-  // Validation: userId must be a non-empty string
-  if (typeof userId !== "string" || !userId.trim()) {
-    return Response.json({ success: false, error: "userId must be a non-empty string" }, { status: 400 });
-  }
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  const metadata = user.publicMetadata || {};
+  const shopCodes: string[] = Array.isArray(metadata.shopCodes) ? metadata.shopCodes : [];
 
-  // Validation: shopCode must be a non-empty string
-  if (typeof shopCode !== "string" || !shopCode.trim()) {
-    return Response.json({ success: false, error: "shopCode must be a non-empty string" }, { status: 400 });
-  }
-
-  const client = await getClerkClient();
-  const user = await getClerkUser(client, userId);
-  const existingMetadata = getUserMetadata(user);
-  const shopCodes = getShopCodes(existingMetadata);
-
-  // Validation: Check if shopCode already exists
+  // Validate shopCode uniqueness
   if (shopCodes.includes(shopCode)) {
     return Response.json({ success: false, error: "Code already exists", shopCodes }, { status: 400 });
   }
 
-  // Add new code
+  // Add new shopCode
   shopCodes.push(shopCode);
 
   // Update Clerk metadata
   await client.users.updateUserMetadata(userId, {
-    publicMetadata: {
-      ...existingMetadata,
-      shopCodes,
-    },
+    publicMetadata: { ...metadata, shopCodes },
   });
 
   // Add shopCode to ShopSubscription
-  const shop = await getShopByCode(shopCode);
+  const shop = await prisma.shops.findUnique({
+    where: { code: shopCode },
+    select: { clerkOrgId: true },
+  });
   if (shop) {
-    await upsertShopSubscription(userId, shop.clerkOrgId);
+    await prisma.shopSubscription.upsert({
+      where: { userId_shopId: { userId, shopId: shop.clerkOrgId } },
+      update: {},
+      create: { userId, shopId: shop.clerkOrgId },
+    });
   }
 
   return Response.json({ success: true, shopCodes });
@@ -128,37 +99,26 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const { userId, shopCode } = await req.json();
 
-  // Validation: shopCode must be a string
-  if (typeof shopCode !== "string" || !shopCode.trim()) {
-    return Response.json({ success: false, error: "shopCode must be a non-empty string" }, { status: 400 });
-  }
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  const metadata = user.publicMetadata || {};
+  const shopCodes: string[] = Array.isArray(metadata.shopCodes) ? metadata.shopCodes : [];
 
-  // Clerk user and metadata
-  const client = await getClerkClient();
-  const user = await getClerkUser(client, userId);
-  const existingMetadata = getUserMetadata(user);
-  const shopCodes = getShopCodes(existingMetadata);
-
-  // Validation: Check if shopCode exists
+  // Validate shopCode existence
   if (!shopCodes.includes(shopCode)) {
-    return Response.json({ success: false, error: "Code does not exist", shopCodes }, { status: 400 });
+    return Response.json(
+      { success: false, error: "Code does not exist", shopCodes },
+      { status: 400 }
+    );
   }
 
-  // Remove the code from shopCodes
+  // Remove shopCode
   const updatedShopCodes = shopCodes.filter((c) => c !== shopCode);
 
   // Update Clerk metadata
-  const updateResult = await client.users.updateUserMetadata(userId, {
-    publicMetadata: {
-      ...existingMetadata,
-      shopCodes: updatedShopCodes,
-    },
+  await client.users.updateUserMetadata(userId, {
+    publicMetadata: { ...metadata, shopCodes: updatedShopCodes },
   });
-  console.log("Update result:", updateResult);
-
-  // Fetch user again to verify
-  const updatedUser = await getClerkUser(client, userId);
-  console.log("Updated metadata:", updatedUser.publicMetadata);
 
   return Response.json({ success: true, shopCodes: updatedShopCodes });
 }
