@@ -23,7 +23,7 @@ export async function PUT(req: NextRequest) {
       }
     }
 
-    // Update metadata fields
+    // Update metadata fields (only valid shopCodes)
     const newMetadata = {
       ...metadata,
       ...(birthday !== undefined && {

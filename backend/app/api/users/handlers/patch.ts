@@ -11,9 +11,13 @@ export async function PATCH(req: NextRequest) {
     const metadata = user.publicMetadata || {};
     const shopCodes: string[] = Array.isArray(metadata.shopCodes) ? metadata.shopCodes : [];
 
-    // Validate shopCode uniqueness
-    if (shopCodes.includes(shopCode)) {
-      return Response.json({ success: false, error: "Code already exists", shopCodes }, { status: 400 });
+    // Validate shopCode existence in DB
+    const shop = await prisma.shops.findUnique({
+      where: { code: shopCode },
+      select: { clerkOrgId: true },
+    });
+    if (!shop) {
+      return Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 });
     }
 
     // Add new shopCode
@@ -25,13 +29,6 @@ export async function PATCH(req: NextRequest) {
     });
 
     // Add shopCode to ShopSubscription
-    const shop = await prisma.shops.findUnique({
-      where: { code: shopCode },
-      select: { clerkOrgId: true },
-    });
-    if (!shop) {
-      return Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 });
-    }
     await prisma.shopSubscription.upsert({
       where: { userId_shopId: { userId, shopId: shop.clerkOrgId } },
       update: {},

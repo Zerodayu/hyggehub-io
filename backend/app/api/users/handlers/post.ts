@@ -27,14 +27,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Prepare new metadata, only add if not present
+    // Validate shopCode existence in DB
+    let validShopCode: string | null = null;
+    if (shopCode) {
+      const shop = await prisma.shops.findUnique({
+        where: { code: shopCode },
+        select: { clerkOrgId: true },
+      });
+      if (!shop) {
+        return Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 });
+      }
+      validShopCode = shopCode;
+    }
+
+    // Prepare new metadata, only add if not present and valid
     const newMetadata = {
       ...metadata,
       ...(birthday && !birthdayExists && {
         birthday: new Date(birthday).toISOString().split("T")[0],
       }),
-      ...(shopCode && !shopCodeExists && {
-        shopCodes: [...shopCodes, shopCode],
+      ...(validShopCode && !shopCodeExists && {
+        shopCodes: [...shopCodes, validShopCode],
       }),
     };
 
@@ -47,17 +60,6 @@ export async function POST(req: NextRequest) {
         where: { clerkId: userId },
         data: { bdate: birthday },
       });
-    }
-
-    // Validate shopCode existence in DB
-    if (shopCode) {
-      const shop = await prisma.shops.findUnique({
-        where: { code: shopCode },
-        select: { clerkOrgId: true },
-      });
-      if (!shop) {
-        return Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 });
-      }
     }
 
     // Save shopCode to ShopSubscription if not present
