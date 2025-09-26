@@ -4,15 +4,27 @@ import prisma from "@/prisma/PrismaClient"
 
 // POST: Accepts a single shopCode string, stores as array
 export async function POST(req: NextRequest) {
-  const { birthday, userId, shopCode } = await req.json()
+  const { birthday, userId, shopCode } = await req.json();
 
   // Convert birthday string to Date object
-  const birthdayDate = birthday ? new Date(birthday) : null
+  const birthdayDate = birthday ? new Date(birthday) : null;
 
   // Get existing publicMetadata
   const client = await clerkClient();
   const user = await client.users.getUser(userId);
   const existingMetadata = user.publicMetadata || {};
+  const existingShopCodes: string[] = Array.isArray(existingMetadata.shopCodes) ? existingMetadata.shopCodes : [];
+
+  // Validation: Check if shopCode already exists
+  if (shopCode && existingShopCodes.includes(shopCode)) {
+    return Response.json({ success: false, error: "Code already exists", shopCodes: existingShopCodes }, { status: 400 });
+  }
+
+  // Add new shopCode
+  let updatedShopCodes = existingShopCodes;
+  if (shopCode) {
+    updatedShopCodes = [...existingShopCodes, shopCode];
+  }
 
   // Prepare new metadata, merging with existing
   const newMetadata = {
@@ -21,7 +33,7 @@ export async function POST(req: NextRequest) {
       birthday: birthdayDate ? birthdayDate.toISOString().split('T')[0] : null,
     }),
     ...(shopCode !== undefined && {
-      shopCodes: [shopCode],
+      shopCodes: updatedShopCodes,
     }),
   };
 
@@ -35,7 +47,7 @@ export async function POST(req: NextRequest) {
     await prisma.users.update({
       where: { clerkId: userId },
       data: { bdate: birthday },
-    })
+    });
   }
 
   // Save shopCode to ShopSubscription
@@ -44,7 +56,7 @@ export async function POST(req: NextRequest) {
     const shop = await prisma.shops.findUnique({
       where: { code: shopCode },
       select: { clerkOrgId: true },
-    })
+    });
 
     if (shop) {
       await prisma.shopSubscription.upsert({
@@ -54,11 +66,11 @@ export async function POST(req: NextRequest) {
           userId,
           shopId: shop.clerkOrgId,
         },
-      })
+      });
     }
   }
 
-  return Response.json({ success: true })
+  return Response.json({ success: true, shopCodes: updatedShopCodes });
 }
 
 // PATCH: Add a shopCode to existing shopCodes array
@@ -70,10 +82,13 @@ export async function PATCH(req: NextRequest) {
   const existingMetadata = user.publicMetadata || {};
   const shopCodes: string[] = Array.isArray(existingMetadata.shopCodes) ? existingMetadata.shopCodes : [];
 
-  // Add new code if not already present
-  if (!shopCodes.includes(shopCode)) {
-    shopCodes.push(shopCode);
+  // Validation: Check if shopCode already exists
+  if (shopCodes.includes(shopCode)) {
+    return Response.json({ success: false, error: "Code already exists", shopCodes }, { status: 400 });
   }
+
+  // Add new code
+  shopCodes.push(shopCode);
 
   // Update Clerk metadata
   await client.users.updateUserMetadata(userId, {
