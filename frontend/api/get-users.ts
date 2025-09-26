@@ -26,9 +26,6 @@ export const updateUser = async ({
     "x-api-key": API_KEY,
     "Content-Type": "application/json",
   };
-  console.log(API_KEY);
-  console.log("Request Body:", requestBody); // Log the body
-  console.log("Request Headers:", headers);   // Log the headers
 
   try {
     const response = await axios.patch(
