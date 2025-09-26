@@ -28,10 +28,7 @@ export async function GET(req: NextRequest) {
     // Extract shop info
     const followedShops = subscriptions.map(sub => sub.shop);
 
-    return withCORS(Response.json({
-      user,
-      followedShops
-    }));
+    return withCORS(Response.json({ user, followedShops }));
   } catch (error: string | unknown) {
     return withCORS(Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 }));
   }
