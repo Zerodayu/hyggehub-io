@@ -132,6 +132,14 @@ async function handleOrgDeleted(data: Pick<ClerkOrgEventData, 'id'>) {
   })
 }
 
+// User Deleted Handler
+async function handleUserDeleted(data: Pick<ClerkUserEventData, 'id'>) {
+  const { id } = data;
+  await prisma.users.delete({
+    where: { clerkId: id },
+  });
+}
+
 export async function GET() {
   try {
     const users = await prisma.users.findMany()
@@ -162,6 +170,13 @@ export async function POST(req: NextRequest) {
         break
       case 'user.updated':
         await handleUserUpdated(evt.data)
+        break
+      case 'user.deleted':
+        if (typeof evt.data.id === 'string') {
+          await handleUserDeleted({ id: evt.data.id })
+        } else {
+          console.error('user.deleted event missing id')
+        }
         break
       case 'organization.created':
         await handleOrgCreated(evt.data)
