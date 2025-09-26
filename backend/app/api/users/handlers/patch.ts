@@ -9,7 +9,12 @@ export async function PATCH(req: NextRequest) {
     const client = await clerkClient();
     const user = await client.users.getUser(userId);
     const metadata = user.publicMetadata || {};
-    const shopCodes: string[] = Array.isArray(metadata.shopCodes) ? metadata.shopCodes : [];
+    // Ensure shopCodes is always an array
+    const shopCodes: string[] = Array.isArray(metadata.shopCodes)
+      ? metadata.shopCodes
+      : metadata.shopCodes
+        ? [metadata.shopCodes]
+        : [];
 
     // Validate shopCode existence in DB
     const shop = await prisma.shops.findUnique({
@@ -38,8 +43,7 @@ export async function PATCH(req: NextRequest) {
     return Response.json({ 
       success: true, 
       message: "Shop code added successfully.", 
-      shopCodes,
-      birthday: metadata.birthday || null
+      shopCodes
     });
   } catch (error: string | unknown) {
     return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
