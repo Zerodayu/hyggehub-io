@@ -1,8 +1,6 @@
 "use client";
 
 import { OrganizationProfile, OrganizationSwitcher, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
-import { Calendar, CircleAlert, DotIcon } from "lucide-react"
-import CalendarPickerInput from "./calendarPicker";
 
 export default function Navbar() {
     return (

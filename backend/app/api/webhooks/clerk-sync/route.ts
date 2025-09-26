@@ -13,15 +13,21 @@ type ClerkUserEventData = {
   }
 }
 
+type ClerkOrgMember = {
+  clerkId: string
+  role: 'ADMIN' | 'members'
+}
+
 type ClerkOrgEventData = {
   id: string
   name: string
-  image_url?: string | null // <-- Add this line
+  image_url?: string | null
   public_metadata?: {
     message?: string
     location?: string
     code?: string
   } | null
+  members?: ClerkOrgMember[] // <-- Add members array
 }
 
 // User Handlers
@@ -96,21 +102,56 @@ async function handleUserUpdated(data: ClerkUserEventData) {
   }
 }
 
+// --- Sync Org Members ---
+async function syncOrgMembers(orgId: string, members: ClerkOrgMember[] = []) {
+  // Get current members from DB
+  const currentMembers = await prisma.orgMembers.findMany({
+    where: { orgId },
+    select: { clerkId: true }
+  });
+  const currentClerkIds = currentMembers.map(m => m.clerkId);
+
+  // Upsert each member
+  for (const member of members) {
+    await prisma.orgMembers.upsert({
+      where: { clerkId_orgId: { clerkId: member.clerkId, orgId } },
+      update: { role: member.role },
+      create: {
+        clerkId: member.clerkId,
+        orgId,
+        role: member.role,
+      }
+    });
+  }
+
+  // Remove members not in the new list
+  const newClerkIds = members.map(m => m.clerkId);
+  const toRemove = currentClerkIds.filter(id => !newClerkIds.includes(id));
+  for (const clerkId of toRemove) {
+    await prisma.orgMembers.deleteMany({
+      where: { clerkId, orgId }
+    });
+  }
+}
+
 // Organization Handlers
 async function handleOrgCreated(data: ClerkOrgEventData) {
-  const { id, name, image_url } = data
+  const { id, name, image_url, members } = data
 
   await prisma.shops.create({
     data: {
       clerkOrgId: id,
       name: name || '',
-      imgUrl: image_url || null, // <-- Save org image URL
+      imgUrl: image_url || null,
     },
-  })
+  });
+
+  // Sync members
+  await syncOrgMembers(id, members || []);
 }
 
 async function handleOrgUpdated(data: ClerkOrgEventData) {
-  const { id, name, public_metadata, image_url } = data
+  const { id, name, public_metadata, image_url, members } = data
   const message = public_metadata?.message
   const location = public_metadata?.location
   const code = public_metadata?.code
@@ -126,9 +167,12 @@ async function handleOrgUpdated(data: ClerkOrgEventData) {
       message: message ?? existingShop?.message,
       location: location ?? existingShop?.location,
       code: code ?? existingShop?.code ?? id,
-      imgUrl: image_url ?? existingShop?.imgUrl ?? null, // <-- Update org image URL
+      imgUrl: image_url ?? existingShop?.imgUrl ?? null,
     },
-  })
+  });
+
+  // Sync members
+  await syncOrgMembers(id, members || []);
 }
 
 async function handleOrgDeleted(data: Pick<ClerkOrgEventData, 'id'>) {
