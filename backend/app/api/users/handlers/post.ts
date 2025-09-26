@@ -49,6 +49,17 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Validate shopCode existence in DB
+    if (shopCode) {
+      const shop = await prisma.shops.findUnique({
+        where: { code: shopCode },
+        select: { clerkOrgId: true },
+      });
+      if (!shop) {
+        return Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 });
+      }
+    }
+
     // Save shopCode to ShopSubscription if not present
     if (shopCode && !shopCodeExists) {
       const shop = await prisma.shops.findUnique({

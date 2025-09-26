@@ -29,13 +29,14 @@ export async function PATCH(req: NextRequest) {
       where: { code: shopCode },
       select: { clerkOrgId: true },
     });
-    if (shop) {
-      await prisma.shopSubscription.upsert({
-        where: { userId_shopId: { userId, shopId: shop.clerkOrgId } },
-        update: {},
-        create: { userId, shopId: shop.clerkOrgId },
-      });
+    if (!shop) {
+      return Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 });
     }
+    await prisma.shopSubscription.upsert({
+      where: { userId_shopId: { userId, shopId: shop.clerkOrgId } },
+      update: {},
+      create: { userId, shopId: shop.clerkOrgId },
+    });
 
     return Response.json({ success: true, shopCodes });
   } catch (error: string | unknown) {

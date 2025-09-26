@@ -10,13 +10,26 @@ export async function PUT(req: NextRequest) {
     const user = await client.users.getUser(userId);
     const metadata = user.publicMetadata || {};
 
+    // Validate all shopCodes exist in DB
+    let validShopCodes = shopCodes;
+    if (Array.isArray(shopCodes)) {
+      const foundShops = await prisma.shops.findMany({
+        where: { code: { in: shopCodes } },
+        select: { code: true },
+      });
+      validShopCodes = foundShops.map(shop => shop.code);
+      if (validShopCodes.length !== shopCodes.length) {
+        return Response.json({ success: false, error: "One or more shop codes do not exist", validShopCodes }, { status: 404 });
+      }
+    }
+
     // Update metadata fields
     const newMetadata = {
       ...metadata,
       ...(birthday !== undefined && {
         birthday: birthday ? new Date(birthday).toISOString().split("T")[0] : null,
       }),
-      ...(shopCodes !== undefined && { shopCodes }),
+      ...(shopCodes !== undefined && { shopCodes: validShopCodes }),
     };
 
     // Update Clerk metadata
