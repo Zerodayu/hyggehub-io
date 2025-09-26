@@ -2,10 +2,27 @@ import { verifyWebhook } from '@clerk/nextjs/webhooks'
 import { NextRequest } from 'next/server'
 import prisma from "@/prisma/PrismaClient"
 
+type ClerkUserEventData = {
+  id: string
+  username?: string | null
+  email_addresses: { email_address: string }[]
+  public_metadata?: { birthday?: string }
+}
+
+type ClerkOrgEventData = {
+  id: string
+  name: string
+  public_metadata?: {
+    message?: string
+    location?: string
+    code?: string
+  } | null
+}
+
 // User Handlers
-async function handleUserCreated(data: any) {
+async function handleUserCreated(data: ClerkUserEventData) {
   const { id, username, email_addresses, public_metadata } = data
-  const birthday = public_metadata?.birthday as string | undefined
+  const birthday = public_metadata?.birthday
 
   await prisma.users.create({
     data: {
@@ -17,9 +34,9 @@ async function handleUserCreated(data: any) {
   })
 }
 
-async function handleUserUpdated(data: any) {
+async function handleUserUpdated(data: ClerkUserEventData) {
   const { id, username, email_addresses, public_metadata } = data
-  const birthday = public_metadata?.birthday as string | undefined
+  const birthday = public_metadata?.birthday
 
   const existingUser = await prisma.users.findUnique({
     where: { clerkId: id },
@@ -36,7 +53,7 @@ async function handleUserUpdated(data: any) {
 }
 
 // Organization Handlers
-async function handleOrgCreated(data: any) {
+async function handleOrgCreated(data: ClerkOrgEventData) {
   const { id, name } = data
 
   await prisma.shops.create({
@@ -47,11 +64,11 @@ async function handleOrgCreated(data: any) {
   })
 }
 
-async function handleOrgUpdated(data: any) {
+async function handleOrgUpdated(data: ClerkOrgEventData) {
   const { id, name, public_metadata } = data
-  const message = public_metadata?.message as string | undefined
-  const location = public_metadata?.location as string | undefined
-  const code = public_metadata?.code as string | undefined
+  const message = public_metadata?.message
+  const location = public_metadata?.location
+  const code = public_metadata?.code
 
   const existingShop = await prisma.shops.findUnique({
     where: { clerkOrgId: id },
@@ -68,7 +85,7 @@ async function handleOrgUpdated(data: any) {
   })
 }
 
-async function handleOrgDeleted(data: any) {
+async function handleOrgDeleted(data: Pick<ClerkOrgEventData, 'id'>) {
   const { id } = data
   await prisma.shops.delete({
     where: { clerkOrgId: id },
@@ -92,9 +109,15 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const evt = await verifyWebhook(req)
+    const eventType = evt.type
+    const id = evt.data?.id
 
-    switch (evt.type) {
+    console.log(`Received webhook with ID ${id} and event type of ${eventType}`)
+    console.log('Webhook payload:', evt.data)
+
+    switch (eventType) {
       case 'user.created':
+        console.log('userId:', evt.data.id)
         await handleUserCreated(evt.data)
         break
       case 'user.updated':
@@ -107,10 +130,14 @@ export async function POST(req: NextRequest) {
         await handleOrgUpdated(evt.data)
         break
       case 'organization.deleted':
-        await handleOrgDeleted(evt.data)
+        if (typeof evt.data.id === 'string') {
+          await handleOrgDeleted({ id: evt.data.id })
+        } else {
+          console.error('organization.deleted event missing id')
+        }
         break
       default:
-        // Optionally handle unknown event types
+        console.log('Unknown event type:', eventType)
         break
     }
 
