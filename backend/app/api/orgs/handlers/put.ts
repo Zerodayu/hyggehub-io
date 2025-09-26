@@ -1,27 +1,44 @@
 import { NextRequest } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
+import prisma from "@/prisma/PrismaClient";
 
 export async function PUT(req: NextRequest) {
   try {
-    const { orgId, shopCode, userId } = await req.json();
+    const { orgId, shopCode } = await req.json();
+    const clerkUserId = req.headers.get("x-clerk-user-id");
 
-    const client = await clerkClient();
-    // Get organization memberships (paginated response)
-    const membershipsResponse = await client.organizations.getOrganizationMembershipList({ organizationId: orgId });
-    const memberships = membershipsResponse.data; // Array of OrganizationMembership
-
-    // Check if user is a member of the organization
-    const isMember = memberships.some((m: any) => m.publicUserData.userId === userId);
-    if (!isMember) {
+    if (!clerkUserId) {
       return Response.json(
-        { success: false, error: "User is not a member of this organization" },
+        { success: false, error: "Missing user authentication." },
+        { status: 401 }
+      );
+    }
+
+    // Check if user is a member of the org
+    const membership = await prisma.orgMembers.findUnique({
+      where: { clerkId_orgId: { clerkId: clerkUserId, orgId } },
+    });
+
+    if (!membership) {
+      return Response.json(
+        { success: false, error: "User is not a member of this organization." },
         { status: 403 }
       );
     }
 
-    // Update Clerk metadata only
+    const client = await clerkClient();
+    const org = await client.organizations.getOrganization({ organizationId: orgId });
+    const metadata = org.publicMetadata || {};
+
+    // Allow updating shopCode
     await client.organizations.updateOrganizationMetadata(orgId, {
-      publicMetadata: { shopCode },
+      publicMetadata: { ...metadata, shopCode },
+    });
+
+    // Update DB if you store org-shopCode mapping
+    await prisma.shops.updateMany({
+      where: { clerkOrgId: orgId },
+      data: { code: shopCode },
     });
 
     return Response.json({ success: true, shopCode, message: "Shop code updated successfully." });

@@ -14,27 +14,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  members
+}
 
 model Shops {
-  shopId      Int         @id @default(autoincrement())
-  clerkOrgId  String      @unique
-  name        String
-  message     String?
-  location    String?
-  code        String?       @unique
-  users       ShopSubscription[]
+  shopId     String             @id @default(cuid())
+  clerkOrgId String             @unique
+  name       String
+  message    String?
+  location   String?
+  code       String?            @unique
+  users      ShopSubscription[]
 }
 
 model Users {
-  userId    Int           @id @default(autoincrement())
-  clerkId   String        @unique
-  username  String
-  email     String        @unique
-  bdate     String?
-  shops     ShopSubscription[]
+  userId         String             @id @default(cuid())
+  clerkId        String             @unique
+  username       String
+  email          String             @unique
+  bdate          String?
+  shops          ShopSubscription[]
+  orgMemberships OrgMembers[]
 }
 
-// New join table for many-to-many relationship
+// Many-to-many relationship between Users and Shops
 model ShopSubscription {
   id        String   @id @default(cuid())
   userId    String
@@ -45,4 +50,17 @@ model ShopSubscription {
   shop Shops @relation(fields: [shopId], references: [clerkOrgId])
 
   @@unique([userId, shopId])
+}
+
+// Organization members with roles
+model OrgMembers {
+  id       String   @id @default(cuid())
+  clerkId  String
+  orgId    String
+  role     Role
+  joinedAt DateTime @default(now())
+
+  user Users @relation(fields: [clerkId], references: [clerkId])
+
+  @@unique([clerkId, orgId])
 }
