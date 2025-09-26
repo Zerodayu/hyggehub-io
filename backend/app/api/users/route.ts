@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   await client.users.updateUserMetadata(userId, {
     publicMetadata: {
       birthday: birthdayDate ? birthdayDate.toISOString().split('T')[0] : null,
-      shopCodes: shopCodes || [],
+      shopCodes: [],
     },
   })
 
