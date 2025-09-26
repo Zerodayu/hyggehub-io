@@ -50,8 +50,7 @@ export async function PATCH(req: NextRequest) {
 
     return Response.json({ 
       success: true, 
-      message: "Shop code added successfully.", 
-      shopCodes
+      message: "Shop code added successfully."
     });
   } catch (error: string | unknown) {
     return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
