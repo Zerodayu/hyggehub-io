@@ -25,6 +25,7 @@ model Shops {
   name       String
   message    String?
   location   String?
+  imgUrl     String?
   code       String?            @unique
   users      ShopSubscription[]
 }
@@ -32,8 +33,9 @@ model Shops {
 model Users {
   userId         String             @id @default(cuid())
   clerkId        String             @unique
-  username       String
+  username       String?
   email          String             @unique
+  avatarUrl      String?
   bdate          String?
   shops          ShopSubscription[]
   orgMemberships OrgMembers[]

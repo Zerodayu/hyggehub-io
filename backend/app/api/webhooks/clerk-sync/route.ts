@@ -6,15 +6,17 @@ type ClerkUserEventData = {
   id: string
   username?: string | null
   email_addresses: { email_address: string }[]
+  image_url?: string | null // <-- Add this line
   public_metadata?: {
     birthday?: string
-    shopCodes?: string[] | string // <-- Add this line
+    shopCodes?: string[] | string
   }
 }
 
 type ClerkOrgEventData = {
   id: string
   name: string
+  logo_url?: string | null // <-- Add this line
   public_metadata?: {
     message?: string
     location?: string
@@ -24,7 +26,7 @@ type ClerkOrgEventData = {
 
 // User Handlers
 async function handleUserCreated(data: ClerkUserEventData) {
-  const { id, username, email_addresses, public_metadata } = data
+  const { id, username, email_addresses, public_metadata, image_url } = data
   const birthday = public_metadata?.birthday
 
   await prisma.users.create({
@@ -33,17 +35,18 @@ async function handleUserCreated(data: ClerkUserEventData) {
       username: username || '',
       email: email_addresses[0]?.email_address || '',
       bdate: birthday,
+      avatarUrl: image_url || null, // <-- Save image URL
     },
   })
 }
 
 async function handleUserUpdated(data: ClerkUserEventData) {
-  const { id, username, email_addresses, public_metadata } = data;
+  const { id, username, email_addresses, public_metadata, image_url } = data;
   const birthday = public_metadata?.birthday;
 
   const existingUser = await prisma.users.findUnique({
     where: { clerkId: id },
-    include: { shops: true }, // Get current subscriptions
+    include: { shops: true },
   });
 
   // Update user info
@@ -53,6 +56,7 @@ async function handleUserUpdated(data: ClerkUserEventData) {
       username: username ?? existingUser?.username ?? '',
       email: email_addresses?.[0]?.email_address ?? existingUser?.email ?? '',
       bdate: birthday ?? existingUser?.bdate,
+      avatarUrl: image_url ?? existingUser?.avatarUrl ?? null, // <-- Update image URL
     },
   });
 
@@ -94,18 +98,19 @@ async function handleUserUpdated(data: ClerkUserEventData) {
 
 // Organization Handlers
 async function handleOrgCreated(data: ClerkOrgEventData) {
-  const { id, name } = data
+  const { id, name, logo_url } = data
 
   await prisma.shops.create({
     data: {
       clerkOrgId: id,
       name: name || '',
+      imgUrl: logo_url || null, // <-- Save org image URL
     },
   })
 }
 
 async function handleOrgUpdated(data: ClerkOrgEventData) {
-  const { id, name, public_metadata } = data
+  const { id, name, public_metadata, logo_url } = data
   const message = public_metadata?.message
   const location = public_metadata?.location
   const code = public_metadata?.code
@@ -121,6 +126,7 @@ async function handleOrgUpdated(data: ClerkOrgEventData) {
       message: message ?? existingShop?.message,
       location: location ?? existingShop?.location,
       code: code ?? existingShop?.code ?? id,
+      imgUrl: logo_url ?? existingShop?.imgUrl ?? null, // <-- Update org image URL
     },
   })
 }
