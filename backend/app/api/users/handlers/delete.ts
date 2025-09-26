@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
+import { withCORS } from "@/cors";
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -12,9 +13,8 @@ export async function DELETE(req: NextRequest) {
 
     // Validate shopCode existence
     if (!shopCodes.includes(shopCode)) {
-      return Response.json(
-        { success: false, error: "Code does not exist", shopCodes },
-        { status: 400 }
+      return withCORS(
+        Response.json({ success: false, error: "Code does not exist", shopCodes }, { status: 400 })
       );
     }
 
@@ -26,8 +26,8 @@ export async function DELETE(req: NextRequest) {
       publicMetadata: { ...metadata, shopCodes: updatedShopCodes },
     });
 
-    return Response.json({ success: true, message: "Shop code removed successfully."});
+    return withCORS(Response.json({ success: true, message: "Shop code removed successfully." }));
   } catch (error: string | unknown) {
-    return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
+    return withCORS(Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 }));
   }
 }

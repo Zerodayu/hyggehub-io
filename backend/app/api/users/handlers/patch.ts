@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "@/prisma/PrismaClient";
+import { withCORS } from "@/cors";
 
 function getShopCodesArray(metadata: Record<string, unknown>, shopCode: string): string[] {
   if (!metadata || typeof metadata !== "object") {
@@ -30,7 +31,7 @@ export async function PATCH(req: NextRequest) {
       select: { clerkOrgId: true },
     });
     if (!shop) {
-      return Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 });
+      return withCORS(Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 }));
     }
 
     // Check if shopCode already exists in metadata
@@ -39,10 +40,10 @@ export async function PATCH(req: NextRequest) {
       (Array.isArray(codes) && codes.includes(shopCode)) ||
       (typeof codes === "string" && codes === shopCode)
     ) {
-      return Response.json({
+      return withCORS(Response.json({
         success: false,
         message: "Shop code already exists."
-      }, { status: 200 });
+      }, { status: 200 }));
     }
 
     // Create or update shopCodes array
@@ -60,11 +61,11 @@ export async function PATCH(req: NextRequest) {
       create: { userId, shopId: shop.clerkOrgId },
     });
 
-    return Response.json({
+    return withCORS(Response.json({
       success: true,
       message: "Shop code added successfully."
-    });
+    }));
   } catch (error: string | unknown) {
-    return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
+    return withCORS(Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 }));
   }
 }

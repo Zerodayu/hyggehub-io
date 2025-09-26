@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
+import { withCORS } from "@/cors";
 
 export async function PUT(req: NextRequest) {
   try {
@@ -18,8 +19,8 @@ export async function PUT(req: NextRequest) {
     // Update Clerk metadata
     await client.users.updateUserMetadata(userId, { publicMetadata: newMetadata });
 
-    return Response.json({ success: true, birthday: newMetadata.birthday, message: "Birthday updated successfully." });
+    return withCORS(Response.json({ success: true, birthday: newMetadata.birthday, message: "Birthday updated successfully." }));
   } catch (error: string | unknown) {
-    return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
+    return withCORS(Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 }));
   }
 }
