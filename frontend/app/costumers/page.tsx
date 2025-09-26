@@ -1,4 +1,6 @@
-import { currentUser } from "@clerk/nextjs/server";
+"use client"
+import React from "react";
+import { useUser } from "@clerk/nextjs";
 import {
   Card,
   CardAction,
@@ -14,19 +16,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Minus, CircleAlert, TicketSlash, } from "lucide-react"
+import { Minus, CircleAlert } from "lucide-react"
 import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
-import EditProfileBtn from "@/components/editProfile";
+import UsersShopCodeInput from "@/components/usersShopCode";
 
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
-  const { slug } = await params
-  const user = await currentUser();
+export default function Page() {
+  const { user } = useUser();
 
   return (
     <section className="flex flex-col items-center justify-start min-h-screen pt-25 px-4 gap-6">
@@ -45,13 +41,7 @@ export default async function Page({
             </div>
           </div>
           <div className="flex gap-6 w-full items-center justify-center pt-4">
-            <Button className="font-mono">
-              <TicketSlash />
-              Enter Shop Code
-            </Button>
-
-            <EditProfileBtn />
-
+            <UsersShopCodeInput />
           </div>
         </div>
 

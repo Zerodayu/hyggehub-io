@@ -14,7 +14,7 @@ export default function PasswordInput() {
 
   return (
     <div className="*:not-first:mt-2">
-      <Label htmlFor={id}>Show/hide password input</Label>
+      <Label htmlFor={id}>Set/Change Password</Label>
       <div className="relative">
         <Input
           id={id}

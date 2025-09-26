@@ -15,7 +15,7 @@ import { DateInput } from "@/components/ui/datefield-rac"
 
 export default function CalendarPickerInput() {
   return (
-    <DatePicker className="*:not-first:mt-2 py-4">
+    <DatePicker className="*:not-first:mt-2">
       <Label className="text-foreground text-sm font-medium">Date picker</Label>
       <div className="flex">
         <Group className="w-full">
