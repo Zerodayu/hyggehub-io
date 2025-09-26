@@ -26,7 +26,7 @@ export async function DELETE(req: NextRequest) {
       publicMetadata: { ...metadata, shopCodes: updatedShopCodes },
     });
 
-    return Response.json({ success: true, shopCodes: updatedShopCodes });
+    return Response.json({ success: true, message: "Shop code removed successfully."});
   } catch (error: string | unknown) {
     return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
   }
