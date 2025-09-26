@@ -64,49 +64,18 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const { userId, shopCode } = await req.json();
+  const { userId, code } = await req.json();
 
-  // Find the shop by code
-  const shop = await prisma.shops.findUnique({
-    where: { code: shopCode },
-    select: { clerkOrgId: true },
-  });
-
-  if (!shop) {
-    // Fallback: Remove code from Clerk metadata even if shop doesn't exist in DB
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
-    const existingMetadata = user.publicMetadata || {};
-    const currentShopCodes = Array.isArray(existingMetadata.shopCodes) ? existingMetadata.shopCodes : [];
-
-    const updatedShopCodes = currentShopCodes.filter((code: string) => code !== shopCode);
-
-    await client.users.updateUserMetadata(userId, {
-      publicMetadata: {
-        ...existingMetadata,
-        shopCodes: updatedShopCodes,
-      },
-    });
-
-    return Response.json({ success: false, error: "Shop not found in database, but removed from metadata" }, { status: 200 });
-  }
-
-  // Delete the ShopSubscription entry
-  await prisma.shopSubscription.deleteMany({
-    where: {
-      userId: userId,
-      shopId: shop.clerkOrgId,
-    },
-  });
-
-  // Update Clerk metadata: remove shopCode from shopCodes array
+  // Get Clerk user and metadata
   const client = await clerkClient();
   const user = await client.users.getUser(userId);
   const existingMetadata = user.publicMetadata || {};
-  const currentShopCodes = Array.isArray(existingMetadata.shopCodes) ? existingMetadata.shopCodes : [];
+  const shopCodes: string[] = Array.isArray(existingMetadata.shopCodes) ? existingMetadata.shopCodes : [];
 
-  const updatedShopCodes = currentShopCodes.filter((code: string) => code !== shopCode);
+  // Remove the code from shopCodes
+  const updatedShopCodes = shopCodes.filter((c) => c !== code);
 
+  // Update Clerk metadata
   await client.users.updateUserMetadata(userId, {
     publicMetadata: {
       ...existingMetadata,
@@ -114,5 +83,6 @@ export async function DELETE(req: NextRequest) {
     },
   });
 
-  return Response.json({ success: true });
+  return Response.json({ success: true, shopCodes: updatedShopCodes });
 }
+
