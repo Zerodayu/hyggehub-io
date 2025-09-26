@@ -21,17 +21,26 @@ export const updateUser = async ({
   userId: string;
   userData: any;
 }) => {
-  const response = await axios.patch(
-    `${API_BASE_URL}/api/users/${userId}`,
-    userData,
-    {
-      headers: {
-        "x-api-key": API_KEY,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
+  const requestBody = { userId, ...userData };
+  const headers = {
+    "x-api-key": API_KEY,
+    "Content-Type": "application/json",
+  };
+  console.log(API_KEY);
+  console.log("Request Body:", requestBody); // Log the body
+  console.log("Request Headers:", headers);   // Log the headers
+
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/api/users`,
+      requestBody,
+      { headers }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Update User Error:", error?.response?.data || error.message); // Log the error
+    throw error;
+  }
 };
 
 export const useUsers = () => {
