@@ -8,17 +8,29 @@ export async function POST(req: NextRequest) {
   // Convert birthday string to Date object
   const birthdayDate = birthday ? new Date(birthday) : null
 
-  // Update Clerk metadata
+  // Get existing publicMetadata
   const client = await clerkClient();
-  await client.users.updateUserMetadata(userId, {
-    publicMetadata: {
+  const user = await client.users.getUser(userId);
+  const existingMetadata = user.publicMetadata || {};
+
+  // Prepare new metadata, merging with existing
+  const newMetadata = {
+    ...existingMetadata,
+    ...(birthday !== undefined && {
       birthday: birthdayDate ? birthdayDate.toISOString().split('T')[0] : null,
-      shopCodes: [],
-    },
-  })
+    }),
+    ...(shopCodes !== undefined && {
+      shopCodes: shopCodes,
+    }),
+  };
+
+  // Update Clerk metadata
+  await client.users.updateUserMetadata(userId, {
+    publicMetadata: newMetadata,
+  });
 
   // Save birthday to database
-  if (birthdayDate) {
+  if (birthday !== undefined && birthdayDate) {
     await prisma.users.update({
       where: { clerkId: userId },
       data: { bdate: birthday },
