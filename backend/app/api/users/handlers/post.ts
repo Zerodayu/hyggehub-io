@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     }
 
     return Response.json({ success: true, shopCodes: newMetadata.shopCodes || shopCodes, birthday: newMetadata.birthday });
-  } catch (error: any) {
-    return Response.json({ success: false, error: error.message || "Internal Server Error" }, { status: 500 });
+  } catch (error: string | unknown) {
+    return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
   }
 }

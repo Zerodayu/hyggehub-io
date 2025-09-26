@@ -38,7 +38,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     return Response.json({ success: true, shopCodes });
-  } catch (error: any) {
-    return Response.json({ success: false, error: error.message || "Internal Server Error" }, { status: 500 });
+  } catch (error: string | unknown) {
+    return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
   }
 }
