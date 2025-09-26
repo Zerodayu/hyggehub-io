@@ -2,6 +2,18 @@ import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+      },
+    });
+  }
+
   const apiKey = req.headers.get('x-api-key');
   const validKey = process.env.API_KEY;
 
