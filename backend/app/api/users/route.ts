@@ -2,8 +2,9 @@ import { NextRequest } from "next/server"
 import { clerkClient } from "@clerk/nextjs/server"
 import prisma from "@/prisma/PrismaClient"
 
+// POST: Accepts a single shopCode string, stores as array
 export async function POST(req: NextRequest) {
-  const { birthday, userId, shopCodes } = await req.json()
+  const { birthday, userId, shopCode } = await req.json()
 
   // Convert birthday string to Date object
   const birthdayDate = birthday ? new Date(birthday) : null
@@ -19,8 +20,8 @@ export async function POST(req: NextRequest) {
     ...(birthday !== undefined && {
       birthday: birthdayDate ? birthdayDate.toISOString().split('T')[0] : null,
     }),
-    ...(shopCodes !== undefined && {
-      shopCodes: shopCodes,
+    ...(shopCode !== undefined && {
+      shopCodes: [shopCode],
     }),
   };
 
@@ -37,30 +38,69 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  // Save shopCodes to ShopSubscription
-  if (Array.isArray(shopCodes) && shopCodes.length > 0) {
-    // Find all shops with matching codes
-    const shops = await prisma.shops.findMany({
-      where: { code: { in: shopCodes } },
+  // Save shopCode to ShopSubscription
+  if (shopCode) {
+    // Find shop with matching code
+    const shop = await prisma.shops.findUnique({
+      where: { code: shopCode },
       select: { clerkOrgId: true },
     })
 
-    // Create subscriptions for each shop
-    await Promise.all(
-      shops.map(shop =>
-        prisma.shopSubscription.upsert({
-          where: { userId_shopId: { userId, shopId: shop.clerkOrgId } },
-          update: {},
-          create: {
-            userId,
-            shopId: shop.clerkOrgId,
-          },
-        })
-      )
-    )
+    if (shop) {
+      await prisma.shopSubscription.upsert({
+        where: { userId_shopId: { userId, shopId: shop.clerkOrgId } },
+        update: {},
+        create: {
+          userId,
+          shopId: shop.clerkOrgId,
+        },
+      })
+    }
   }
 
   return Response.json({ success: true })
+}
+
+// PATCH: Add a shopCode to existing shopCodes array
+export async function PATCH(req: NextRequest) {
+  const { userId, shopCode } = await req.json();
+
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  const existingMetadata = user.publicMetadata || {};
+  const shopCodes: string[] = Array.isArray(existingMetadata.shopCodes) ? existingMetadata.shopCodes : [];
+
+  // Add new code if not already present
+  if (!shopCodes.includes(shopCode)) {
+    shopCodes.push(shopCode);
+  }
+
+  // Update Clerk metadata
+  await client.users.updateUserMetadata(userId, {
+    publicMetadata: {
+      ...existingMetadata,
+      shopCodes,
+    },
+  });
+
+  // Add shopCode to ShopSubscription
+  const shop = await prisma.shops.findUnique({
+    where: { code: shopCode },
+    select: { clerkOrgId: true },
+  })
+
+  if (shop) {
+    await prisma.shopSubscription.upsert({
+      where: { userId_shopId: { userId, shopId: shop.clerkOrgId } },
+      update: {},
+      create: {
+        userId,
+        shopId: shop.clerkOrgId,
+      },
+    })
+  }
+
+  return Response.json({ success: true, shopCodes });
 }
 
 export async function DELETE(req: NextRequest) {
