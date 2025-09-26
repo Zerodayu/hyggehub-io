@@ -1,7 +1,8 @@
 "use client";
 
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
-import { CircleAlert, DotIcon } from "lucide-react"
+import { Calendar, CircleAlert, DotIcon } from "lucide-react"
+import CalendarPickerInput from "./calendarPicker";
 
 export default function Navbar() {
     return (
@@ -17,24 +18,7 @@ export default function Navbar() {
                         </div> */}
 
                         <div className="flex justify-end bg-muted rounded-full py-3 px-3">
-                            <UserButton>
-                                <UserButton.MenuItems>
-                                    <UserButton.Action
-                                        label="Open chat"
-                                        labelIcon={<DotIcon />}
-                                        onClick={() => alert('init chat')}
-                                    />
-                                    <UserButton.Action label="manageAccount" />
-                                    <UserButton.Action label="signOut" />
-                                </UserButton.MenuItems>
-
-                                <UserButton.UserProfilePage label="Help" labelIcon={<DotIcon />} url="help">
-                                    <div>
-                                        <h1>Help Page</h1>
-                                        <p>This is the custom help page</p>
-                                    </div>
-                                </UserButton.UserProfilePage>
-                            </UserButton>
+                            <UserButton/>
                         </div>
                     </div>
                 </SignedIn>

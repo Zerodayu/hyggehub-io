@@ -14,9 +14,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Minus, CircleAlert, TicketSlash, CalendarFold } from "lucide-react"
+import { Minus, CircleAlert, TicketSlash, } from "lucide-react"
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import EditProfileBtn from "@/components/editProfile";
 
 
 export default async function Page({
@@ -48,10 +49,9 @@ export default async function Page({
               <TicketSlash />
               Enter Shop Code
             </Button>
-            <Button variant="secondary" className="font-mono">
-              <CalendarFold />
-              Set your Birthday
-            </Button>
+
+            <EditProfileBtn />
+
           </div>
         </div>
 
