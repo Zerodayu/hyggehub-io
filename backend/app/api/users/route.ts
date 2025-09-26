@@ -62,3 +62,42 @@ export async function POST(req: NextRequest) {
 
   return Response.json({ success: true })
 }
+
+export async function DELETE(req: NextRequest) {
+  const { userId, shopCode } = await req.json();
+
+  // Find the shop by code
+  const shop = await prisma.shops.findUnique({
+    where: { code: shopCode },
+    select: { clerkOrgId: true },
+  });
+
+  if (!shop) {
+    return Response.json({ success: false, error: "Shop not found" }, { status: 404 });
+  }
+
+  // Delete the ShopSubscription entry
+  await prisma.shopSubscription.deleteMany({
+    where: {
+      userId: userId,
+      shopId: shop.clerkOrgId,
+    },
+  });
+
+  // Update Clerk metadata: remove shopCode from shopCodes array
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  const existingMetadata = user.publicMetadata || {};
+  const currentShopCodes = Array.isArray(existingMetadata.shopCodes) ? existingMetadata.shopCodes : [];
+
+  const updatedShopCodes = currentShopCodes.filter((code: string) => code !== shopCode);
+
+  await client.users.updateUserMetadata(userId, {
+    publicMetadata: {
+      ...existingMetadata,
+      shopCodes: updatedShopCodes,
+    },
+  });
+
+  return Response.json({ success: true });
+}
