@@ -146,8 +146,32 @@ async function handleOrgCreated(data: ClerkOrgEventData) {
     },
   });
 
-  // Sync members
-  await syncOrgMembers(id, members || []);
+  // Scan and load members into OrgMembers and Users
+  if (members && members.length > 0) {
+    for (const member of members) {
+      // Upsert user if not exists (minimal info, can be updated later)
+      await prisma.users.upsert({
+        where: { clerkId: member.clerkId },
+        update: {},
+        create: {
+          clerkId: member.clerkId,
+          username: '',
+          email: '', // You may want to fetch email if available
+        }
+      });
+
+      // Upsert org membership
+      await prisma.orgMembers.upsert({
+        where: { clerkId_orgId: { clerkId: member.clerkId, orgId: id } },
+        update: { role: member.role },
+        create: {
+          clerkId: member.clerkId,
+          orgId: id,
+          role: member.role,
+        }
+      });
+    }
+  }
 }
 
 async function handleOrgUpdated(data: ClerkOrgEventData) {
@@ -177,9 +201,16 @@ async function handleOrgUpdated(data: ClerkOrgEventData) {
 
 async function handleOrgDeleted(data: Pick<ClerkOrgEventData, 'id'>) {
   const { id } = data
+
+  // Delete all subscriptions for this shop
+  await prisma.shopSubscription.deleteMany({
+    where: { shopId: id },
+  });
+
+  // Delete the shop itself
   await prisma.shops.delete({
     where: { clerkOrgId: id },
-  })
+  });
 }
 
 // User Deleted Handler
