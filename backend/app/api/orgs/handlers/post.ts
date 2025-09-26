@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       data: { code: shopCode },
     });
 
-    return Response.json({ success: true, shopCode });
+    return Response.json({ success: true, shopCode, message: "Shop code set successfully." });
   } catch (error: string | unknown) {
     return Response.json(
       { success: false, error: (error as Error).message || "Internal Server Error" },
