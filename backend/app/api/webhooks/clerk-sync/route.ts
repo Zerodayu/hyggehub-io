@@ -6,7 +6,10 @@ type ClerkUserEventData = {
   id: string
   username?: string | null
   email_addresses: { email_address: string }[]
-  public_metadata?: { birthday?: string }
+  public_metadata?: {
+    birthday?: string
+    shopCodes?: string[] | string // <-- Add this line
+  }
 }
 
 type ClerkOrgEventData = {
@@ -35,13 +38,15 @@ async function handleUserCreated(data: ClerkUserEventData) {
 }
 
 async function handleUserUpdated(data: ClerkUserEventData) {
-  const { id, username, email_addresses, public_metadata } = data
-  const birthday = public_metadata?.birthday
+  const { id, username, email_addresses, public_metadata } = data;
+  const birthday = public_metadata?.birthday;
 
   const existingUser = await prisma.users.findUnique({
     where: { clerkId: id },
-  })
+    include: { shops: true }, // Get current subscriptions
+  });
 
+  // Update user info
   await prisma.users.update({
     where: { clerkId: id },
     data: {
@@ -49,7 +54,42 @@ async function handleUserUpdated(data: ClerkUserEventData) {
       email: email_addresses?.[0]?.email_address ?? existingUser?.email ?? '',
       bdate: birthday ?? existingUser?.bdate,
     },
-  })
+  });
+
+  // --- Sync ShopSubscription ---
+  // Get shopCodes from metadata
+  const newShopCodes = Array.isArray(public_metadata?.shopCodes)
+    ? public_metadata.shopCodes
+    : typeof public_metadata?.shopCodes === "string"
+      ? [public_metadata.shopCodes]
+      : [];
+
+  // Get all shop clerkOrgIds for these codes
+  const shops = await prisma.shops.findMany({
+    where: { code: { in: newShopCodes } },
+    select: { clerkOrgId: true, code: true },
+  });
+  const newOrgIds = shops.map(s => s.clerkOrgId);
+
+  // Find subscriptions to remove
+  const currentOrgIds = existingUser?.shops.map(sub => sub.shopId) ?? [];
+  const toRemove = currentOrgIds.filter(orgId => !newOrgIds.includes(orgId));
+
+  // Remove subscriptions for removed codes
+  for (const shopId of toRemove) {
+    await prisma.shopSubscription.deleteMany({
+      where: { userId: id, shopId },
+    });
+  }
+
+  // Optionally, add new subscriptions for added codes (if not already present)
+  for (const shopId of newOrgIds) {
+    if (!currentOrgIds.includes(shopId)) {
+      await prisma.shopSubscription.create({
+        data: { userId: id, shopId },
+      });
+    }
+  }
 }
 
 // Organization Handlers

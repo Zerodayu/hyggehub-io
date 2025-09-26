@@ -8,10 +8,10 @@ function getShopCodesArray(metadata: Record<string, unknown>, shopCode: string):
   }
   const codes = metadata.shopCodes;
   if (Array.isArray(codes)) {
-    return [...codes, shopCode];
+    return codes.includes(shopCode) ? codes : [...codes, shopCode];
   }
   if (typeof codes === "string") {
-    return [codes, shopCode];
+    return codes === shopCode ? [codes] : [codes, shopCode];
   }
   return [shopCode];
 }
@@ -33,6 +33,18 @@ export async function PATCH(req: NextRequest) {
       return Response.json({ success: false, error: "Shop code does not exist" }, { status: 404 });
     }
 
+    // Check if shopCode already exists in metadata
+    const codes = metadata.shopCodes;
+    if (
+      (Array.isArray(codes) && codes.includes(shopCode)) ||
+      (typeof codes === "string" && codes === shopCode)
+    ) {
+      return Response.json({
+        success: false,
+        message: "Shop code already exists."
+      }, { status: 200 });
+    }
+
     // Create or update shopCodes array
     const shopCodes = getShopCodesArray(metadata, shopCode);
 
@@ -48,8 +60,8 @@ export async function PATCH(req: NextRequest) {
       create: { userId, shopId: shop.clerkOrgId },
     });
 
-    return Response.json({ 
-      success: true, 
+    return Response.json({
+      success: true,
       message: "Shop code added successfully."
     });
   } catch (error: string | unknown) {
