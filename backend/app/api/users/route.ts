@@ -84,6 +84,16 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const { userId, shopCode } = await req.json();
 
+  // Validation: userId must be a non-empty string
+  if (typeof userId !== "string" || !userId.trim()) {
+    return Response.json({ success: false, error: "userId must be a non-empty string" }, { status: 400 });
+  }
+
+  // Validation: shopCode must be a non-empty string
+  if (typeof shopCode !== "string" || !shopCode.trim()) {
+    return Response.json({ success: false, error: "shopCode must be a non-empty string" }, { status: 400 });
+  }
+
   const client = await getClerkClient();
   const user = await getClerkUser(client, userId);
   const existingMetadata = getUserMetadata(user);
@@ -118,22 +128,37 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const { userId, shopCode } = await req.json();
 
+  // Validation: shopCode must be a string
+  if (typeof shopCode !== "string" || !shopCode.trim()) {
+    return Response.json({ success: false, error: "shopCode must be a non-empty string" }, { status: 400 });
+  }
+
   // Clerk user and metadata
   const client = await getClerkClient();
   const user = await getClerkUser(client, userId);
   const existingMetadata = getUserMetadata(user);
   const shopCodes = getShopCodes(existingMetadata);
 
+  // Validation: Check if shopCode exists
+  if (!shopCodes.includes(shopCode)) {
+    return Response.json({ success: false, error: "Code does not exist", shopCodes }, { status: 400 });
+  }
+
   // Remove the code from shopCodes
   const updatedShopCodes = shopCodes.filter((c) => c !== shopCode);
 
   // Update Clerk metadata
-  await client.users.updateUserMetadata(userId, {
+  const updateResult = await client.users.updateUserMetadata(userId, {
     publicMetadata: {
       ...existingMetadata,
       shopCodes: updatedShopCodes,
     },
   });
+  console.log("Update result:", updateResult);
+
+  // Fetch user again to verify
+  const updatedUser = await getClerkUser(client, userId);
+  console.log("Updated metadata:", updatedUser.publicMetadata);
 
   return Response.json({ success: true, shopCodes: updatedShopCodes });
 }
