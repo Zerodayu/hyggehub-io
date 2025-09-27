@@ -15,7 +15,7 @@ export default function ShopUsersDay() {
             <MiniCalendarSection />
             <div className="flex flex-col gap-2">
                 <div className="pt-6">
-                    <Accordion type="single" collapsible>
+                    <Accordion type="single" collapsible defaultValue="item-1">
                         <AccordionItem value="item-1">
                             <AccordionTrigger>
                                 <span className="flex items-center gap-2 pb-4">

@@ -1,7 +1,11 @@
+import { notFound } from "next/navigation";
 import ShopCardSection from "@/components/shopCardSection";
 import ShopUsersDay from "@/components/shopUsersDay";
-import { Store, Settings2 } from "lucide-react"
+import { Store, Settings2, PanelTopClose } from "lucide-react"
 import { Button } from "@/components/ui/button";
+import { OrganizationProfile, PricingTable } from "@clerk/nextjs";
+import { auth } from '@clerk/nextjs/server'
+import PricingButton from "@/components/PricingDrawer";
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -12,9 +16,6 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { OrganizationProfile } from "@clerk/nextjs";
-import { auth } from '@clerk/nextjs/server'
-import { notFound } from "next/navigation";
 
 export default async function Page({
     params,
@@ -23,7 +24,7 @@ export default async function Page({
 }) {
     const { orgSlug } = await auth()
     const { slug } = await params
-    
+
 
     if (slug !== orgSlug) {
         return (
@@ -68,6 +69,8 @@ export default async function Page({
                                         </div>
                                     </AlertDialogContent>
                                 </AlertDialog>
+
+                                <PricingButton />
                             </div>
                             <div className="w-full flex flex-row justify-center items-center text-xs text-muted-foreground gap-6 py-2">
                                 <div className="flex-1 w-auto h-0.5 rounded bg-accent shadow-sm" />
@@ -81,6 +84,7 @@ export default async function Page({
                     <div className="grid w-full py-4 gap-14">
                         <div>
                             <ShopCardSection />
+                            <PricingTable forOrganizations ctaPosition="bottom" />
                         </div>
                     </div>
                 </div>
