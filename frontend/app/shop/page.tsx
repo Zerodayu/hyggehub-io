@@ -1,8 +1,8 @@
 
 import ShopCardSection from "@/components/shopCardSection";
 import ShopUsersDay from "@/components/shopUsersDay";
-import Navbar from "@/components/Navbar";
 import { Store } from "lucide-react"
+import { Button } from "@/components/ui/button";
 
 export default async function Page({
     params,
@@ -13,7 +13,6 @@ export default async function Page({
 
     return (
         <section className="flex flex-col items-center justify-start min-h-screen px-4 gap-6">
-            <Navbar />
             <div className="flex gap-12 pt-25 max-w-auto md:max-w-6xl w-full">
                 <div className="grid col-span-1.5">
                     <div className="flex items-center w-full gap-6">
@@ -28,7 +27,7 @@ export default async function Page({
                             <div className="w-full flex flex-row justify-center items-center text-xs text-muted-foreground gap-6 py-2">
                                 <div className="flex-1 w-auto h-0.5 rounded bg-accent shadow-sm" />
                                 <div className="flex flex-row items-center gap-6">
-                                    <p className="font-mono">4 followers</p>
+                                    <Button variant="link" className="font-mono">Followers</Button>
                                 </div>
                             </div>
                         </div>

@@ -3,6 +3,7 @@ import MyClerkProvider from '@/components/clerkProvider'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import QueryProvider from "@/components/QueryProvider" // <-- import the new provider
+import Navbar from '@/components/Navbar'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,6 +30,7 @@ export default function RootLayout({
       <MyClerkProvider>
         <html lang="en" className="dark">
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <Navbar />
             {children}
           </body>
         </html>

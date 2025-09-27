@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationProfile, OrganizationSwitcher, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
+import { OrganizationSwitcher, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 
 export default function Navbar() {
     return (
@@ -10,13 +10,13 @@ export default function Navbar() {
                     <div className="flex flex-row gap-4 w-full justify-between items-center">
                         <div className="flex justify-end bg-muted rounded-full py-3 px-3">
                             <UserButton/>
-                            <OrganizationSwitcher />
+                            <OrganizationSwitcher/>
                         </div>
                     </div>
                 </SignedIn>
 
                 <SignedOut>
-                    <SignInButton />
+                    
                 </SignedOut>
             </div>
         </div>

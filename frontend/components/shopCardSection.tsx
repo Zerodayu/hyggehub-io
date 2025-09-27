@@ -19,7 +19,8 @@ import {
     ClockArrowDown,
     CalendarCheck,
     Ticket,
-    SquarePen
+    SquarePen,
+    Send
 } from "lucide-react"
 import { Textarea } from "./ui/textarea"
 import DatetimeInput from "./dateTimeInput"
@@ -148,6 +149,11 @@ export default function ShopCardSection() {
                                         </DialogContent>
                                     </form>
                                 </Dialog>
+
+                                <Button className="font-mono">
+                                    <Send />
+                                    Post
+                                </Button>
                             </CardFooter>
                         </Card>
                     </div>
