@@ -1,4 +1,3 @@
-
 import ShopCardSection from "@/components/shopCardSection";
 import ShopUsersDay from "@/components/shopUsersDay";
 import { Store, Settings2 } from "lucide-react"
@@ -15,16 +14,16 @@ import {
 } from "@/components/ui/alert-dialog"
 import { OrganizationProfile } from "@clerk/nextjs";
 import { auth } from '@clerk/nextjs/server'
-import { OrganizationList } from '@clerk/nextjs'
 import { notFound } from "next/navigation";
 
 export default async function Page({
     params,
 }: {
-    params: { slug: string }
+    params: Promise<{ slug: string }>
 }) {
     const { orgSlug } = await auth()
-    const { slug } = params
+    const { slug } = await params
+    
 
     if (slug !== orgSlug) {
         return (
@@ -40,7 +39,7 @@ export default async function Page({
                         <div className="flex flex-col items-start w-full">
                             <span className="flex gap-2 items-center justify-center text-xl font-mono font-bold text-muted-foreground">
                                 <Store size={20} />
-                                <h1>shop</h1>
+                                <h1>{orgSlug}</h1>
                             </span>
                             <div className="flex flex-row gap-2 items-end">
                                 <p className="text-5xl font-semibold">
