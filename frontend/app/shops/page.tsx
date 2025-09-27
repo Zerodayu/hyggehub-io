@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
 import { CreateOrganization } from '@clerk/nextjs';
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -31,7 +30,8 @@ export default function Page() {
                                 <AlertDialogTitle />
                                 <AlertDialogDescription asChild>
                                     <span>
-                                        <CreateOrganization />
+                                        {/* clerk component */}
+                                        <CreateOrganization hideSlug/>
                                     </span>
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
