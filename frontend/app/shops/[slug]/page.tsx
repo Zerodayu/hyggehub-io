@@ -14,13 +14,23 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { OrganizationProfile } from "@clerk/nextjs";
+import { auth } from '@clerk/nextjs/server'
+import { OrganizationList } from '@clerk/nextjs'
+import { notFound } from "next/navigation";
 
 export default async function Page({
     params,
 }: {
-    params: Promise<{ slug: string }>
+    params: { slug: string }
 }) {
-    const { slug } = await params
+    const { orgSlug } = await auth()
+    const { slug } = params
+
+    if (slug !== orgSlug) {
+        return (
+            notFound()
+        )
+    }
 
     return (
         <section className="flex flex-col items-center justify-start min-h-screen px-4 gap-6">
@@ -34,7 +44,7 @@ export default async function Page({
                             </span>
                             <div className="flex flex-row gap-2 items-end">
                                 <p className="text-5xl font-semibold">
-                                    Shop Name
+                                    shopname
                                 </p>
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
