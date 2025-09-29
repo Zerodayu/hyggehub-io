@@ -112,16 +112,37 @@ const InputStartSelectDemo = ({ value, setValue, phoneNo, setPhoneNo }: {
 }
 
 export default function PhoneSelectorInput() {
-    const [countryCode, setCountryCode] = useState(countryCodes[0].value);
-    const [phoneNo, setPhoneNo] = useState("");
     const { organization } = useOrganization();
     const { user } = useUser();
     const orgId = organization?.id;
     const userId = user?.id;
 
+    // Get phoneNo from Clerk org public metadata
+    const orgPhoneNo = organization?.publicMetadata?.phoneNo as string | undefined;
+
+    const [countryCode, setCountryCode] = useState(() => {
+        if (orgPhoneNo) {
+            const code = countryCodes.find(c => orgPhoneNo.startsWith(c.value));
+            return code ? code.value : countryCodes[0].value;
+        }
+        return countryCodes[0].value;
+    });
+    const [phoneNo, setPhoneNo] = useState(() => {
+        if (orgPhoneNo) {
+            const code = countryCodes.find(c => orgPhoneNo.startsWith(c.value));
+            return code ? orgPhoneNo.slice(code.value.length) : orgPhoneNo;
+        }
+        return "";
+    });
+
+    // Track original values for change detection
+    const originalFullPhoneNo = orgPhoneNo ?? "";
+
+    const isChanged = `${countryCode}${phoneNo}` !== originalFullPhoneNo;
+
     const mutation = useMutation({
         mutationFn: async (fullPhoneNo: string) => {
-            const res = await api.put('/api/orgs', 
+            const res = await api.put('/api/orgs',
                 { phoneNo: fullPhoneNo },
                 {
                     headers: {
@@ -136,7 +157,7 @@ export default function PhoneSelectorInput() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!orgId) return;
+        if (!orgId || !isChanged) return;
         mutation.mutate(`${countryCode}${phoneNo}`);
     };
 
@@ -146,7 +167,7 @@ export default function PhoneSelectorInput() {
                 <DialogTrigger asChild>
                     <Button variant="ghost" className="font-mono text-xs text-muted-foreground">
                         <Phone />
-                        Set Phone Number
+                        {phoneNo ? `${countryCode}${phoneNo}` : "Set Phone Number"}
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-opacity-50 backdrop-blur">
@@ -161,20 +182,31 @@ export default function PhoneSelectorInput() {
                                     setPhoneNo={setPhoneNo}
                                 />
                             </div>
+                            {mutation.isSuccess && <span className="text-xs text-muted-foreground">Saved!</span>}
+                            {mutation.isError && <span className="text-xs text-destructive">Error: {mutation.error?.message}</span>}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline" className="font-mono">Cancel</Button>
+                            <Button
+                                variant="outline"
+                                className="font-mono"
+                                disabled={mutation.isPending}
+                            >
+                                Cancel
+                            </Button>
                         </DialogClose>
-                        <Button type="submit" className="font-mono" onClick={handleSubmit} disabled={mutation.isPending || !phoneNo || !orgId}>
+                        <Button
+                            type="submit"
+                            className="font-mono"
+                            onClick={handleSubmit}
+                            disabled={mutation.isPending || !phoneNo || !orgId || !isChanged}
+                        >
                             {mutation.isPending ? "Updating..." : "Save"}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-            {mutation.isSuccess && <span className="text-xs text-muted-foreground">Saved!</span>}
-            {mutation.isError && <span className="text-xs text-red-600">Error: {mutation.error?.message}</span>}
         </div>
     )
 }

@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     // Find the shop by clerkOrgId
     const shop = await prisma.shops.findUnique({
       where: { clerkOrgId },
-      select: { shopId: true, clerkOrgId: true, name: true, message: true, location: true, code: true }
+      select: { shopId: true, clerkOrgId: true, name: true, message: true, location: true, code: true, shopNum: true }
     });
     if (!shop) {
       return withCORS(Response.json({ success: false, error: "Shop not found" }, { status: 404 }));
@@ -28,9 +28,13 @@ export async function GET(req: NextRequest) {
     // Extract user info
     const connectedUsers = subscriptions.map(sub => sub.user);
 
+    // Fetch all data from OrgMembers table
+    const orgMembers = await prisma.orgMembers.findMany();
+
     return withCORS(Response.json({
       shop,
-      connectedUsers
+      connectedUsers,
+      orgMembers
     }));
   } catch (error: string | unknown) {
     return withCORS(Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 }));
