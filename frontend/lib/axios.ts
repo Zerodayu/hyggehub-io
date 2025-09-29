@@ -5,7 +5,7 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "blank",
+    "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "https://coffee-shop-app-ruddy.vercel.app",
   },
 });
 

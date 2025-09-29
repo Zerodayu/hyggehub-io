@@ -30,7 +30,7 @@ import {
     CommandList,
 } from "@/components/ui/command"
 import api from "@/lib/axios";
-import { useOrganization } from "@clerk/nextjs";
+import { useOrganization, useUser } from "@clerk/nextjs";
 import { useMutation } from '@tanstack/react-query';
 
 const countryCodes = [
@@ -115,14 +115,21 @@ export default function PhoneSelectorInput() {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value);
     const [phoneNo, setPhoneNo] = useState("");
     const { organization } = useOrganization();
+    const { user } = useUser();
     const orgId = organization?.id;
+    const userId = user?.id;
 
     const mutation = useMutation({
         mutationFn: async (fullPhoneNo: string) => {
-            const res = await api.put('/api/orgs', {
-                orgId,
-                phoneNo: fullPhoneNo,
-            });
+            const res = await api.put('/api/orgs', 
+                { phoneNo: fullPhoneNo },
+                {
+                    headers: {
+                        'x-clerk-user-id': userId,
+                        'x-clerk-org-id': orgId,
+                    }
+                }
+            );
             return res.data;
         },
     });

@@ -55,7 +55,8 @@ export async function PUT(req: Request) {
       shopCode,
       phoneNo,
       message: "Shop code and phone number updated successfully."
-    }));
+    }, { status: 200 }
+  ));
   } catch (error: string | unknown) {
     return withCORS(Response.json(
       { success: false, error: (error as Error).message || "Internal Server Error" },
