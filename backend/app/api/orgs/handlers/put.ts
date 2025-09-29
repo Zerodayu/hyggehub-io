@@ -1,21 +1,22 @@
 import { NextRequest } from "next/server";
-import { clerkClient } from "@clerk/nextjs/server";
+import { clerkClient, auth } from "@clerk/nextjs/server";
 import { withCORS } from "@/cors";
 import prisma from "@/prisma/PrismaClient";
 import type { OrganizationMembership } from "@clerk/nextjs/server";
 
-export async function PUT(req: NextRequest) {
+export async function PUT(req: Request) {
+  const { userId, orgId } = await auth(); // <-- add await here
+
+  if (!userId || !orgId) {
+    return Response.json(
+      { success: false, error: "Missing user or organization context." },
+      { status: 401 }
+    );
+  }
+
+  const { shopCode, phoneNo } = await req.json();
+
   try {
-    const { orgId, shopCode, phoneNo } = await req.json();
-    const clerkUserId = req.headers.get("x-clerk-user-id");
-
-    if (!clerkUserId) {
-      return withCORS(Response.json(
-        { success: false, error: "Missing user authentication." },
-        { status: 401 }
-      ));
-    }
-
     // Check if user is a member of the org using Clerk API
     const client = await clerkClient();
     // Get organization membership list
@@ -23,7 +24,7 @@ export async function PUT(req: NextRequest) {
 
     // Check if clerkUserId is in memberships
     const isMember = memberships.data.some(
-      (member: OrganizationMembership) => member.id === clerkUserId
+      (member: OrganizationMembership) => member.publicUserData?.userId === userId // <-- fix here too
     );
 
     if (!isMember) {
@@ -47,7 +48,14 @@ export async function PUT(req: NextRequest) {
       data: { code: shopCode },
     });
 
-    return withCORS(Response.json({ success: true, shopCode, phoneNo, message: "Shop code and phone number updated successfully." }));
+    return Response.json({
+      success: true,
+      userId,
+      orgId,
+      shopCode,
+      phoneNo,
+      message: "Shop code and phone number updated successfully."
+    });
   } catch (error: string | unknown) {
     return withCORS(Response.json(
       { success: false, error: (error as Error).message || "Internal Server Error" },
