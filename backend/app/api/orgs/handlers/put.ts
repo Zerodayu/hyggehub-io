@@ -4,7 +4,7 @@ import prisma from "@/prisma/PrismaClient";
 
 export async function PUT(req: NextRequest) {
   try {
-    const { orgId, shopCode } = await req.json();
+    const { orgId, shopCode, phoneNo } = await req.json();
     const clerkUserId = req.headers.get("x-clerk-user-id");
 
     if (!clerkUserId) {
@@ -30,9 +30,9 @@ export async function PUT(req: NextRequest) {
     const org = await client.organizations.getOrganization({ organizationId: orgId });
     const metadata = org.publicMetadata || {};
 
-    // Allow updating shopCode
+    // Allow updating shopCode and phoneNo
     await client.organizations.updateOrganizationMetadata(orgId, {
-      publicMetadata: { ...metadata, shopCode },
+      publicMetadata: { ...metadata, shopCode, phoneNo },
     });
 
     // Update DB if you store org-shopCode mapping
@@ -41,7 +41,7 @@ export async function PUT(req: NextRequest) {
       data: { code: shopCode },
     });
 
-    return Response.json({ success: true, shopCode, message: "Shop code updated successfully." });
+    return Response.json({ success: true, shopCode, phoneNo, message: "Shop code and phone number updated successfully." });
   } catch (error: string | unknown) {
     return Response.json(
       { success: false, error: (error as Error).message || "Internal Server Error" },
