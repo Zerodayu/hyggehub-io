@@ -2,10 +2,10 @@
 
 import { Phone, Check, ChevronsUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button";
-import { useId, useState } from 'react'
+import { useId, useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { cn } from "@/lib/utils"
+import { cn, filterNumbers } from "@/lib/utils"
 import {
     Dialog,
     DialogClose,
@@ -31,7 +31,9 @@ import {
 } from "@/components/ui/command"
 import api from "@/lib/axios";
 import { useOrganization, useUser } from "@clerk/nextjs";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getOrg } from '@/api/get-org';
+import { updateOrgPhoneNo } from '@/api/put-org-phoneNo';
 
 const countryCodes = [
     { value: "+1", label: "🇺🇸 +1" },
@@ -104,7 +106,7 @@ const InputStartSelectDemo = ({ value, setValue, phoneNo, setPhoneNo }: {
                     placeholder='Enter number'
                     className='-ms-px rounded-l-none shadow-none text-foreground font-mono'
                     value={phoneNo}
-                    onChange={e => setPhoneNo(e.target.value)}
+                    onChange={e => setPhoneNo(filterNumbers(e.target.value))}
                 />
             </div>
         </div>
@@ -117,8 +119,15 @@ export default function PhoneSelectorInput() {
     const orgId = organization?.id;
     const userId = user?.id;
 
-    // Get phoneNo from Clerk org public metadata
-    const orgPhoneNo = organization?.publicMetadata?.phoneNo as string | undefined;
+    // Fetch shop data (including phone number) from backend
+    const { data, isLoading } = useQuery({
+        queryKey: ['shop', orgId],
+        queryFn: () => orgId ? getOrg(orgId) : Promise.resolve(null),
+        enabled: !!orgId,
+    });
+
+    // Get phoneNo from backend response
+    const orgPhoneNo = data?.shop?.shopNum as string | undefined;
 
     const [countryCode, setCountryCode] = useState(() => {
         if (orgPhoneNo) {
@@ -135,24 +144,31 @@ export default function PhoneSelectorInput() {
         return "";
     });
 
+    // Sync input fields with backend value when orgPhoneNo changes
+    useEffect(() => {
+        if (orgPhoneNo) {
+            const code = countryCodes.find(c => orgPhoneNo.startsWith(c.value));
+            setCountryCode(code ? code.value : countryCodes[0].value);
+            setPhoneNo(code ? orgPhoneNo.slice(code.value.length) : orgPhoneNo);
+        }
+    }, [orgPhoneNo]);
+
     // Track original values for change detection
     const originalFullPhoneNo = orgPhoneNo ?? "";
 
     const isChanged = `${countryCode}${phoneNo}` !== originalFullPhoneNo;
 
+    const queryClient = useQueryClient();
+
     const mutation = useMutation({
         mutationFn: async (fullPhoneNo: string) => {
-            const res = await api.put('/api/orgs',
-                { phoneNo: fullPhoneNo },
-                {
-                    headers: {
-                        'x-clerk-user-id': userId,
-                        'x-clerk-org-id': orgId,
-                    }
-                }
-            );
-            return res.data;
+            if (!orgId || !userId) throw new Error("Missing orgId or userId");
+            return updateOrgPhoneNo({ orgId, userId, phoneNo: fullPhoneNo });
         },
+        onSuccess: () => {
+            // Refetch shop data after successful update
+            queryClient.invalidateQueries({ queryKey: ['shop', orgId] });
+        }
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -167,7 +183,9 @@ export default function PhoneSelectorInput() {
                 <DialogTrigger asChild>
                     <Button variant="ghost" className="font-mono text-xs text-muted-foreground">
                         <Phone />
-                        {phoneNo ? `${countryCode}${phoneNo}` : "Set Phone Number"}
+                        {isLoading
+                            ? "Loading..."
+                            : (orgPhoneNo ?? "Add phone number")}
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-opacity-50 backdrop-blur">
