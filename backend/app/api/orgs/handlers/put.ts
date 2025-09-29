@@ -1,11 +1,11 @@
-import { NextRequest } from "next/server";
-import { clerkClient, auth } from "@clerk/nextjs/server";
+import { clerkClient } from "@clerk/nextjs/server";
 import { withCORS } from "@/cors";
 import prisma from "@/prisma/PrismaClient";
 import type { OrganizationMembership } from "@clerk/nextjs/server";
 
 export async function PUT(req: Request) {
-  const { userId, orgId } = await auth(); // <-- add await here
+  const orgId = req.headers.get("x-clerk-org-id");
+  const userId = req.headers.get("x-clerk-user-id");
 
   if (!userId || !orgId) {
     return Response.json(
@@ -24,7 +24,7 @@ export async function PUT(req: Request) {
 
     // Check if clerkUserId is in memberships
     const isMember = memberships.data.some(
-      (member: OrganizationMembership) => member.publicUserData?.userId === userId // <-- fix here too
+      (member: OrganizationMembership) => member.publicUserData?.userId === userId
     );
 
     if (!isMember) {
@@ -48,14 +48,14 @@ export async function PUT(req: Request) {
       data: { code: shopCode },
     });
 
-    return Response.json({
+    return withCORS(Response.json({
       success: true,
       userId,
       orgId,
       shopCode,
       phoneNo,
       message: "Shop code and phone number updated successfully."
-    });
+    }));
   } catch (error: string | unknown) {
     return withCORS(Response.json(
       { success: false, error: (error as Error).message || "Internal Server Error" },
