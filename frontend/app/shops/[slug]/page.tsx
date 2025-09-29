@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PricingTable } from "@clerk/nextjs";
 import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
+import PhoneSelectorInput from "@/components/phoneSelector";
 
 export default async function Page({
     params,
@@ -35,10 +36,7 @@ export default async function Page({
                                 <p className="text-5xl font-semibold">
                                     shopname
                                 </p>
-                                <Button variant="ghost" className="font-mono text-xs text-muted-foreground">
-                                    <Phone />
-                                    1651 951 9526
-                                </Button>
+                                <PhoneSelectorInput />
                             </div>
                             <div className="w-full flex flex-row justify-center items-center text-xs text-muted-foreground gap-6 py-2">
                                 <div className="flex-1 w-auto h-0.5 rounded bg-accent shadow-sm" />
