@@ -24,6 +24,7 @@ model Shops {
   clerkOrgId String             @unique
   name       String
   message    String?
+  shopNum    String?
   location   String?
   imgUrl     String?
   code       String?            @unique

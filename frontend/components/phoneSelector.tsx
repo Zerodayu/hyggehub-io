@@ -116,7 +116,9 @@ export default function PhoneSelectorInput() {
                     <DialogHeader>
                         <DialogTitle>Shops Phone Number</DialogTitle>
                         <DialogDescription>
-                            <InputStartSelectDemo />
+                            <span>
+                                <InputStartSelectDemo />
+                            </span>
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>

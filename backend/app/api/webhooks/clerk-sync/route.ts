@@ -1,239 +1,33 @@
 import { verifyWebhook } from '@clerk/nextjs/webhooks'
 import { NextRequest } from 'next/server'
-import prisma from "@/prisma/PrismaClient"
+import { handleUserCreated } from './handlers/user-created'
 
-type ClerkUserEventData = {
-  id: string
-  username?: string | null
-  email_addresses: { email_address: string }[]
-  image_url?: string | null // <-- Add this line
-  public_metadata?: {
-    birthday?: string
-    shopCodes?: string[] | string
-  }
-}
 
-type ClerkOrgMember = {
-  clerkId: string
-  role: 'ADMIN' | 'members'
-}
+// User Created webhook
+export { handleUserCreated } from './handlers/user-created'
 
-type ClerkOrgEventData = {
-  id: string
-  name: string
-  image_url?: string | null
-  public_metadata?: {
-    message?: string
-    location?: string
-    code?: string
-  } | null
-  members?: ClerkOrgMember[] // <-- Add members array
-}
-
-// User Handlers
-async function handleUserCreated(data: ClerkUserEventData) {
-  const { id, username, email_addresses, public_metadata, image_url } = data
-  const birthday = public_metadata?.birthday
-
-  await prisma.users.create({
-    data: {
-      clerkId: id,
-      username: username || '',
-      email: email_addresses[0]?.email_address || '',
-      bdate: birthday,
-      avatarUrl: image_url || null, // <-- Save image URL
-    },
-  })
-}
-
-async function handleUserUpdated(data: ClerkUserEventData) {
-  const { id, username, email_addresses, public_metadata, image_url } = data;
-  const birthday = public_metadata?.birthday;
-
-  const existingUser = await prisma.users.findUnique({
-    where: { clerkId: id },
-    include: { shops: true },
-  });
-
-  // Update user info
-  await prisma.users.update({
-    where: { clerkId: id },
-    data: {
-      username: username ?? existingUser?.username ?? '',
-      email: email_addresses?.[0]?.email_address ?? existingUser?.email ?? '',
-      bdate: birthday ?? existingUser?.bdate,
-      avatarUrl: image_url ?? existingUser?.avatarUrl ?? null, // <-- Update image URL
-    },
-  });
-
-  // --- Sync ShopSubscription ---
-  // Get shopCodes from metadata
-  const newShopCodes = Array.isArray(public_metadata?.shopCodes)
-    ? public_metadata.shopCodes
-    : typeof public_metadata?.shopCodes === "string"
-      ? [public_metadata.shopCodes]
-      : [];
-
-  // Get all shop clerkOrgIds for these codes
-  const shops = await prisma.shops.findMany({
-    where: { code: { in: newShopCodes } },
-    select: { clerkOrgId: true, code: true },
-  });
-  const newOrgIds = shops.map(s => s.clerkOrgId);
-
-  // Find subscriptions to remove
-  const currentOrgIds = existingUser?.shops.map(sub => sub.shopId) ?? [];
-  const toRemove = currentOrgIds.filter(orgId => !newOrgIds.includes(orgId));
-
-  // Remove subscriptions for removed codes
-  for (const shopId of toRemove) {
-    await prisma.shopSubscription.deleteMany({
-      where: { userId: id, shopId },
-    });
-  }
-
-  // Optionally, add new subscriptions for added codes (if not already present)
-  for (const shopId of newOrgIds) {
-    if (!currentOrgIds.includes(shopId)) {
-      await prisma.shopSubscription.create({
-        data: { userId: id, shopId },
-      });
-    }
-  }
-}
-
-// --- Sync Org Members ---
-async function syncOrgMembers(orgId: string, members: ClerkOrgMember[] = []) {
-  // Get current members from DB
-  const currentMembers = await prisma.orgMembers.findMany({
-    where: { orgId },
-    select: { clerkId: true }
-  });
-  const currentClerkIds = currentMembers.map(m => m.clerkId);
-
-  // Upsert each member
-  for (const member of members) {
-    await prisma.orgMembers.upsert({
-      where: { clerkId_orgId: { clerkId: member.clerkId, orgId } },
-      update: { role: member.role },
-      create: {
-        clerkId: member.clerkId,
-        orgId,
-        role: member.role,
-      }
-    });
-  }
-
-  // Remove members not in the new list
-  const newClerkIds = members.map(m => m.clerkId);
-  const toRemove = currentClerkIds.filter(id => !newClerkIds.includes(id));
-  for (const clerkId of toRemove) {
-    await prisma.orgMembers.deleteMany({
-      where: { clerkId, orgId }
-    });
-  }
-}
-
-// Organization Handlers
-async function handleOrgCreated(data: ClerkOrgEventData) {
-  const { id, name, image_url, members } = data
-
-  await prisma.shops.create({
-    data: {
-      clerkOrgId: id,
-      name: name || '',
-      imgUrl: image_url || null,
-    },
-  });
-
-  // Scan and load members into OrgMembers and Users
-  if (members && members.length > 0) {
-    for (const member of members) {
-      // Upsert user if not exists (minimal info, can be updated later)
-      await prisma.users.upsert({
-        where: { clerkId: member.clerkId },
-        update: {},
-        create: {
-          clerkId: member.clerkId,
-          username: '',
-          email: '', // You may want to fetch email if available
-        }
-      });
-
-      // Upsert org membership
-      await prisma.orgMembers.upsert({
-        where: { clerkId_orgId: { clerkId: member.clerkId, orgId: id } },
-        update: { role: member.role },
-        create: {
-          clerkId: member.clerkId,
-          orgId: id,
-          role: member.role,
-        }
-      });
-    }
-  }
-}
-
-async function handleOrgUpdated(data: ClerkOrgEventData) {
-  const { id, name, public_metadata, image_url, members } = data
-  const message = public_metadata?.message
-  const location = public_metadata?.location
-  const code = public_metadata?.code
-
-  const existingShop = await prisma.shops.findUnique({
-    where: { clerkOrgId: id },
-  })
-
-  await prisma.shops.update({
-    where: { clerkOrgId: id },
-    data: {
-      name: name ?? existingShop?.name ?? '',
-      message: message ?? existingShop?.message,
-      location: location ?? existingShop?.location,
-      code: code ?? existingShop?.code ?? id,
-      imgUrl: image_url ?? existingShop?.imgUrl ?? null,
-    },
-  });
-
-  // Sync members
-  await syncOrgMembers(id, members || []);
-}
-
-async function handleOrgDeleted(data: Pick<ClerkOrgEventData, 'id'>) {
-  const { id } = data
-
-  // Delete all subscriptions for this shop
-  await prisma.shopSubscription.deleteMany({
-    where: { shopId: id },
-  });
-
-  // Delete the shop itself
-  await prisma.shops.delete({
-    where: { clerkOrgId: id },
-  });
-}
+// User Updated webhook
+import { handleUserUpdated } from './handlers/user-updated'
+export { handleUserUpdated } from './handlers/user-updated'
 
 // User Deleted Handler
-async function handleUserDeleted(data: Pick<ClerkUserEventData, 'id'>) {
-  const { id } = data;
-  await prisma.users.delete({
-    where: { clerkId: id },
-  });
-}
+import { handleUserDeleted } from './handlers/user-deleted'
+export { handleUserDeleted } from './handlers/user-deleted'
 
-export async function GET() {
-  try {
-    const users = await prisma.users.findMany()
-    const shops = await prisma.shops.findMany()
-    return new Response(JSON.stringify({ users, shops }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  } catch (err) {
-    console.error('Error fetching users/shops:', err)
-    return new Response('Error fetching users/shops', { status: 400 })
-  }
-}
+// Sync Org Members webhook
+export { syncOrgMembers } from './handlers/sync-orgMembers'
+
+// Organization Created webhook
+import { handleOrgCreated } from './handlers/org-created'
+export { handleOrgCreated } from './handlers/org-created'
+
+// Organization Updated webhook
+import { handleOrgUpdated } from './handlers/org-updated'
+export { handleOrgUpdated } from './handlers/org-updated'
+
+// Organization Deleted Handler
+import { handleOrgDeleted } from './handlers/org-deleted'
+export { handleOrgDeleted } from './handlers/org-deleted'
 
 export async function POST(req: NextRequest) {
   try {
