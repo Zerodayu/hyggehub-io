@@ -9,7 +9,7 @@ export function middleware(req: NextRequest) {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+        'Access-Control-Allow-Headers': 'Content-Type, x-api-key, x-clerk-user-id, x-clerk-org-id',
       },
     });
   }
@@ -24,7 +24,7 @@ export function middleware(req: NextRequest) {
         status: 401,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*', // <-- Add this line
+          'Access-Control-Allow-Origin': '*',
         },
       });
     }
