@@ -15,19 +15,23 @@ export async function PUT(req: NextRequest) {
       ));
     }
 
-    // Check if user is a member of the org
-    const membership = await prisma.orgMembers.findUnique({
-      where: { clerkId_orgId: { clerkId: clerkUserId, orgId } },
-    });
+    // Check if user is a member of the org using Clerk API
+    const client = await clerkClient();
+    // Get organization membership list
+    const memberships = await client.organizations.getOrganizationMembershipList({ organizationId: orgId });
 
-    if (!membership) {
+    // Check if clerkUserId is in memberships
+    const isMember = memberships.data.some(
+      (member: any) => member.publicUserId === clerkUserId
+    );
+
+    if (!isMember) {
       return withCORS(Response.json(
         { success: false, error: "User is not a member of this organization." },
         { status: 403 }
       ));
     }
 
-    const client = await clerkClient();
     const org = await client.organizations.getOrganization({ organizationId: orgId });
     const metadata = org.publicMetadata || {};
 
