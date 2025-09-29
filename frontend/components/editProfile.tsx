@@ -2,7 +2,7 @@
 
 import { CheckIcon, ImagePlusIcon, XIcon } from "lucide-react"
 import { useUser } from "@clerk/nextjs"
-import { useFileUpload } from "@/hooks/use-file-upload"
+import { useFileUpload } from "@/utils/use-file-upload"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
