@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { withCORS } from "@/cors";
 import prisma from "@/prisma/PrismaClient";
+import type { OrganizationMembership } from "@clerk/nextjs/server";
 
 export async function PUT(req: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function PUT(req: NextRequest) {
 
     // Check if clerkUserId is in memberships
     const isMember = memberships.data.some(
-      (member: any) => member.publicUserId === clerkUserId
+      (member: OrganizationMembership) => member.id === clerkUserId
     );
 
     if (!isMember) {
