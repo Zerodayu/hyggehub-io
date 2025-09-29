@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
+import { withCORS } from "@/cors";
 import prisma from "@/prisma/PrismaClient";
 
 export async function PUT(req: NextRequest) {
@@ -8,10 +9,10 @@ export async function PUT(req: NextRequest) {
     const clerkUserId = req.headers.get("x-clerk-user-id");
 
     if (!clerkUserId) {
-      return Response.json(
+      return withCORS(Response.json(
         { success: false, error: "Missing user authentication." },
         { status: 401 }
-      );
+      ));
     }
 
     // Check if user is a member of the org
@@ -20,10 +21,10 @@ export async function PUT(req: NextRequest) {
     });
 
     if (!membership) {
-      return Response.json(
+      return withCORS(Response.json(
         { success: false, error: "User is not a member of this organization." },
         { status: 403 }
-      );
+      ));
     }
 
     const client = await clerkClient();
@@ -41,11 +42,11 @@ export async function PUT(req: NextRequest) {
       data: { code: shopCode },
     });
 
-    return Response.json({ success: true, shopCode, phoneNo, message: "Shop code and phone number updated successfully." });
+    return withCORS(Response.json({ success: true, shopCode, phoneNo, message: "Shop code and phone number updated successfully." }));
   } catch (error: string | unknown) {
-    return Response.json(
+    return withCORS(Response.json(
       { success: false, error: (error as Error).message || "Internal Server Error" },
       { status: 500 }
-    );
+    ));
   }
 }

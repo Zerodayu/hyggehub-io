@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
+import { withCORS } from "@/cors";
 import prisma from "@/prisma/PrismaClient";
 
 export async function POST(req: NextRequest) {
@@ -12,14 +13,14 @@ export async function POST(req: NextRequest) {
 
     // Only allow one shopCode per org
     if (metadata.shopCode && metadata.shopCode === shopCode) {
-      return Response.json(
+      return withCORS(Response.json(
         {
           success: false,
           error: "Organization already has this shopCode",
           shopCode: metadata.shopCode,
         },
         { status: 400 }
-      );
+      ));
     }
 
     // Update Clerk metadata
@@ -33,11 +34,11 @@ export async function POST(req: NextRequest) {
       data: { code: shopCode },
     });
 
-    return Response.json({ success: true, shopCode, message: "Shop code set successfully." });
+    return withCORS(Response.json({ success: true, shopCode, message: "Shop code set successfully." }));
   } catch (error: string | unknown) {
-    return Response.json(
+    return withCORS(Response.json(
       { success: false, error: (error as Error).message || "Internal Server Error" },
       { status: 500 }
-    );
+    ));
   }
 }

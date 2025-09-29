@@ -1,12 +1,13 @@
 import { NextRequest } from "next/server";
 import prisma from "@/prisma/PrismaClient";
+import { withCORS } from "@/cors";
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const clerkOrgId = searchParams.get("clerkOrgId");
     if (!clerkOrgId) {
-      return Response.json({ success: false, error: "Missing clerkOrgId" }, { status: 400 });
+      return withCORS(Response.json({ success: false, error: "Missing clerkOrgId" }, { status: 400 }));
     }
 
     // Find the shop by clerkOrgId
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
       select: { shopId: true, clerkOrgId: true, name: true, message: true, location: true, code: true }
     });
     if (!shop) {
-      return Response.json({ success: false, error: "Shop not found" }, { status: 404 });
+      return withCORS(Response.json({ success: false, error: "Shop not found" }, { status: 404 }));
     }
 
     // Fetch users connected to this shop via ShopSubscription
@@ -27,11 +28,11 @@ export async function GET(req: NextRequest) {
     // Extract user info
     const connectedUsers = subscriptions.map(sub => sub.user);
 
-    return Response.json({
+    return withCORS(Response.json({
       shop,
       connectedUsers
-    });
+    }));
   } catch (error: string | unknown) {
-    return Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 });
+    return withCORS(Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 }));
   }
 }

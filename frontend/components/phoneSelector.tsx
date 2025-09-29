@@ -29,6 +29,9 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command"
+import api from "@/lib/axios";
+import { useOrganization } from "@clerk/nextjs";
+import { useMutation } from '@tanstack/react-query';
 
 const countryCodes = [
     { value: "+1", label: "🇺🇸 +1" },
@@ -39,10 +42,14 @@ const countryCodes = [
     { value: "+49", label: "🇩🇪 +49" },
 ]
 
-const InputStartSelectDemo = () => {
+const InputStartSelectDemo = ({ value, setValue, phoneNo, setPhoneNo }: {
+    value: string,
+    setValue: (v: string) => void,
+    phoneNo: string,
+    setPhoneNo: (v: string) => void
+}) => {
     const id = useId()
     const [open, setOpen] = useState(false)
-    const [value, setValue] = useState(countryCodes[0].value)
 
     return (
         <div className='w-full space-y-2 py-2'>
@@ -96,6 +103,8 @@ const InputStartSelectDemo = () => {
                     type='tel'
                     placeholder='Enter number'
                     className='-ms-px rounded-l-none shadow-none text-foreground font-mono'
+                    value={phoneNo}
+                    onChange={e => setPhoneNo(e.target.value)}
                 />
             </div>
         </div>
@@ -103,6 +112,27 @@ const InputStartSelectDemo = () => {
 }
 
 export default function PhoneSelectorInput() {
+    const [countryCode, setCountryCode] = useState(countryCodes[0].value);
+    const [phoneNo, setPhoneNo] = useState("");
+    const { organization } = useOrganization();
+    const orgId = organization?.id;
+
+    const mutation = useMutation({
+        mutationFn: async (fullPhoneNo: string) => {
+            const res = await api.put('/api/orgs', {
+                orgId,
+                phoneNo: fullPhoneNo,
+            });
+            return res.data;
+        },
+    });
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!orgId) return;
+        mutation.mutate(`${countryCode}${phoneNo}`);
+    };
+
     return (
         <div>
             <Dialog>
@@ -116,19 +146,28 @@ export default function PhoneSelectorInput() {
                     <DialogHeader>
                         <DialogTitle>Shops Phone Number</DialogTitle>
                         <DialogDescription>
-                            <span>
-                                <InputStartSelectDemo />
-                            </span>
+                            <div>
+                                <InputStartSelectDemo
+                                    value={countryCode}
+                                    setValue={setCountryCode}
+                                    phoneNo={phoneNo}
+                                    setPhoneNo={setPhoneNo}
+                                />
+                            </div>
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose asChild>
                             <Button variant="outline" className="font-mono">Cancel</Button>
                         </DialogClose>
-                        <Button type="submit" className="font-mono">Save</Button>
+                        <Button type="submit" className="font-mono" onClick={handleSubmit} disabled={mutation.isPending || !phoneNo || !orgId}>
+                            {mutation.isPending ? "Updating..." : "Save"}
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+            {mutation.isSuccess && <span className="text-xs text-muted-foreground">Saved!</span>}
+            {mutation.isError && <span className="text-xs text-red-600">Error: {mutation.error?.message}</span>}
         </div>
     )
 }
