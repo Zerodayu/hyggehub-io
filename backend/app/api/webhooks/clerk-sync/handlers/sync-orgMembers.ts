@@ -1,5 +1,3 @@
-import { verifyWebhook } from '@clerk/nextjs/webhooks'
-import { NextRequest } from 'next/server'
 import prisma from "@/prisma/PrismaClient"
 import type { ClerkOrgMember } from "@/lib/types"
 
