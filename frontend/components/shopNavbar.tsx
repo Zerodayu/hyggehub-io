@@ -1,16 +1,20 @@
 import { Button } from "./ui/button"
 import Link from "next/link"
 
-export default function ShopNavbar() {
+interface ShopNavbarProps {
+    slug: string
+}
+
+export default function ShopNavbar({ slug }: ShopNavbarProps) {
 
     const navigations = [
         {
             title: "Settings",
-            href: "/shops/*/org-profile"
+            href: `/shops/${slug}/org-profile`
         },
         {
             title: "Pricing",
-            href: "/shops/*/plans"
+            href: `/shops/${slug}/plans`
         },
     ]
     return (

@@ -3,7 +3,6 @@ import ShopCardSection from "@/components/shopCardSection";
 import ShopUsersDay from "@/components/shopUsersDay";
 import { Store, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button";
-import { PricingTable } from "@clerk/nextjs";
 import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
 import PhoneSelectorInput from "@/components/phoneSelector";
@@ -23,7 +22,7 @@ export default async function Page({
 
     return (
         <section className="flex flex-col items-center justify-start min-h-screen px-4 gap-6">
-            <ShopNavbar />
+            <ShopNavbar slug={slug}/>
             <div className="flex gap-12 pt-25 max-w-auto md:max-w-6xl w-full">
                 <div className="grid col-span-1.5">
                     <div className="flex items-center w-full gap-6">
@@ -50,7 +49,6 @@ export default async function Page({
                     <div className="grid w-full py-4 gap-14">
                         <div>
                             <ShopCardSection />
-                            <PricingTable forOrganizations ctaPosition="bottom" />
                         </div>
                     </div>
                 </div>

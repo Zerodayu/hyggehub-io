@@ -95,7 +95,7 @@ const InputStartSelectDemo = () => {
                     id={id}
                     type='tel'
                     placeholder='Enter number'
-                    className='-ms-px rounded-l-none shadow-none'
+                    className='-ms-px rounded-l-none shadow-none text-foreground font-mono'
                 />
             </div>
         </div>
@@ -109,16 +109,14 @@ export default function PhoneSelectorInput() {
                 <DialogTrigger asChild>
                     <Button variant="ghost" className="font-mono text-xs text-muted-foreground">
                         <Phone />
-                        1651 951 9526
+                        Set Phone Number
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-opacity-50 backdrop-blur">
                     <DialogHeader>
                         <DialogTitle>Shops Phone Number</DialogTitle>
                         <DialogDescription>
-                            <div>
-                                <InputStartSelectDemo />
-                            </div>
+                            <InputStartSelectDemo />
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>

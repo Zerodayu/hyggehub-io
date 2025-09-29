@@ -1,4 +1,6 @@
-import Link from 'next/link'
+"use client"
+
+import { useRouter } from 'next/navigation'
 import { OrganizationProfile } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,20 +13,25 @@ import {
 } from "@/components/ui/breadcrumb"
 import { ChevronRight, Store, Settings2 } from 'lucide-react'
 
+
 export default function Page() {
+    const router = useRouter();
+
     return (
-        <section className="flex flex-col items-center justify-center min-h-screen px-4 gap-6">
+        <section className="flex flex-col items-center justify-start min-h-screen p-6 gap-6">
             <div className="flex w-full items-center justify-start">
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
                             <BreadcrumbLink asChild>
-                                <Link href="/shops">
-                                    <Button variant="link" className='font-mono text-muted-foreground'>
-                                        <Store />
-                                        Shop
-                                    </Button>
-                                </Link>
+                                <Button
+                                    variant="link"
+                                    className='font-mono text-muted-foreground'
+                                    onClick={() => router.back()}
+                                >
+                                    <Store />
+                                    Shop
+                                </Button>
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator>
@@ -33,8 +40,8 @@ export default function Page() {
                         <BreadcrumbItem>
                             <BreadcrumbPage className='font-mono'>
                                 <span className='flex items-center gap-2'>
-                                    <Settings2 size={16}/>
-                                    Shop Profile 
+                                    <Settings2 size={16} />
+                                    Shop Profile
                                 </span>
                             </BreadcrumbPage>
                         </BreadcrumbItem>
@@ -43,7 +50,7 @@ export default function Page() {
             </div>
             <div className="flex w-full h-0.5 rounded bg-accent shadow-sm" />
             <div className='flex justify-center items-center w-full'>
-                <OrganizationProfile routing='hash'/>
+                <OrganizationProfile routing='hash' />
             </div>
         </section>
     )

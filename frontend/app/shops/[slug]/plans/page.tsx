@@ -1,4 +1,6 @@
-import Link from 'next/link'
+"use client"
+
+import { useRouter } from 'next/navigation'
 import { PricingTable } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,20 +13,25 @@ import {
 } from "@/components/ui/breadcrumb"
 import { ChevronRight, Store, Wallet } from 'lucide-react'
 
+
 export default function Page() {
+    const router = useRouter();
+
     return (
-        <section className="flex flex-col items-center justify-center min-h-screen px-4 gap-6">
+        <section className="flex flex-col items-center justify-start min-h-screen p-6 gap-6">
             <div className="flex w-full items-center justify-start">
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
                             <BreadcrumbLink asChild>
-                                <Link href="/shops">
-                                    <Button variant="link" className='font-mono text-muted-foreground'>
-                                        <Store />
-                                        Shop
-                                    </Button>
-                                </Link>
+                                <Button
+                                    variant="link"
+                                    className='font-mono text-muted-foreground'
+                                    onClick={() => router.back()}
+                                >
+                                    <Store />
+                                    Shop
+                                </Button>
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator>
