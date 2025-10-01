@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
 import PhoneSelectorInput from "@/components/phoneSelector";
+import ShopEditSheet from "@/components/shopEdit";
 
 export default async function Page({
     params,
@@ -36,6 +37,7 @@ export default async function Page({
                                     shopname
                                 </p>
                                 <PhoneSelectorInput />
+                                <ShopEditSheet />
                             </div>
                             <div className="w-full flex flex-row justify-center items-center text-xs text-muted-foreground gap-6 py-2">
                                 <div className="flex-1 w-auto h-0.5 rounded bg-accent shadow-sm" />

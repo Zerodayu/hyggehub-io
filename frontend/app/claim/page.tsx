@@ -54,7 +54,7 @@ const InputStartSelectDemo = ({
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="rounded-r-none shadow-none focus-visible:z-1 w-[120px] justify-between"
+                            className="rounded-r-none shadow-none focus-visible:z-1 w-[100px] justify-between"
                         >
                             {value
                                 ? countryCodes.find((code) => code.value === value)?.label
@@ -109,8 +109,8 @@ export default function Page() {
     const [phoneNo, setPhoneNo] = useState("");
 
     return (
-        <section className="flex w-full min-h-screen flex-col items-center justify-center">
-            <Card className="w-lg">
+        <section className="flex w-full min-h-screen flex-col items-center justify-center p-4">
+            <Card className="w-auto">
                 <CardHeader>
                     <CardTitle className='flex gap-2 font-mono text-lg'>
                         Claim Shop Codes

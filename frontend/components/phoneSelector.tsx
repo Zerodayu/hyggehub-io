@@ -34,7 +34,7 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOrg, updateOrgPhoneNo } from '@/api/api-org';
 
-const InputStartSelectDemo = ({ value, setValue, phoneNo, setPhoneNo }: {
+export const InputStartSelectDemo = ({ value, setValue, phoneNo, setPhoneNo }: {
     value: string,
     setValue: (v: string) => void,
     phoneNo: string,
