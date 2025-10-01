@@ -1,6 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { withCORS } from "@/cors";
-import prisma from "@/prisma/PrismaClient";
 import type { OrganizationMembership } from "@clerk/nextjs/server";
 
 export async function PUT(req: Request) {
@@ -19,10 +18,8 @@ export async function PUT(req: Request) {
   try {
     // Check if user is a member of the org using Clerk API
     const client = await clerkClient();
-    // Get organization membership list
     const memberships = await client.organizations.getOrganizationMembershipList({ organizationId: orgId });
 
-    // Check if clerkUserId is in memberships
     const isMember = memberships.data.some(
       (member: OrganizationMembership) => member.publicUserData?.userId === userId
     );
@@ -37,15 +34,9 @@ export async function PUT(req: Request) {
     const org = await client.organizations.getOrganization({ organizationId: orgId });
     const metadata = org.publicMetadata || {};
 
-    // Allow updating shopCode and phoneNo
+    // Only update Clerk metadata, do NOT update DB
     await client.organizations.updateOrganizationMetadata(orgId, {
       publicMetadata: { ...metadata, shopCode, phoneNo },
-    });
-
-    // Update DB if you store org-shopCode mapping
-    await prisma.shops.updateMany({
-      where: { clerkOrgId: orgId },
-      data: { code: shopCode },
     });
 
     return withCORS(Response.json({
@@ -56,7 +47,7 @@ export async function PUT(req: Request) {
       phoneNo,
       message: "Shop code and phone number updated successfully."
     }, { status: 200 }
-  ));
+    ));
   } catch (error: string | unknown) {
     return withCORS(Response.json(
       { success: false, error: (error as Error).message || "Internal Server Error" },
