@@ -38,13 +38,13 @@ export async function PUT(req: Request) {
     const newMetadata: Record<string, any> = { ...metadata };
 
     if (shopCode !== undefined) {
-      newMetadata.shopCode = { value: shopCode };
+      newMetadata.shopCode = shopCode;
     }
     if (phoneNo !== undefined) {
       newMetadata.phoneNo = phoneNo;
     }
 
-    // Only update Clerk metadata, do NOT update DB
+    // Update Clerk metadata
     await client.organizations.updateOrganizationMetadata(orgId, {
       publicMetadata: newMetadata,
     });
@@ -55,7 +55,7 @@ export async function PUT(req: Request) {
       orgId,
       shopCode,
       phoneNo,
-      message: "Organization metadata updated successfully."
+      message: "Shop code and phone number updated successfully."
     }, { status: 200 }
     ));
   } catch (error: string | unknown) {

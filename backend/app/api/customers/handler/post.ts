@@ -66,9 +66,9 @@ export async function POST(req: NextRequest) {
                 { status: 201 }
             )
         );
-    } catch (error: string | unknown) {
+    } catch (err: string | unknown) {
         return withCORS(
-            Response.json({ success: false, error: "Internal Server Error" }, { status: 500 })
+            Response.json({ success: false, error: (err as Error).message || "Internal Server Error" }, { status: 500 })
         );
     }
 }
