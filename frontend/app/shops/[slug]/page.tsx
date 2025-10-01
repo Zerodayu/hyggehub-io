@@ -35,7 +35,7 @@ export default async function Page({
                             <div className="flex flex-row gap-10 w-full">
                                 <span className="flex gap-2 items-center justify-center text-xs font-mono font-bold text-muted-foreground">
                                     <Key size={16} />
-                                    
+                                    <p>{shopCode ?? "no shop code"}</p>
                                 </span>
                                 <span className="flex gap-2 items-center justify-center text-xs font-mono font-bold text-muted-foreground">
                                     <Phone size={16} />
