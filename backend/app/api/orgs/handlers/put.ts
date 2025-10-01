@@ -1,6 +1,7 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { withCORS } from "@/cors";
 import type { OrganizationMembership } from "@clerk/nextjs/server";
+import type { ClerkOrgEventData } from "@/lib/types";
 
 export async function PUT(req: Request) {
   const orgId = req.headers.get("x-clerk-org-id");
@@ -35,10 +36,10 @@ export async function PUT(req: Request) {
     const metadata = org.publicMetadata || {};
 
     // Prepare new metadata object
-    const newMetadata: Record<string, any> = { ...metadata };
+    const newMetadata: ClerkOrgEventData['public_metadata'] = { ...metadata };
 
     if (shopCode !== undefined) {
-      newMetadata.shopCode = shopCode;
+      newMetadata.code = shopCode;
     }
     if (phoneNo !== undefined) {
       newMetadata.phoneNo = phoneNo;
