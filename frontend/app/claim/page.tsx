@@ -3,7 +3,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useId, useState } from "react";
-import { ChevronsUpDown, Check } from "lucide-react";
+import { ChevronsUpDown, Check, Key, Ticket, Send } from "lucide-react";
 import { cn, filterNumbers } from "@/lib/utils";
 import { countryCodes } from "@/utils/country-code";
 import {
@@ -28,7 +28,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Ticket, Send } from "lucide-react";
 
 
 const InputStartSelectDemo = ({
@@ -110,8 +109,7 @@ export default function Page() {
     const [phoneNo, setPhoneNo] = useState("");
 
     return (
-        <section className="flex min-h-screen flex-col items-center justify-center">
-
+        <section className="flex w-full min-h-screen flex-col items-center justify-center">
             <Card className="w-lg">
                 <CardHeader>
                     <CardTitle className='flex gap-2 font-mono text-lg'>
@@ -133,6 +131,16 @@ export default function Page() {
                         phoneNo={phoneNo}
                         setPhoneNo={setPhoneNo}
                     />
+                    <div className="flex-1 w-auto h-0.5 rounded bg-border shadow-sm" />
+                    <div className="w-full space-y-2 py-2">
+                        <Label>Shop code</Label>
+                        <div className="relative">
+                            <Input placeholder="Enter shop code" type="text" className='text-foreground font-mono' />
+                            <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 peer-disabled:opacity-50">
+                                <Key size={16} aria-hidden="true" />
+                            </div>
+                        </div>
+                    </div>
                 </CardContent>
                 <CardFooter className='flex flex-col items-start'>
                     <Label className="text-sm text-muted-foreground mb-2">

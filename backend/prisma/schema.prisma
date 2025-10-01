@@ -42,17 +42,28 @@ model Users {
   orgMemberships OrgMembers[]
 }
 
+model Customers {
+  customerId String   @id @default(cuid())
+  name       String
+  phone      String   @unique
+  createdAt  DateTime @default(now())
+  shops          ShopSubscription[]
+}
+
 // Many-to-many relationship between Users and Shops
 model ShopSubscription {
-  id        String   @id @default(cuid())
-  userId    String
-  shopId    String
-  createdAt DateTime @default(now())
+  id          String      @id @default(cuid())
+  userId      String?
+  customerId  String?
+  shopId      String
+  createdAt   DateTime    @default(now())
 
-  user Users @relation(fields: [userId], references: [clerkId])
-  shop Shops @relation(fields: [shopId], references: [clerkOrgId])
+  user        Users?      @relation(fields: [userId], references: [clerkId])
+  customer    Customers?  @relation(fields: [customerId], references: [customerId])
+  shop        Shops       @relation(fields: [shopId], references: [clerkOrgId])
 
   @@unique([userId, shopId])
+  @@unique([customerId, shopId])
 }
 
 // Organization members with roles
