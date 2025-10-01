@@ -21,16 +21,16 @@ import { countryCodes } from "@/utils/country-code"
 import { PhoneNumInput } from "./phoneSelector"
 import { Key } from "lucide-react"
 import { removeSpaces } from "@/lib/utils"
-import { toast } from 'sonner'
+import { ToastSuccessPopup } from "./sonnerShowHandler"
 
-export default function ShopEditSheet() {
+export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void }) {
     const { organization } = useOrganization()
     const { user } = useUser()
     const orgId = organization?.id
     const userId = user?.id
 
     // Fetch shop data (including phone number) from backend
-    const { data, isLoading } = useQuery({
+    const { data } = useQuery({
         queryKey: ['shop', orgId],
         queryFn: () => orgId ? getOrg(orgId) : Promise.resolve(null),
         enabled: !!orgId,
@@ -38,6 +38,10 @@ export default function ShopEditSheet() {
 
     // Get phoneNo from backend response
     const orgPhoneNo = data?.shop?.shopNum as string | undefined
+    const orgCode = data?.shop?.code as string | undefined
+
+    const originalShopCode = orgCode ?? ""
+    const [shopCode, setShopCode] = useState(originalShopCode)
 
     const [countryCode, setCountryCode] = useState(() => {
         if (orgPhoneNo) {
@@ -46,6 +50,7 @@ export default function ShopEditSheet() {
         }
         return countryCodes[0].value
     })
+
     const [phoneNo, setPhoneNo] = useState(() => {
         if (orgPhoneNo) {
             const code = countryCodes.find(c => orgPhoneNo.startsWith(c.value))
@@ -53,8 +58,6 @@ export default function ShopEditSheet() {
         }
         return ""
     })
-    const originalShopCode = data?.shop?.shopCode ?? ""
-    const [shopCode, setShopCode] = useState(originalShopCode)
 
     useEffect(() => {
         if (orgPhoneNo) {
@@ -80,15 +83,13 @@ export default function ShopEditSheet() {
             if (!orgId || !userId) throw new Error("Missing orgId or userId")
             return updateOrgPhoneNo({ orgId, userId, phoneNo: fullPhoneNo, shopCode: shopCode })
         },
+
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['shop', orgId] })
-            toast.success('Action completed successfully!', {
-                style: {
-                    '--normal-bg':
-                        'color-mix(in oklab, light-dark(var(--color-green-600), var(--color-green-400)) 10%, var(--background))',
-                    '--normal-text': 'light-dark(var(--color-green-600), var(--color-green-400))',
-                    '--normal-border': 'light-dark(var(--color-green-600), var(--color-green-400))'
-                } as React.CSSProperties
+            ToastSuccessPopup({
+                queryClient,
+                orgId,
+                onUpdated,
+                message: "Shop details updated successfully!"
             })
         }
     })

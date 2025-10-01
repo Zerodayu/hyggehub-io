@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
 import ShopEditSheet from "@/components/shopEdit";
-import { getOrg } from '@/api/api-org'; // Import getOrg directly
+import { getOrg } from '@/api/api-org'; 
 
 export default async function Page({
     params,
