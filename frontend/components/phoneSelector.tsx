@@ -34,7 +34,7 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOrg, updateOrgPhoneNo } from '@/api/api-org';
 
-export const InputStartSelectDemo = ({ value, setValue, phoneNo, setPhoneNo }: {
+export const PhoneNumInput = ({ value, setValue, phoneNo, setPhoneNo }: {
     value: string,
     setValue: (v: string) => void,
     phoneNo: string,
@@ -153,7 +153,7 @@ export default function PhoneSelectorInput() {
     const mutation = useMutation({
         mutationFn: async (fullPhoneNo: string) => {
             if (!orgId || !userId) throw new Error("Missing orgId or userId");
-            return updateOrgPhoneNo({ orgId, userId, phoneNo: fullPhoneNo });
+            return updateOrgPhoneNo({ orgId, userId, phoneNo: fullPhoneNo, shopCode: "" });
         },
         onSuccess: () => {
             // Refetch shop data after successful update
@@ -183,7 +183,7 @@ export default function PhoneSelectorInput() {
                         <DialogTitle>Shops Phone Number</DialogTitle>
                         <DialogDescription>
                             <div>
-                                <InputStartSelectDemo
+                                <PhoneNumInput
                                     value={countryCode}
                                     setValue={setCountryCode}
                                     phoneNo={phoneNo}

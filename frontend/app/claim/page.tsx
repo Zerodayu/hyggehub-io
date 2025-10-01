@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useId, useState } from "react";
 import { ChevronsUpDown, Check, Key, Ticket, Send } from "lucide-react";
-import { cn, filterNumbers } from "@/lib/utils";
+import { cn, filterNumbers, removeSpaces } from "@/lib/utils";
 import { countryCodes } from "@/utils/country-code";
 import {
     Popover,
@@ -107,6 +107,7 @@ const InputStartSelectDemo = ({
 export default function Page() {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value);
     const [phoneNo, setPhoneNo] = useState("");
+    const [shopCode, setShopCode] = useState(""); // Add state for shop code
 
     return (
         <section className="flex w-full min-h-screen flex-col items-center justify-center p-4">
@@ -135,7 +136,13 @@ export default function Page() {
                     <div className="w-full space-y-2 py-2">
                         <Label>Shop code</Label>
                         <div className="relative">
-                            <Input placeholder="Enter shop code" type="text" className='text-foreground font-mono' />
+                            <Input
+                                placeholder="Enter shop code"
+                                type="text"
+                                className='text-foreground font-mono'
+                                value={shopCode}
+                                onChange={e => setShopCode(removeSpaces(e.target.value))}
+                            />
                             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 peer-disabled:opacity-50">
                                 <Key size={16} aria-hidden="true" />
                             </div>

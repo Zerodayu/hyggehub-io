@@ -5,9 +5,9 @@ export async function getOrg(clerkOrgId: string) {
   return res.data;
 }
 
-export async function updateOrgPhoneNo({ orgId, userId, phoneNo }: { orgId: string, userId: string, phoneNo: string }) {
+export async function updateOrgPhoneNo({ orgId, userId, phoneNo, shopCode }: { orgId: string, userId: string, phoneNo: string, shopCode: string }) {
   const res = await api.put('/api/orgs',
-    { phoneNo },
+    { phoneNo, shopCode },
     {
       headers: {
         'x-clerk-user-id': userId,

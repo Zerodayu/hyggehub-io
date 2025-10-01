@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function filterNumbers(input: string): string {
   return input.replace(/\D/g, "");
 }
+
+export function removeSpaces(input: string): string {
+  return input.replace(/\s+/g, "");
+}
