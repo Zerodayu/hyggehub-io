@@ -22,8 +22,10 @@ export default async function Page({
 
     // Fetch shop metadata server-side
     const orgData = orgId ? await getOrg(orgId) : null;
+    console.log("orgData:", orgData); // Add this line for debugging
     const shopNum = orgData?.shop?.shopNum;
     const shopCode = orgData?.shop?.code;
+    const shopName = orgData?.shop?.name;
 
     return (
         <section className="flex flex-col items-center justify-start min-h-screen px-4 gap-6">
@@ -44,7 +46,7 @@ export default async function Page({
                             </div>
                             <div className="flex flex-row gap-2 items-end justify-between w-full">
                                 <p className="text-5xl font-semibold">
-                                    shopname
+                                    {shopName ?? "Shop Name"}
                                 </p>
                                 <ShopEditSheet />
                             </div>
