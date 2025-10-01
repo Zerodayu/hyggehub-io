@@ -29,7 +29,6 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command"
-import api from "@/lib/axios";
 import { useOrganization, useUser } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOrg } from '@/api/get-org';
