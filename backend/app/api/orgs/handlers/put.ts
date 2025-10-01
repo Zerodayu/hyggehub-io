@@ -34,9 +34,19 @@ export async function PUT(req: Request) {
     const org = await client.organizations.getOrganization({ organizationId: orgId });
     const metadata = org.publicMetadata || {};
 
+    // Prepare new metadata object
+    const newMetadata: Record<string, any> = { ...metadata };
+
+    if (shopCode !== undefined) {
+      newMetadata.shopCode = { value: shopCode };
+    }
+    if (phoneNo !== undefined) {
+      newMetadata.phoneNo = phoneNo;
+    }
+
     // Only update Clerk metadata, do NOT update DB
     await client.organizations.updateOrganizationMetadata(orgId, {
-      publicMetadata: { ...metadata, shopCode, phoneNo },
+      publicMetadata: newMetadata,
     });
 
     return withCORS(Response.json({
@@ -45,7 +55,7 @@ export async function PUT(req: Request) {
       orgId,
       shopCode,
       phoneNo,
-      message: "Shop code and phone number updated successfully."
+      message: "Organization metadata updated successfully."
     }, { status: 200 }
     ));
   } catch (error: string | unknown) {
