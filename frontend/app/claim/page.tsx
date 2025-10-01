@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { useId, useState } from "react";
 import { ChevronsUpDown, Check } from "lucide-react";
 import { cn, filterNumbers } from "@/lib/utils";
+import { countryCodes } from "@/utils/country-code";
 import {
     Popover,
     PopoverContent,
@@ -27,16 +28,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { Ticket, Send } from "lucide-react";
 
-
-const countryCodes = [
-    { value: "+1", label: "🇺🇸 +1" },
-    { value: "+44", label: "🇬🇧 +44" },
-    { value: "+91", label: "🇮🇳 +91" },
-    { value: "+61", label: "🇦🇺 +61" },
-    { value: "+81", label: "🇯🇵 +81" },
-    { value: "+49", label: "🇩🇪 +49" },
-];
 
 const InputStartSelectDemo = ({
     value,
@@ -119,15 +112,20 @@ export default function Page() {
     return (
         <section className="flex min-h-screen flex-col items-center justify-center">
 
-            <Card className="w-[60vw]">
+            <Card className="w-lg">
                 <CardHeader>
-                    <CardTitle className='font-mono text-lg'>Claim Shop Codes</CardTitle>
+                    <CardTitle className='flex gap-2 font-mono text-lg'>
+                        Claim Shop Codes
+                    </CardTitle>
                     <CardDescription>Register your phone number to claim codes and receive exclusive offers.</CardDescription>
+                    <CardAction>
+                        <Ticket size={40} />
+                    </CardAction>
                 </CardHeader>
                 <CardContent className='space-y-4'>
                     <div className="w-full space-y-2 py-2">
-                        <Label>Your Username/Name</Label>
-                        <Input placeholder="Enter username or name" type="text" className='text-foreground font-mono'/>
+                        <Label>Your username/name</Label>
+                        <Input placeholder="Enter username or name" type="text" className='text-foreground font-mono' />
                     </div>
                     <InputStartSelectDemo
                         value={countryCode}
@@ -142,6 +140,7 @@ export default function Page() {
                     </Label>
                     <Button type="submit" className="w-full font-mono">
                         Submit
+                        <Send />
                     </Button>
                 </CardFooter>
             </Card>

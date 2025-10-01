@@ -6,6 +6,7 @@ import { useId, useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn, filterNumbers } from "@/lib/utils"
+import { countryCodes } from "@/utils/country-code";
 import {
     Dialog,
     DialogClose,
@@ -33,15 +34,6 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOrg } from '@/api/get-org';
 import { updateOrgPhoneNo } from '@/api/put-org-phoneNo';
-
-const countryCodes = [
-    { value: "+1", label: "🇺🇸 +1" },
-    { value: "+44", label: "🇬🇧 +44" },
-    { value: "+91", label: "🇮🇳 +91" },
-    { value: "+61", label: "🇦🇺 +61" },
-    { value: "+81", label: "🇯🇵 +81" },
-    { value: "+49", label: "🇩🇪 +49" },
-]
 
 const InputStartSelectDemo = ({ value, setValue, phoneNo, setPhoneNo }: {
     value: string,
