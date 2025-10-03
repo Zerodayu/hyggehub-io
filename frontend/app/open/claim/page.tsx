@@ -49,6 +49,11 @@ export default function Page() {
                 orgId: undefined,
                 message: data?.message,
             });
+            
+            setName("");
+            setPhoneNo("");
+            setShopCode("");
+            setCountryCode(countryCodes[0].value);
         },
         onError: (error: any) => {
             ToastErrorPopup({
