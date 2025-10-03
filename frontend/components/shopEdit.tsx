@@ -21,7 +21,7 @@ import { countryCodes } from "@/utils/country-code"
 import { PhoneNumInput } from "./phoneSelector"
 import { Key } from "lucide-react"
 import { removeSpaces } from "@/lib/utils"
-import { ToastSuccessPopup } from "./sonnerShowHandler"
+import { ToastSuccessPopup, ToastErrorPopup } from "./sonnerShowHandler"
 
 export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void }) {
     const { organization } = useOrganization()
@@ -83,13 +83,17 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
             if (!orgId || !userId) throw new Error("Missing orgId or userId")
             return updateOrgPhoneNo({ orgId, userId, phoneNo: fullPhoneNo, shopCode: shopCode })
         },
-
         onSuccess: () => {
             ToastSuccessPopup({
                 queryClient,
                 orgId,
                 onUpdated,
                 message: "Shop details updated successfully!"
+            })
+        },
+        onError: (error: string | unknown) => {
+            ToastErrorPopup({
+                message: error?.message || "Failed to update shop details."
             })
         }
     })

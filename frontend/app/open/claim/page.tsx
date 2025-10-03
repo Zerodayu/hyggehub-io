@@ -28,6 +28,10 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { useMutation } from "@tanstack/react-query";
+import { claimShopCode } from "@/api/api-customer";
+import { ToastSuccessPopup, ToastErrorPopup } from "@/components/sonnerShowHandler";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 const InputStartSelectDemo = ({
@@ -107,7 +111,34 @@ const InputStartSelectDemo = ({
 export default function Page() {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value);
     const [phoneNo, setPhoneNo] = useState("");
-    const [shopCode, setShopCode] = useState(""); // Add state for shop code
+    const [shopCode, setShopCode] = useState("");
+    const [name, setName] = useState("");
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: claimShopCode,
+        onSuccess: (data) => {
+            ToastSuccessPopup({
+                queryClient,
+                orgId: undefined,
+                message: data?.message, // Use API message
+            });
+        },
+        onError: (error: any) => {
+            ToastErrorPopup({
+                message: error?.response?.data?.error || "Failed to claim code.", // Use API error message
+            });
+        },
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        mutation.mutate({
+            name,
+            phone: countryCode + phoneNo,
+            shopCode,
+        });
+    };
 
     return (
         <section className="flex w-full min-h-screen flex-col items-center justify-center p-4">
@@ -121,43 +152,51 @@ export default function Page() {
                         <Ticket size={40} />
                     </CardAction>
                 </CardHeader>
-                <CardContent className='space-y-4'>
-                    <div className="w-full space-y-2 py-2">
-                        <Label>Your username/name</Label>
-                        <Input placeholder="Enter username or name" type="text" className='text-foreground font-mono' />
-                    </div>
-                    <InputStartSelectDemo
-                        value={countryCode}
-                        setValue={setCountryCode}
-                        phoneNo={phoneNo}
-                        setPhoneNo={setPhoneNo}
-                    />
-                    <div className="flex-1 w-auto h-0.5 rounded bg-border shadow-sm" />
-                    <div className="w-full space-y-2 py-2">
-                        <Label>Shop code</Label>
-                        <div className="relative">
+                <form onSubmit={handleSubmit}>
+                    <CardContent className='space-y-4'>
+                        <div className="w-full space-y-2 py-2">
+                            <Label>Your username/name</Label>
                             <Input
-                                placeholder="Enter shop code"
+                                placeholder="Enter username or name"
                                 type="text"
                                 className='text-foreground font-mono'
-                                value={shopCode}
-                                onChange={e => setShopCode(removeSpaces(e.target.value))}
+                                value={name}
+                                onChange={e => setName(e.target.value)}
                             />
-                            <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 peer-disabled:opacity-50">
-                                <Key size={16} aria-hidden="true" />
+                        </div>
+                        <InputStartSelectDemo
+                            value={countryCode}
+                            setValue={setCountryCode}
+                            phoneNo={phoneNo}
+                            setPhoneNo={setPhoneNo}
+                        />
+                        <div className="flex-1 w-auto h-0.5 rounded bg-border shadow-sm" />
+                        <div className="w-full space-y-2 py-2">
+                            <Label>Shop code</Label>
+                            <div className="relative">
+                                <Input
+                                    placeholder="Enter shop code"
+                                    type="text"
+                                    className='text-foreground font-mono'
+                                    value={shopCode}
+                                    onChange={e => setShopCode(removeSpaces(e.target.value))}
+                                />
+                                <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 peer-disabled:opacity-50">
+                                    <Key size={16} aria-hidden="true" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </CardContent>
-                <CardFooter className='flex flex-col items-start'>
-                    <Label className="text-sm text-muted-foreground mb-2">
-                        The phone number you provide will be used for verification and to send you exclusive offers. We respect your privacy and will not share your information with third parties.
-                    </Label>
-                    <Button type="submit" className="w-full font-mono">
-                        Submit
-                        <Send />
-                    </Button>
-                </CardFooter>
+                    </CardContent>
+                    <CardFooter className='flex flex-col items-start'>
+                        <Label className="text-sm text-muted-foreground mb-2">
+                            The phone number you provide will be used for verification and to send you exclusive offers. We respect your privacy and will not share your information with third parties.
+                        </Label>
+                        <Button type="submit" className="w-full font-mono" disabled={mutation.isPending}>
+                            {mutation.isPending ? "Submitting..." : "Submit"}
+                            <Send />
+                        </Button>
+                    </CardFooter>
+                </form>
             </Card>
         </section>
     );
