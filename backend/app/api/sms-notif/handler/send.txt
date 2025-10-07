@@ -1,0 +1,10 @@
+const accountSid = 'ACc3e26a83947c80bf7bc42f866837485d';
+const authToken = '[AuthToken]';
+const client = require('twilio')(accountSid, authToken);
+client.messages
+    .create({
+        body: 'Ahoy 👋',
+        messagingServiceSid: 'MGe605fab95a66342b71d091cdf1e329d5',
+        to: '+18777804236'
+    })
+    .then(message => console.log(message.sid));
