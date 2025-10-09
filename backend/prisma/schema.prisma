@@ -12,6 +12,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -46,6 +47,7 @@ model Customers {
   customerId String   @id @default(cuid())
   name       String
   phone      String   @unique
+  birthday   String?
   createdAt  DateTime @default(now())
   shops          ShopSubscription[]
 }

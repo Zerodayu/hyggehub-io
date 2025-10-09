@@ -4,7 +4,7 @@ import prisma from "@/prisma/PrismaClient";
 
 export async function POST(req: NextRequest) {
     try {
-        const { name, phone, shopCode } = await req.json();
+        const { name, phone, shopCode, birthday } = await req.json();
 
         if (!name || !phone || !shopCode) {
             return withCORS(
@@ -45,7 +45,11 @@ export async function POST(req: NextRequest) {
 
         // Create new customer
         const newCustomer = await prisma.customers.create({
-            data: { name, phone },
+            data: { 
+                name, 
+                phone,
+                birthday // Add birthday field to the customer record
+            },
         });
 
         // Link customer to shop via ShopSubscription

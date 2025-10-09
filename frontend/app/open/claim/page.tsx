@@ -6,6 +6,7 @@ import { useId, useState } from "react";
 import { ChevronsUpDown, Check, Key, Ticket, Send } from "lucide-react";
 import { cn, filterNumbers, removeSpaces } from "@/lib/utils";
 import { countryCodes } from "@/utils/country-code";
+import CalendarPickerInput from '@/components/calendarPicker';
 import {
     Popover,
     PopoverContent,
@@ -49,7 +50,7 @@ export default function Page() {
                 orgId: undefined,
                 message: data?.message,
             });
-            
+
             setName("");
             setPhoneNo("");
             setShopCode("");
@@ -103,6 +104,8 @@ export default function Page() {
                             setPhoneNo={setPhoneNo}
                             disabled={mutation.isPending}
                         />
+                        <CalendarPickerInput />
+
                         <div className="flex-1 w-auto h-0.5 rounded bg-border shadow-sm" />
                         <div className="w-full space-y-2 py-2">
                             <Label>Shop code</Label>

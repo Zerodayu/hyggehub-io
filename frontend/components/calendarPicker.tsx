@@ -15,11 +15,11 @@ import { DateInput } from "@/components/ui/datefield-rac"
 
 export default function CalendarPickerInput() {
   return (
-    <DatePicker className="*:not-first:mt-2">
+    <DatePicker className="w-full space-y-2 py-2">
       <Label className="text-foreground text-sm font-medium">Date picker</Label>
       <div className="flex">
         <Group className="w-full">
-          <DateInput className="pe-9" />
+          <DateInput className="text-foreground font-mono" />
         </Group>
         <Button className="text-muted-foreground/80 hover:text-foreground data-focus-visible:border-ring data-focus-visible:ring-ring/50 z-10 -ms-9 -me-px flex w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none data-focus-visible:ring-[3px]">
           <CalendarIcon size={16} />
