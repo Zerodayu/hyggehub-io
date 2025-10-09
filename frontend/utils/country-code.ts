@@ -5,4 +5,5 @@ export const countryCodes = [
     { value: "+61", label: "🇦🇺 +61" },
     { value: "+81", label: "🇯🇵 +81" },
     { value: "+49", label: "🇩🇪 +49" },
+    { value: "+45", label: "🇩🇰 +45" },
 ];
