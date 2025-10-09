@@ -7,6 +7,7 @@ import { ChevronsUpDown, Check, Key, Ticket, Send } from "lucide-react";
 import { cn, filterNumbers, removeSpaces } from "@/lib/utils";
 import { countryCodes } from "@/utils/country-code";
 import CalendarPickerInput from '@/components/calendarPicker';
+import { formatDateForDatabase } from '@/utils/save-as-date';
 import {
     Popover,
     PopoverContent,
@@ -40,6 +41,7 @@ export default function Page() {
     const [phoneNo, setPhoneNo] = useState("");
     const [shopCode, setShopCode] = useState("");
     const [name, setName] = useState("");
+    const [birthday, setBirthday] = useState("");
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
@@ -54,6 +56,7 @@ export default function Page() {
             setName("");
             setPhoneNo("");
             setShopCode("");
+            setBirthday("");
             setCountryCode(countryCodes[0].value);
         },
         onError: (error: any) => {
@@ -68,6 +71,7 @@ export default function Page() {
         mutation.mutate({
             name,
             phone: countryCode + phoneNo,
+            birthday: formatDateForDatabase(birthday),
             shopCode,
         });
     };
@@ -104,7 +108,13 @@ export default function Page() {
                             setPhoneNo={setPhoneNo}
                             disabled={mutation.isPending}
                         />
-                        <CalendarPickerInput />
+                        <div className="w-full space-y-2 py-2">
+                            <CalendarPickerInput 
+                                value={birthday} 
+                                onChange={setBirthday} 
+                                disabled={mutation.isPending}
+                            />
+                        </div>
 
                         <div className="flex-1 w-auto h-0.5 rounded bg-border shadow-sm" />
                         <div className="w-full space-y-2 py-2">

@@ -1,5 +1,6 @@
 "use client"
 
+import { Dispatch, SetStateAction } from "react"
 import { CalendarIcon } from "lucide-react"
 import {
   Button,
@@ -8,15 +9,42 @@ import {
   Group,
   Label,
   Popover,
+  DateValue
 } from "react-aria-components"
 
 import { Calendar } from "@/components/ui/calendar-rac"
 import { DateInput } from "@/components/ui/datefield-rac"
 
-export default function CalendarPickerInput() {
+interface CalendarPickerInputProps {
+  value: string;
+  onChange: Dispatch<SetStateAction<string>>;
+  disabled?: boolean;
+}
+
+export default function CalendarPickerInput({ 
+  value, 
+  onChange, 
+  disabled = false 
+}: CalendarPickerInputProps) {
+  // Parse date string to create a DateValue object if value exists
+  const date = value ? new Date(value) : null;
+  
   return (
-    <DatePicker className="w-full space-y-2 py-2">
-      <Label className="text-foreground text-sm font-medium">Date picker</Label>
+    <DatePicker 
+      className="w-full space-y-2 py-2"
+      isDisabled={disabled}
+      value={date ? new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate()) : undefined}
+      onChange={(newDate) => {
+        if (newDate) {
+          // Convert the DateValue to ISO string format
+          const dateObj = newDate.toDate(getLocalTimeZone());
+          onChange(dateObj.toISOString());
+        } else {
+          onChange('');
+        }
+      }}
+    >
+      <Label className="text-foreground text-sm font-medium">Your birthday</Label>
       <div className="flex">
         <Group className="w-full">
           <DateInput className="text-foreground font-mono" />
@@ -36,3 +64,6 @@ export default function CalendarPickerInput() {
     </DatePicker>
   )
 }
+
+// Import these from react-aria-components
+import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
