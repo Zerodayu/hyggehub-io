@@ -35,9 +35,11 @@ model Shops {
 // New model for shop messages
 model ShopMessage {
   id        String   @id @default(cuid())
+  title     String
   value     String
   shopId    String
   createdAt DateTime @default(now())
+  expiresAt DateTime?
   shop      Shops    @relation(fields: [shopId], references: [shopId])
 }
 

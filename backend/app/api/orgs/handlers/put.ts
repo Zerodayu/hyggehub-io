@@ -35,7 +35,7 @@ export async function PUT(req: Request) {
 
     // If there's a message update request, process it
     let updatedMessage = null;
-    if (messageUpdate && messageUpdate.id && messageUpdate.value) {
+    if (messageUpdate && messageUpdate.id) {
       // Find the shop first
       const shop = await prisma.shops.findUnique({
         where: { clerkOrgId: orgId },
@@ -67,11 +67,28 @@ export async function PUT(req: Request) {
         ));
       }
       
-      // Update the message
-      updatedMessage = await prisma.shopMessage.update({
-        where: { id: messageUpdate.id },
-        data: { value: messageUpdate.value }
-      });
+      // Update the message with all possible fields
+      const updateData: any = {};
+      
+      if (messageUpdate.value !== undefined) {
+        updateData.value = messageUpdate.value;
+      }
+      
+      if (messageUpdate.title !== undefined) {
+        updateData.title = messageUpdate.title;
+      }
+      
+      if (messageUpdate.expiresAt !== undefined) {
+        updateData.expiresAt = messageUpdate.expiresAt ? new Date(messageUpdate.expiresAt) : null;
+      }
+      
+      // Only update if there are fields to update
+      if (Object.keys(updateData).length > 0) {
+        updatedMessage = await prisma.shopMessage.update({
+          where: { id: messageUpdate.id },
+          data: updateData
+        });
+      }
     }
 
     // Handle the original Clerk metadata update

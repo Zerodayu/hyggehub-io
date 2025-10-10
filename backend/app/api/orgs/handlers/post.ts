@@ -20,17 +20,23 @@ export async function POST(req: NextRequest) {
 
     // Get message from request body
     const body = await req.json();
-    const { message } = body;
+    const { title, message, expiresAt } = body;
 
     if (!message) {
       return withCORS(Response.json({ success: false, error: "Message is required" }, { status: 400 }));
     }
 
-    // Create the message
+    if (!title) {
+      return withCORS(Response.json({ success: false, error: "Title is required" }, { status: 400 }));
+    }
+
+    // Create the message with title and expiresAt
     const newMessage = await prisma.shopMessage.create({
       data: {
+        title: title,
         value: message,
-        shopId: shop.shopId
+        shopId: shop.shopId,
+        expiresAt: expiresAt ? new Date(expiresAt) : null
       }
     });
 

@@ -45,3 +45,35 @@ export async function delCustomer({ orgId, customerId }: { orgId: string, custom
   });
   return res.data;
 }
+
+// New function to add a shop message
+export async function addShopMessage({ orgId, message }: { orgId: string, message: string }) {
+  const res = await api.post('/api/orgs', 
+    { message },
+    {
+      headers: {
+        'x-clerk-org-id': orgId
+      }
+    }
+  );
+  return res.data;
+}
+
+// New function to edit a shop message
+export async function updateShopMessage({ orgId, userId, messageId, value }: { orgId: string, userId: string, messageId: string, value: string }) {
+  const res = await api.put('/api/orgs',
+    { 
+      messageUpdate: {
+        id: messageId,
+        value
+      }
+    },
+    {
+      headers: {
+        'x-clerk-user-id': userId,
+        'x-clerk-org-id': orgId,
+      }
+    }
+  );
+  return res.data;
+}
