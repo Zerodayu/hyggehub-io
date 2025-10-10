@@ -33,13 +33,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getOrg, addShopMessage, updateShopMessage } from "@/api/api-org"
 import { useOrganization, useUser } from "@clerk/nextjs"
 import { ToastSuccessPopup, ToastErrorPopup } from "@/components/sonnerShowHandler"
+import { formatDateForDatabase, formatDateForDisplay } from "@/utils/save-as-date"
+import CalendarPickerInput from "./calendarPicker"
 
 export default function ShopCardSection() {
     const { organization } = useOrganization()
     const { user } = useUser()
     const queryClient = useQueryClient()
-    const [newMessage, setNewMessage] = useState({ title: "", value: "", expiresAt: "" })
-    const [editMessage, setEditMessage] = useState({ id: "", title: "", value: "", expiresAt: "" })
+    const [newMessage, setNewMessage] = useState("")
+    const [newTitle, setNewTitle] = useState("")
+    const [newExpiresAt, setNewExpiresAt] = useState("")
+    const [editMessage, setEditMessage] = useState({ id: "", value: "", title: "", expiresAt: "" })
     
     // Fetch shop data including messages
     const { data: orgData, isLoading } = useQuery({
@@ -54,9 +58,9 @@ export default function ShopCardSection() {
             if (!organization?.id) throw new Error("No organization selected")
             return addShopMessage({ 
                 orgId: organization.id, 
-                title: newMessage.title,
-                message: newMessage.value,
-                expiresAt: newMessage.expiresAt || undefined
+                title: newTitle,
+                message: newMessage,
+                expiresAt: formatDateForDatabase(newExpiresAt)
             })
         },
         onSuccess: () => {
@@ -65,7 +69,9 @@ export default function ShopCardSection() {
                 orgId: organization?.id,
                 message: "Message posted successfully"
             })
-            setNewMessage({ title: "", value: "", expiresAt: "" })
+            setNewMessage("")
+            setNewTitle("")
+            setNewExpiresAt("")
             queryClient.invalidateQueries({ queryKey: ['org', organization?.id] })
         },
         onError: (error) => {
@@ -84,7 +90,7 @@ export default function ShopCardSection() {
                 messageId: editMessage.id,
                 value: editMessage.value,
                 title: editMessage.title,
-                expiresAt: editMessage.expiresAt || null
+                expiresAt: formatDateForDatabase(editMessage.expiresAt)
             })
         },
         onSuccess: () => {
@@ -93,7 +99,7 @@ export default function ShopCardSection() {
                 orgId: organization?.id,
                 message: "Message updated successfully"
             })
-            setEditMessage({ id: "", title: "", value: "", expiresAt: "" })
+            setEditMessage({ id: "", value: "", title: "", expiresAt: "" })
             queryClient.invalidateQueries({ queryKey: ['org', organization?.id] })
         },
         onError: (error) => {
@@ -105,14 +111,14 @@ export default function ShopCardSection() {
     
     const handleAddMessage = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (newMessage.title.trim() && newMessage.value.trim()) {
+        if (newMessage.trim() && newTitle.trim()) {
             addMessageMutation.mutate()
         }
     }
     
     const handleUpdateMessage = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (editMessage.title.trim() && editMessage.value.trim() && editMessage.id) {
+        if (editMessage.value.trim() && editMessage.title.trim() && editMessage.id) {
             updateMessageMutation.mutate()
         }
     }
@@ -138,34 +144,36 @@ export default function ShopCardSection() {
                             <CardContent>
                                 <form onSubmit={handleAddMessage} className="space-y-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="new-message-title">Title</Label>
+                                        <Label htmlFor="new-title">Title</Label>
                                         <Input
-                                            id="new-message-title"
-                                            value={newMessage.title}
-                                            onChange={(e) => setNewMessage({...newMessage, title: e.target.value})}
-                                            placeholder="Enter message title..."
+                                            id="new-title"
+                                            value={newTitle}
+                                            onChange={(e) => setNewTitle(e.target.value)}
+                                            placeholder="Message title"
+                                            className="mb-2"
                                         />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="new-message-content">Content</Label>
+                                        <Label htmlFor="new-message">Message</Label>
                                         <Textarea 
-                                            id="new-message-content"
-                                            value={newMessage.value}
-                                            onChange={(e) => setNewMessage({...newMessage, value: e.target.value})}
+                                            id="new-message"
+                                            value={newMessage}
+                                            onChange={(e) => setNewMessage(e.target.value)}
                                             placeholder="Type your message here..."
+                                            className="mb-2"
                                         />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="new-message-expires">Expiration Date (Optional)</Label>
-                                        <DatetimeInput 
-                                            value={newMessage.expiresAt}
-                                            onChange={(date) => setNewMessage({...newMessage, expiresAt: date})}
+                                        <Label htmlFor="new-expires">Expiration Date (Optional)</Label>
+                                        <CalendarPickerInput 
+                                            value={newExpiresAt}
+                                            onChange={setNewExpiresAt}
                                         />
                                     </div>
                                     <Button 
                                         type="submit" 
-                                        className="font-mono mt-2"
-                                        disabled={addMessageMutation.isPending || !newMessage.title.trim() || !newMessage.value.trim()}
+                                        className="font-mono mt-4"
+                                        disabled={addMessageMutation.isPending || !newMessage.trim() || !newTitle.trim()}
                                     >
                                         <Plus className="mr-1" size={16} />
                                         {addMessageMutation.isPending ? "Posting..." : "Add Message"}
@@ -188,15 +196,15 @@ export default function ShopCardSection() {
                                 </CardContent>
                             </Card>
                         ) : (
-                            messages.map((message: { id: string; title: string; createdAt: string; value: string; expiresAt?: string }) => (
+                            messages.map((message: { id: string; createdAt: string; title: string; value: string; expiresAt: string | null }) => (
                                 <Card key={message.id}>
                                     <CardHeader>
-                                        <CardTitle className="text-lg font-bold">{message.title}</CardTitle>
+                                        <CardTitle className="text-lg font-bold">{message.title || "Shop Message"}</CardTitle>
                                         <CardDescription>
                                             Posted: {new Date(message.createdAt).toLocaleDateString()}
                                             {message.expiresAt && (
                                                 <span className="ml-2">
-                                                    | Expires: {new Date(message.expiresAt).toLocaleDateString()}
+                                                    · Expires: {formatDateForDisplay(message.expiresAt)}
                                                 </span>
                                             )}
                                         </CardDescription>
@@ -225,56 +233,72 @@ export default function ShopCardSection() {
                                                 <form onSubmit={handleUpdateMessage}>
                                                     <div className="grid gap-4 py-4">
                                                         <div className="grid gap-2">
-                                                            <Label htmlFor="edit-message-title">Title</Label>
+                                                            <Label htmlFor="edit-title">Title</Label>
                                                             <Input
-                                                                id="edit-message-title"
-                                                                value={editMessage.id === message.id ? editMessage.title : message.title}
-                                                                onClick={() => setEditMessage({
-                                                                    id: message.id,
-                                                                    title: message.title,
+                                                                id="edit-title"
+                                                                value={editMessage.id === message.id ? editMessage.title : message.title || ""}
+                                                                onClick={() => setEditMessage({ 
+                                                                    id: message.id, 
                                                                     value: message.value,
+                                                                    title: message.title || "",
                                                                     expiresAt: message.expiresAt || ""
                                                                 })}
-                                                                onChange={(e) => setEditMessage({...editMessage, title: e.target.value})}
+                                                                onChange={(e) => setEditMessage({
+                                                                    ...editMessage,
+                                                                    title: e.target.value
+                                                                })}
                                                             />
                                                         </div>
                                                         <div className="grid gap-2">
-                                                            <Label htmlFor="edit-message-content">Message</Label>
+                                                            <Label htmlFor="edit-message">Message</Label>
                                                             <Textarea
-                                                                id="edit-message-content"
+                                                                id="edit-message"
                                                                 value={editMessage.id === message.id ? editMessage.value : message.value}
                                                                 onClick={() => setEditMessage({
-                                                                    id: message.id,
-                                                                    title: message.title,
+                                                                    id: message.id, 
                                                                     value: message.value,
+                                                                    title: message.title || "",
                                                                     expiresAt: message.expiresAt || ""
                                                                 })}
-                                                                onChange={(e) => setEditMessage({...editMessage, value: e.target.value})}
+                                                                onChange={(e) => setEditMessage({
+                                                                    ...editMessage,
+                                                                    value: e.target.value
+                                                                })}
                                                             />
                                                         </div>
                                                         <div className="grid gap-2">
-                                                            <Label htmlFor="edit-message-expires">Expiration Date (Optional)</Label>
-                                                            <DatetimeInput 
-                                                                value={editMessage.id === message.id ? editMessage.expiresAt : message.expiresAt || ""}
-                                                                onClick={() => setEditMessage({
-                                                                    id: message.id,
-                                                                    title: message.title,
-                                                                    value: message.value,
-                                                                    expiresAt: message.expiresAt || ""
-                                                                })}
-                                                                onChange={(date) => setEditMessage({...editMessage, expiresAt: date})}
-                                                            />
+                                                            <Label htmlFor="edit-expires">Expiration Date (Optional)</Label>
+                                                            <div onClick={() => setEditMessage({
+                                                                id: message.id, 
+                                                                value: message.value,
+                                                                title: message.title || "",
+                                                                expiresAt: message.expiresAt || ""
+                                                            })}>
+                                                                <CalendarPickerInput 
+                                                                    value={editMessage.id === message.id ? editMessage.expiresAt : message.expiresAt || ""}
+                                                                    onChange={(date: string | ((prevDate: string) => string)) => {
+                                                                        // Ensure we're using a string here, not a function
+                                                                        if (typeof date === 'string') {
+                                                                            setEditMessage({
+                                                                                ...editMessage,
+                                                                                expiresAt: date
+                                                                            });
+                                                                        }
+                                                                    }}
+                                                                    label="Expiration Date (Optional)"
+                                                                />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <DialogFooter>
                                                         <DialogClose asChild>
-                                                            <Button variant="outline" onClick={() => setEditMessage({ id: "", title: "", value: "", expiresAt: "" })}>
+                                                            <Button variant="outline" onClick={() => setEditMessage({ id: "", value: "", title: "", expiresAt: "" })}>
                                                                 Cancel
                                                             </Button>
                                                         </DialogClose>
                                                         <Button 
                                                             type="submit"
-                                                            disabled={updateMessageMutation.isPending || !editMessage.title.trim() || !editMessage.value.trim()}
+                                                            disabled={updateMessageMutation.isPending || !editMessage.value.trim() || !editMessage.title.trim()}
                                                         >
                                                             {updateMessageMutation.isPending ? "Saving..." : "Save changes"}
                                                         </Button>
@@ -297,7 +321,7 @@ export default function ShopCardSection() {
                     </span>
                     <div className="grid grid-cols-1 gap-6">
                         {/* ... existing coupon cards ... */}
-                        
+                        {/* Fourth coupon card with dialog */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg font-bold">Free Coffee Coupon</CardTitle>
@@ -339,8 +363,11 @@ export default function ShopCardSection() {
                                                     <Textarea id="desc-1" placeholder="Type your message here." defaultValue="Default description" />
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="desc-1">Expiration Date</Label>
-                                                    <DatetimeInput />
+                                                    <Label htmlFor="expiration-date">Expiration Date</Label>
+                                                    <CalendarPickerInput
+                                                        value=""
+                                                        onChange={() => {}}
+                                                    />
                                                 </div>
                                             </div>
                                             <DialogFooter>
@@ -359,6 +386,8 @@ export default function ShopCardSection() {
                                 </Button>
                             </CardFooter>
                         </Card>
+                        
+                        {/* Other coupon cards remain unchanged */}
                     </div>
                 </div>
             </div>

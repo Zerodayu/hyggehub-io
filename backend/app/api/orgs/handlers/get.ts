@@ -12,7 +12,14 @@ export async function GET(req: NextRequest) {
     // Find the shop by clerkOrgId
     const shop = await prisma.shops.findUnique({
       where: { clerkOrgId },
-      select: { shopId: true, clerkOrgId: true, name: true, messages: true, location: true, code: true, shopNum: true }
+      include: { 
+        messages: {
+          // Add orderBy to make sure we get messages in a predictable order
+          orderBy: {
+            createdAt: 'desc'
+          }
+        }
+      }
     });
     if (!shop) {
       return withCORS(Response.json({ success: false, error: "Shop not found" }, { status: 404 }));
@@ -43,10 +50,15 @@ export async function GET(req: NextRequest) {
       .filter(customer => customer !== null);
 
     return withCORS(Response.json({
+      success: true,
       shop,
       connectedCustomers
     }));
   } catch (error: string | unknown) {
-    return withCORS(Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 }));
+    console.error("Error in GET /api/orgs:", error);
+    return withCORS(Response.json({ 
+      success: false, 
+      error: (error as Error).message || "Internal Server Error" 
+    }, { status: 500 }));
   }
 }

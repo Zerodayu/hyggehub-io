@@ -17,14 +17,16 @@ import { DateInput } from "@/components/ui/datefield-rac"
 
 interface CalendarPickerInputProps {
   value: string;
-  onChange: Dispatch<SetStateAction<string>>;
+  onChange: Dispatch<SetStateAction<string>> | ((value: string) => void);
   disabled?: boolean;
+  label?: string;
 }
 
 export default function CalendarPickerInput({ 
   value, 
   onChange, 
-  disabled = false 
+  disabled = false,
+  label = "Expiration Date" 
 }: CalendarPickerInputProps) {
   // Parse date string to create a DateValue object if value exists
   const date = value ? new Date(value) : null;
@@ -38,13 +40,14 @@ export default function CalendarPickerInput({
         if (newDate) {
           // Convert the DateValue to ISO string format
           const dateObj = newDate.toDate(getLocalTimeZone());
+          // Use direct string assignment instead of setState function
           onChange(dateObj.toISOString());
         } else {
           onChange('');
         }
       }}
     >
-      <Label className="text-foreground text-sm font-medium">Your birthday</Label>
+      <Label className="text-foreground text-sm font-medium">{label}</Label>
       <div className="flex">
         <Group className="w-full">
           <DateInput className="text-foreground font-mono" />
