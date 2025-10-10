@@ -18,21 +18,48 @@ export async function GET(req: NextRequest) {
       return withCORS(Response.json({ success: false, error: "Shop not found" }, { status: 404 }));
     }
 
-    // Fetch users connected to this shop via ShopSubscription
+    // Fetch customers connected to this shop via ShopSubscription
     const subscriptions = await prisma.shopSubscription.findMany({
-      where: { shopId: clerkOrgId },
-      include: { user: true }
+      where: { 
+        shopId: clerkOrgId,
+        customerId: { not: null } // Only get subscriptions with valid customer IDs
+      },
+      include: {
+        customer: {
+          select: {
+            customerId: true,
+            name: true,
+            phone: true,
+            birthday: true,
+            createdAt: true
+          }
+        }
+      }
     });
 
-    // Extract user info
-    const connectedUsers = subscriptions.map(sub => sub.user);
+    // Extract customer info from non-null customers
+    const connectedCustomers = subscriptions
+      .map(sub => sub.customer)
+      .filter(customer => customer !== null);
 
-    // Fetch all data from OrgMembers table
-    const orgMembers = await prisma.orgMembers.findMany();
+    // Fetch all org members for this specific organization
+    const orgMembers = await prisma.orgMembers.findMany({
+      where: { orgId: clerkOrgId },
+      include: {
+        user: {
+          select: {
+            userId: true,
+            clerkId: true,
+            username: true,
+            email: true
+          }
+        }
+      }
+    });
 
     return withCORS(Response.json({
       shop,
-      connectedUsers,
+      connectedCustomers,
       orgMembers
     }));
   } catch (error: string | unknown) {
