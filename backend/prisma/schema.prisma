@@ -24,12 +24,21 @@ model Shops {
   shopId     String             @id @default(cuid())
   clerkOrgId String             @unique
   name       String
-  message    String?
+  messages   ShopMessage[]
   shopNum    String?
   location   String?
   imgUrl     String?
   code       String?            @unique
   users      ShopSubscription[]
+}
+
+// New model for shop messages
+model ShopMessage {
+  id        String   @id @default(cuid())
+  value     String
+  shopId    String
+  createdAt DateTime @default(now())
+  shop      Shops    @relation(fields: [shopId], references: [shopId])
 }
 
 model Users {
@@ -49,7 +58,7 @@ model Customers {
   phone      String   @unique
   birthday   String?
   createdAt  DateTime @default(now())
-  shops          ShopSubscription[]
+  shops      ShopSubscription[]
 }
 
 // Many-to-many relationship between Users and Shops
