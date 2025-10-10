@@ -33,3 +33,15 @@ export async function updateOrgPhoneNo({ orgId, userId, phoneNo, shopCode,  }: {
   );
   return res.data;
 }
+
+export async function delCustomer({ orgId, customerId }: { orgId: string, customerId: string }) {
+  const res = await api.delete(`/api/orgs`, {
+    headers: {
+      'x-clerk-org-id': orgId
+    },
+    params: {
+      customerId
+    }
+  });
+  return res.data;
+}
