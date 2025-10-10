@@ -19,7 +19,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getOrg, updateOrgPhoneNo } from '@/api/api-org'
 import { countryCodes } from "@/utils/country-code"
 import { PhoneNumInput } from "./phoneSelector"
-import { Key } from "lucide-react"
+import { Key, Settings2 } from "lucide-react"
 import { removeSpaces } from "@/lib/utils"
 import { ToastSuccessPopup, ToastErrorPopup } from "./sonnerShowHandler"
 
@@ -91,9 +91,9 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
                 message: "Shop details updated successfully!"
             })
         },
-        onError: (error: string | unknown) => {
+        onError: (error: Error | unknown) => {
             ToastErrorPopup({
-                message: error?.message || "Failed to update shop details."
+                message: error instanceof Error ? error.message : "Failed to update shop details."
             })
         }
     })
@@ -107,7 +107,10 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="outline">Open</Button>
+                <Button variant="outline">
+                    <Settings2 />
+                    Setup
+                </Button>
             </SheetTrigger>
             <SheetContent className="h-screen">
                 <SheetHeader>
@@ -126,7 +129,7 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
                             setPhoneNo={setPhoneNo}
                         />
                         {/* Remove the success <span> */}
-                        {mutation.isError && <span className="text-xs text-destructive">Error: {mutation.error?.message}</span>}
+                        {mutation.isError && <span className="text-xs text-destructive">Error: {mutation.error instanceof Error ? mutation.error.message : "Unknown error"}</span>}
                         <div className="grid gap-3">
                             <Label htmlFor="shop-code-input">
                                 Shop code
