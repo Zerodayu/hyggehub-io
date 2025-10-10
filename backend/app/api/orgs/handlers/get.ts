@@ -42,25 +42,9 @@ export async function GET(req: NextRequest) {
       .map(sub => sub.customer)
       .filter(customer => customer !== null);
 
-    // Fetch all org members for this specific organization
-    const orgMembers = await prisma.orgMembers.findMany({
-      where: { orgId: clerkOrgId },
-      include: {
-        user: {
-          select: {
-            userId: true,
-            clerkId: true,
-            username: true,
-            email: true
-          }
-        }
-      }
-    });
-
     return withCORS(Response.json({
       shop,
-      connectedCustomers,
-      orgMembers
+      connectedCustomers
     }));
   } catch (error: string | unknown) {
     return withCORS(Response.json({ success: false, error: (error as Error).message || "Internal Server Error" }, { status: 500 }));
