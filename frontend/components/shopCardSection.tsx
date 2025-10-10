@@ -320,16 +320,11 @@ export default function ShopCardSection() {
                         <h1 className="font-mono">Coupon Setups</h1>
                     </span>
                     <div className="grid grid-cols-1 gap-6">
-                        {/* ... existing coupon cards ... */}
-                        {/* Fourth coupon card with dialog */}
+                        {/* ... existing cards ... */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg font-bold">Free Coffee Coupon</CardTitle>
-                                <CardDescription>Show name here</CardDescription>
-                                <CardAction className="flex items-center justify-center gap-2 font-mono">
-                                    <CalendarCheck size={20} />
-                                    <p>Weekend Specials</p>
-                                </CardAction>
+                                <CardDescription>infos</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <p>Card Description here, Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.</p>

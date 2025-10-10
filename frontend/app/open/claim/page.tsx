@@ -108,7 +108,8 @@ export default function Page() {
                             setPhoneNo={setPhoneNo}
                             disabled={mutation.isPending}
                         />
-                        <div className="w-full space-y-2 py-2">
+                        <div className="w-full py-2">
+                            <Label className="text-foreground text-sm font-medium">Your Birthday</Label>
                             <CalendarPickerInput 
                                 value={birthday} 
                                 onChange={setBirthday} 

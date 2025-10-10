@@ -26,7 +26,6 @@ export default function CalendarPickerInput({
   value, 
   onChange, 
   disabled = false,
-  label = "Expiration Date" 
 }: CalendarPickerInputProps) {
   // Parse date string to create a DateValue object if value exists
   const date = value ? new Date(value) : null;
@@ -47,7 +46,7 @@ export default function CalendarPickerInput({
         }
       }}
     >
-      <Label className="text-foreground text-sm font-medium">{label}</Label>
+      
       <div className="flex">
         <Group className="w-full">
           <DateInput className="text-foreground font-mono" />
