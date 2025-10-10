@@ -11,9 +11,31 @@ export async function DELETE(req: NextRequest) {
       return withCORS(Response.json({ success: false, error: "Missing clerkOrgId in headers" }, { status: 400 }));
     }
 
-    // Get customer ID from URL or search params
+    // Try to get customer ID from different sources
     const url = new URL(req.url);
-    const customerId = url.searchParams.get("customerId");
+    
+    // Try to get from search params (query string)
+    let customerId = url.searchParams.get("customerId");
+    
+    // If not found in query string, try to get from path segments
+    if (!customerId) {
+      const pathSegments = url.pathname.split('/');
+      // Find the last segment which might be the ID
+      const lastSegment = pathSegments[pathSegments.length - 1];
+      if (lastSegment && lastSegment !== 'del' && lastSegment !== 'orgs') {
+        customerId = lastSegment;
+      }
+    }
+    
+    // If still not found, try to parse request body
+    if (!customerId) {
+      try {
+        const body = await req.json();
+        customerId = body.customerId;
+      } catch (e) {
+        // Body parsing failed, continue with null customerId
+      }
+    }
     
     if (!customerId) {
       return withCORS(Response.json({ success: false, error: "Customer ID is required" }, { status: 400 }));
@@ -45,7 +67,7 @@ export async function DELETE(req: NextRequest) {
       success: true, 
       message: "Customer deleted successfully" 
     }));
-  } catch (error: string | unknown) {
+  } catch (error: unknown) {
     // Check for Prisma-specific errors
     if ((error as PrismaClientKnownRequestError).code === 'P2025') {
       return withCORS(Response.json({ success: false, error: "Customer not found" }, { status: 404 }));
