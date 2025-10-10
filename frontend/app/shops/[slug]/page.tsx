@@ -7,6 +7,7 @@ import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
 import ShopEditSheet from "@/components/shopEdit";
 import { getOrg } from '@/api/api-org'; 
+import FollowersList from "@/components/followersPopup";
 
 export default async function Page({
     params,
@@ -53,7 +54,7 @@ export default async function Page({
                             <div className="w-full flex flex-row justify-center items-center text-xs text-muted-foreground gap-6 py-2">
                                 <div className="flex-1 w-auto h-0.5 rounded bg-accent shadow-sm" />
                                 <div className="flex flex-row items-center gap-6">
-                                    <Button variant="link" className="font-mono">Followers</Button>
+                                    <FollowersList />
                                 </div>
                             </div>
                         </div>

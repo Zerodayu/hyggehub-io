@@ -1,7 +1,11 @@
 import api from "@/lib/axios";
 
 export async function getOrg(clerkOrgId: string) {
-  const res = await api.get(`/api/orgs?clerkOrgId=${clerkOrgId}`);
+  const res = await api.get('/api/orgs', {
+    headers: {
+      'x-clerk-org-id': clerkOrgId
+    }
+  });
   return res.data;
 }
 
