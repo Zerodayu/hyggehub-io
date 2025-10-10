@@ -2,6 +2,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { withCORS } from "@/cors";
 import type { OrganizationMembership } from "@clerk/nextjs/server";
 import type { ClerkOrgEventData } from "@/lib/types";
+import prisma from "@/prisma/PrismaClient";
 
 export async function PUT(req: Request) {
   const orgId = req.headers.get("x-clerk-org-id");
@@ -14,7 +15,7 @@ export async function PUT(req: Request) {
     );
   }
 
-  const { shopCode, phoneNo } = await req.json();
+  const { shopCode, phoneNo, messageUpdate } = await req.json();
 
   try {
     // Check if user is a member of the org using Clerk API
@@ -32,6 +33,48 @@ export async function PUT(req: Request) {
       ));
     }
 
+    // If there's a message update request, process it
+    let updatedMessage = null;
+    if (messageUpdate && messageUpdate.id && messageUpdate.value) {
+      // Find the shop first
+      const shop = await prisma.shops.findUnique({
+        where: { clerkOrgId: orgId },
+      });
+      
+      if (!shop) {
+        return withCORS(Response.json(
+          { success: false, error: "Shop not found" }, 
+          { status: 404 }
+        ));
+      }
+      
+      // Get the message and verify it belongs to this shop
+      const existingMessage = await prisma.shopMessage.findUnique({
+        where: { id: messageUpdate.id },
+      });
+      
+      if (!existingMessage) {
+        return withCORS(Response.json(
+          { success: false, error: "Message not found" }, 
+          { status: 404 }
+        ));
+      }
+      
+      if (existingMessage.shopId !== shop.shopId) {
+        return withCORS(Response.json(
+          { success: false, error: "Message does not belong to this shop" }, 
+          { status: 403 }
+        ));
+      }
+      
+      // Update the message
+      updatedMessage = await prisma.shopMessage.update({
+        where: { id: messageUpdate.id },
+        data: { value: messageUpdate.value }
+      });
+    }
+
+    // Handle the original Clerk metadata update
     const org = await client.organizations.getOrganization({ organizationId: orgId });
     const metadata = org.publicMetadata || {};
 
@@ -56,7 +99,10 @@ export async function PUT(req: Request) {
       orgId,
       shopCode,
       phoneNo,
-      message: "Shop code and phone number updated successfully."
+      updatedMessage,
+      message: updatedMessage 
+        ? "Shop code, phone number and message updated successfully." 
+        : "Shop code and phone number updated successfully."
     }, { status: 200 }
     ));
   } catch (error: string | unknown) {
