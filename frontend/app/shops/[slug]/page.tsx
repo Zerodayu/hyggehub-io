@@ -23,7 +23,6 @@ export default async function Page({
 
     // Fetch shop metadata server-side
     const orgData = orgId ? await getOrg(orgId) : null;
-    console.log("orgData:", orgData); // Add this line for debugging
     const shopNum = orgData?.shop?.shopNum;
     const shopCode = orgData?.shop?.code;
     const shopName = orgData?.shop?.name;
