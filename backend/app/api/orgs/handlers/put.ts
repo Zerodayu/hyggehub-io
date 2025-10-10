@@ -68,7 +68,13 @@ export async function PUT(req: Request) {
       }
       
       // Update the message with all possible fields
-      const updateData: any = {};
+      type ShopMessageUpdateData = {
+        value?: string;
+        title?: string;
+        expiresAt?: Date | null;
+      };
+      
+      const updateData: ShopMessageUpdateData = {};
       
       if (messageUpdate.value !== undefined) {
         updateData.value = messageUpdate.value;
