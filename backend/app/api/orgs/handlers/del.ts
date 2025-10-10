@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import prisma from "@/prisma/PrismaClient";
 import { withCORS } from "@/cors";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -46,7 +47,7 @@ export async function DELETE(req: NextRequest) {
     }));
   } catch (error: string | unknown) {
     // Check for Prisma-specific errors
-    if ((error as any).code === 'P2025') {
+    if ((error as PrismaClientKnownRequestError).code === 'P2025') {
       return withCORS(Response.json({ success: false, error: "Customer not found" }, { status: 404 }));
     }
     
