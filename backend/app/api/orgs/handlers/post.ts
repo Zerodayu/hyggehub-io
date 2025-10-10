@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         title: title,
         value: message,
         shopId: shop.shopId,
-        expiresAt: expiresAt ? new Date(expiresAt) : null
+        expiresAt: expiresAt ? expiresAt.toString() : null
       }
     });
 

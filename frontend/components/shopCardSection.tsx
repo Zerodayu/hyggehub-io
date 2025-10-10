@@ -38,8 +38,8 @@ export default function ShopCardSection() {
     const { organization } = useOrganization()
     const { user } = useUser()
     const queryClient = useQueryClient()
-    const [newMessage, setNewMessage] = useState("")
-    const [editMessage, setEditMessage] = useState({ id: "", value: "" })
+    const [newMessage, setNewMessage] = useState({ title: "", value: "", expiresAt: "" })
+    const [editMessage, setEditMessage] = useState({ id: "", title: "", value: "", expiresAt: "" })
     
     // Fetch shop data including messages
     const { data: orgData, isLoading } = useQuery({
@@ -54,7 +54,9 @@ export default function ShopCardSection() {
             if (!organization?.id) throw new Error("No organization selected")
             return addShopMessage({ 
                 orgId: organization.id, 
-                message: newMessage 
+                title: newMessage.title,
+                message: newMessage.value,
+                expiresAt: newMessage.expiresAt || undefined
             })
         },
         onSuccess: () => {
@@ -63,7 +65,7 @@ export default function ShopCardSection() {
                 orgId: organization?.id,
                 message: "Message posted successfully"
             })
-            setNewMessage("")
+            setNewMessage({ title: "", value: "", expiresAt: "" })
             queryClient.invalidateQueries({ queryKey: ['org', organization?.id] })
         },
         onError: (error) => {
@@ -80,7 +82,9 @@ export default function ShopCardSection() {
                 orgId: organization.id,
                 userId: user.id,
                 messageId: editMessage.id,
-                value: editMessage.value
+                value: editMessage.value,
+                title: editMessage.title,
+                expiresAt: editMessage.expiresAt || null
             })
         },
         onSuccess: () => {
@@ -89,7 +93,7 @@ export default function ShopCardSection() {
                 orgId: organization?.id,
                 message: "Message updated successfully"
             })
-            setEditMessage({ id: "", value: "" })
+            setEditMessage({ id: "", title: "", value: "", expiresAt: "" })
             queryClient.invalidateQueries({ queryKey: ['org', organization?.id] })
         },
         onError: (error) => {
@@ -101,14 +105,14 @@ export default function ShopCardSection() {
     
     const handleAddMessage = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (newMessage.trim()) {
+        if (newMessage.title.trim() && newMessage.value.trim()) {
             addMessageMutation.mutate()
         }
     }
     
     const handleUpdateMessage = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (editMessage.value.trim() && editMessage.id) {
+        if (editMessage.title.trim() && editMessage.value.trim() && editMessage.id) {
             updateMessageMutation.mutate()
         }
     }
@@ -132,17 +136,36 @@ export default function ShopCardSection() {
                                 <CardDescription>Add a message for your customers</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form onSubmit={handleAddMessage}>
-                                    <Textarea 
-                                        value={newMessage}
-                                        onChange={(e) => setNewMessage(e.target.value)}
-                                        placeholder="Type your message here..."
-                                        className="mb-2"
-                                    />
+                                <form onSubmit={handleAddMessage} className="space-y-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="new-message-title">Title</Label>
+                                        <Input
+                                            id="new-message-title"
+                                            value={newMessage.title}
+                                            onChange={(e) => setNewMessage({...newMessage, title: e.target.value})}
+                                            placeholder="Enter message title..."
+                                        />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="new-message-content">Content</Label>
+                                        <Textarea 
+                                            id="new-message-content"
+                                            value={newMessage.value}
+                                            onChange={(e) => setNewMessage({...newMessage, value: e.target.value})}
+                                            placeholder="Type your message here..."
+                                        />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="new-message-expires">Expiration Date (Optional)</Label>
+                                        <DatetimeInput 
+                                            value={newMessage.expiresAt}
+                                            onChange={(date) => setNewMessage({...newMessage, expiresAt: date})}
+                                        />
+                                    </div>
                                     <Button 
                                         type="submit" 
                                         className="font-mono mt-2"
-                                        disabled={addMessageMutation.isPending || !newMessage.trim()}
+                                        disabled={addMessageMutation.isPending || !newMessage.title.trim() || !newMessage.value.trim()}
                                     >
                                         <Plus className="mr-1" size={16} />
                                         {addMessageMutation.isPending ? "Posting..." : "Add Message"}
@@ -165,12 +188,17 @@ export default function ShopCardSection() {
                                 </CardContent>
                             </Card>
                         ) : (
-                            messages.map((message: { id: string; createdAt: string; value: string }) => (
+                            messages.map((message: { id: string; title: string; createdAt: string; value: string; expiresAt?: string }) => (
                                 <Card key={message.id}>
                                     <CardHeader>
-                                        <CardTitle className="text-lg font-bold">Shop Message</CardTitle>
+                                        <CardTitle className="text-lg font-bold">{message.title}</CardTitle>
                                         <CardDescription>
                                             Posted: {new Date(message.createdAt).toLocaleDateString()}
+                                            {message.expiresAt && (
+                                                <span className="ml-2">
+                                                    | Expires: {new Date(message.expiresAt).toLocaleDateString()}
+                                                </span>
+                                            )}
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
@@ -197,24 +225,56 @@ export default function ShopCardSection() {
                                                 <form onSubmit={handleUpdateMessage}>
                                                     <div className="grid gap-4 py-4">
                                                         <div className="grid gap-2">
-                                                            <Label htmlFor="message">Message</Label>
+                                                            <Label htmlFor="edit-message-title">Title</Label>
+                                                            <Input
+                                                                id="edit-message-title"
+                                                                value={editMessage.id === message.id ? editMessage.title : message.title}
+                                                                onClick={() => setEditMessage({
+                                                                    id: message.id,
+                                                                    title: message.title,
+                                                                    value: message.value,
+                                                                    expiresAt: message.expiresAt || ""
+                                                                })}
+                                                                onChange={(e) => setEditMessage({...editMessage, title: e.target.value})}
+                                                            />
+                                                        </div>
+                                                        <div className="grid gap-2">
+                                                            <Label htmlFor="edit-message-content">Message</Label>
                                                             <Textarea
-                                                                id="message"
+                                                                id="edit-message-content"
                                                                 value={editMessage.id === message.id ? editMessage.value : message.value}
-                                                                onClick={() => setEditMessage({ id: message.id, value: message.value })}
-                                                                onChange={(e) => setEditMessage({ id: message.id, value: e.target.value })}
+                                                                onClick={() => setEditMessage({
+                                                                    id: message.id,
+                                                                    title: message.title,
+                                                                    value: message.value,
+                                                                    expiresAt: message.expiresAt || ""
+                                                                })}
+                                                                onChange={(e) => setEditMessage({...editMessage, value: e.target.value})}
+                                                            />
+                                                        </div>
+                                                        <div className="grid gap-2">
+                                                            <Label htmlFor="edit-message-expires">Expiration Date (Optional)</Label>
+                                                            <DatetimeInput 
+                                                                value={editMessage.id === message.id ? editMessage.expiresAt : message.expiresAt || ""}
+                                                                onClick={() => setEditMessage({
+                                                                    id: message.id,
+                                                                    title: message.title,
+                                                                    value: message.value,
+                                                                    expiresAt: message.expiresAt || ""
+                                                                })}
+                                                                onChange={(date) => setEditMessage({...editMessage, expiresAt: date})}
                                                             />
                                                         </div>
                                                     </div>
                                                     <DialogFooter>
                                                         <DialogClose asChild>
-                                                            <Button variant="outline" onClick={() => setEditMessage({ id: "", value: "" })}>
+                                                            <Button variant="outline" onClick={() => setEditMessage({ id: "", title: "", value: "", expiresAt: "" })}>
                                                                 Cancel
                                                             </Button>
                                                         </DialogClose>
                                                         <Button 
                                                             type="submit"
-                                                            disabled={updateMessageMutation.isPending || !editMessage.value.trim()}
+                                                            disabled={updateMessageMutation.isPending || !editMessage.title.trim() || !editMessage.value.trim()}
                                                         >
                                                             {updateMessageMutation.isPending ? "Saving..." : "Save changes"}
                                                         </Button>
@@ -237,66 +297,7 @@ export default function ShopCardSection() {
                     </span>
                     <div className="grid grid-cols-1 gap-6">
                         {/* ... existing coupon cards ... */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg font-bold">Free Coffee Coupon</CardTitle>
-                                <CardDescription>Show name here</CardDescription>
-                                <CardAction className="flex items-center justify-center gap-2 font-mono">
-                                    <ClockArrowDown size={20} />
-                                    <p>Slow hours boost</p>
-                                </CardAction>
-                            </CardHeader>
-                            <CardContent>
-                                <p>Card Description here, Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.</p>
-                            </CardContent>
-                            <CardFooter className="text-muted-foreground gap-2 justify-end">
-                                <Button variant="secondary" className="font-mono">
-                                    <SquarePen />
-                                    Edit
-                                </Button>
-                            </CardFooter>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg font-bold">Free Coffee Coupon</CardTitle>
-                                <CardDescription>Show name here</CardDescription>
-                                <CardAction className="flex items-center justify-center gap-2 font-mono">
-                                    <Cake size={20} />
-                                    <p>Birthday Special</p>
-                                </CardAction>
-                            </CardHeader>
-                            <CardContent>
-                                <p>Card Description here, Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.</p>
-                            </CardContent>
-                            <CardFooter className="text-muted-foreground gap-2 justify-end">
-                                <Button variant="secondary" className="font-mono">
-                                    <SquarePen />
-                                    Edit
-                                </Button>
-                            </CardFooter>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg font-bold">Free Coffee Coupon</CardTitle>
-                                <CardDescription>Show name here</CardDescription>
-                                <CardAction className="flex items-center justify-center gap-2 font-mono">
-                                    <Ticket size={20} />
-                                    <p>Holiday Promos</p>
-                                </CardAction>
-                            </CardHeader>
-                            <CardContent>
-                                <p>Card Description here, Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.</p>
-                            </CardContent>
-                            <CardFooter className="text-muted-foreground gap-2 justify-end">
-                                <Button variant="secondary" className="font-mono">
-                                    <SquarePen />
-                                    Edit
-                                </Button>
-                            </CardFooter>
-                        </Card>
-
+                        
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg font-bold">Free Coffee Coupon</CardTitle>

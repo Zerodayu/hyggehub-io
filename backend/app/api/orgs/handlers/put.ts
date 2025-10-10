@@ -71,7 +71,7 @@ export async function PUT(req: Request) {
       type ShopMessageUpdateData = {
         value?: string;
         title?: string;
-        expiresAt?: Date | null;
+        expiresAt?: string | null;
       };
       
       const updateData: ShopMessageUpdateData = {};
@@ -85,7 +85,7 @@ export async function PUT(req: Request) {
       }
       
       if (messageUpdate.expiresAt !== undefined) {
-        updateData.expiresAt = messageUpdate.expiresAt ? new Date(messageUpdate.expiresAt) : null;
+        updateData.expiresAt = messageUpdate.expiresAt ? String(messageUpdate.expiresAt) : null;
       }
       
       // Only update if there are fields to update

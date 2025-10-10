@@ -46,10 +46,10 @@ export async function delCustomer({ orgId, customerId }: { orgId: string, custom
   return res.data;
 }
 
-// New function to add a shop message
-export async function addShopMessage({ orgId, message }: { orgId: string, message: string }) {
+// Updated function to add a shop message with title and expiresAt
+export async function addShopMessage({ orgId, title, message, expiresAt }: { orgId: string, title: string, message: string, expiresAt?: string }) {
   const res = await api.post('/api/orgs', 
-    { message },
+    { title, message, expiresAt },
     {
       headers: {
         'x-clerk-org-id': orgId
@@ -59,13 +59,29 @@ export async function addShopMessage({ orgId, message }: { orgId: string, messag
   return res.data;
 }
 
-// New function to edit a shop message
-export async function updateShopMessage({ orgId, userId, messageId, value }: { orgId: string, userId: string, messageId: string, value: string }) {
+// Updated function to edit a shop message with title and expiresAt
+export async function updateShopMessage({ 
+  orgId, 
+  userId, 
+  messageId, 
+  value, 
+  title, 
+  expiresAt 
+}: { 
+  orgId: string, 
+  userId: string, 
+  messageId: string, 
+  value?: string,
+  title?: string,
+  expiresAt?: string | null
+}) {
   const res = await api.put('/api/orgs',
     { 
       messageUpdate: {
         id: messageId,
-        value
+        value,
+        title,
+        expiresAt
       }
     },
     {
