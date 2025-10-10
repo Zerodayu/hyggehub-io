@@ -4,10 +4,9 @@ import { withCORS } from "@/cors";
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const clerkOrgId = searchParams.get("clerkOrgId");
+    const clerkOrgId = req.headers.get("x-clerk-org-id");
     if (!clerkOrgId) {
-      return withCORS(Response.json({ success: false, error: "Missing clerkOrgId" }, { status: 400 }));
+      return withCORS(Response.json({ success: false, error: "Missing clerkOrgId in headers" }, { status: 400 }));
     }
 
     // Find the shop by clerkOrgId
