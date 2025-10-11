@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
     // Parse the request body
     const body = await request.json();
 
-    // Get recipient phone number and message from request
+    // Get recipient phone numbers and message from request
+    // 'to' can now be either a string or an array of strings
     const { to, body: messageBody } = body;
 
     if (!to || !messageBody) {
@@ -29,18 +30,51 @@ export async function POST(request: NextRequest) {
     }
 
     const client = new Twilio(accountSid, authToken);
+    const results = [];
 
-    const message = await client.messages.create({
-      from: twilioNumber,
-      to: to,
-      body: messageBody,
-    });
+    // If 'to' is an array, send message to each number
+    if (Array.isArray(to)) {
+      // Check if array is empty
+      if (to.length === 0) {
+        return withCORS(NextResponse.json(
+          { error: "No recipient phone numbers provided" },
+          { status: 400 }
+        ));
+      }
 
-    return withCORS(NextResponse.json({
-      success: true,
-      messageSid: message.sid,
-      message: "SMS sent successfully"
-    }));
+      // Send message to each number in the array
+      for (const recipientNumber of to) {
+        const message = await client.messages.create({
+          from: twilioNumber,
+          to: recipientNumber,
+          body: messageBody,
+        });
+        
+        results.push({
+          to: recipientNumber,
+          messageSid: message.sid
+        });
+      }
+
+      return withCORS(NextResponse.json({
+        success: true,
+        messages: results,
+        message: `SMS sent successfully to ${results.length} recipients`
+      }));
+    } else {
+      // Handle single recipient case (for backward compatibility)
+      const message = await client.messages.create({
+        from: twilioNumber,
+        to: to,
+        body: messageBody,
+      });
+
+      return withCORS(NextResponse.json({
+        success: true,
+        messageSid: message.sid,
+        message: "SMS sent successfully"
+      }));
+    }
   } catch (error) {
     console.error("Error sending SMS:", error);
     return withCORS(NextResponse.json(
