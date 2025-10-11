@@ -59,7 +59,7 @@ export default async function Page({
                         </div>
                     </div>
 
-                    <div className="grid w-full py-4 gap-14">
+                    <div className="grid w-full">
                         <div>
                             <ShopCardSection />
                         </div>

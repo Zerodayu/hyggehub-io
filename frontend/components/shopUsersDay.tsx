@@ -51,7 +51,7 @@ export default function ShopUsersDay() {
                                 <div>
                                     <span className="flex items-center justify-center gap-4 text-muted-foreground">
                                         <Minus />
-                                        <p className="font-mono">No more birthdays today</p>
+                                        <p className="font-mono">No birthdays today</p>
                                         <Minus />
                                     </span>
                                 </div>
