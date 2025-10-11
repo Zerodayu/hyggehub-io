@@ -31,7 +31,8 @@ import {
     Send,
     MessageSquare,
     Plus,
-    RefreshCw
+    RefreshCw,
+    Trash
 } from "lucide-react"
 import {
     AlertDialog,
@@ -75,7 +76,7 @@ export default function ShopCardSection() {
                 message: message,
                 expiresAt: expiresAt ? formatDateForDisplay(expiresAt) : ""
             };
-            
+
             // Use the formatMessage function with the "promotion" template
             const formattedMessage = formatMessage("promotion", templateData);
 
@@ -335,88 +336,96 @@ export default function ShopCardSection() {
                                     <CardContent>
                                         <p>{message.value}</p>
                                     </CardContent>
-                                    <CardFooter className="text-muted-foreground gap-2 justify-end">
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button
-                                                    variant="secondary"
-                                                    className="font-mono"
-                                                    onClick={() => handleInitEditMessage(message)}
-                                                >
-                                                    <SquarePen size={16} className="mr-1" />
-                                                    Edit
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="sm:max-w-[425px]">
-                                                <DialogHeader>
-                                                    <DialogTitle className="flex items-center gap-2">
-                                                        <MessageSquare size={20} />
-                                                        Edit Shop Message
-                                                    </DialogTitle>
-                                                    <DialogDescription>
-                                                        Update your shop message. Click save when you&apos;re done.
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <form onSubmit={handleUpdateMessage}>
-                                                    <div className="grid gap-4 py-4">
-                                                        <div className="grid gap-2">
-                                                            <Label htmlFor="edit-title">Title</Label>
-                                                            <Input
-                                                                id="edit-title"
-                                                                value={editMessage.title}
-                                                                onChange={handleEditTitleChange}
-                                                            />
+                                    <CardFooter className="text-muted-foreground justify-between">
+                                        <div>
+                                            <Button variant="destructive">
+                                                <Trash size={16} />
+                                            </Button>
+                                        </div>
+
+                                        <div className="flex gap-2">
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button
+                                                        variant="secondary"
+                                                        className="font-mono"
+                                                        onClick={() => handleInitEditMessage(message)}
+                                                    >
+                                                        <SquarePen size={16} className="mr-1" />
+                                                        Edit
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[425px]">
+                                                    <DialogHeader>
+                                                        <DialogTitle className="flex items-center gap-2">
+                                                            <MessageSquare size={20} />
+                                                            Edit Shop Message
+                                                        </DialogTitle>
+                                                        <DialogDescription>
+                                                            Update your shop message. Click save when you&apos;re done.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <form onSubmit={handleUpdateMessage}>
+                                                        <div className="grid gap-4 py-4">
+                                                            <div className="grid gap-2">
+                                                                <Label htmlFor="edit-title">Title</Label>
+                                                                <Input
+                                                                    id="edit-title"
+                                                                    value={editMessage.title}
+                                                                    onChange={handleEditTitleChange}
+                                                                />
+                                                            </div>
+                                                            <div className="grid gap-2">
+                                                                <Label htmlFor="edit-message">Message</Label>
+                                                                <Textarea
+                                                                    id="edit-message"
+                                                                    value={editMessage.value}
+                                                                    onChange={handleEditMessageChange}
+                                                                />
+                                                            </div>
+                                                            <div className="grid gap-2">
+                                                                <Label htmlFor="edit-expires">Expiration Date (Optional)</Label>
+                                                                <CalendarPickerInput
+                                                                    value={editMessage.expiresAt}
+                                                                    onChange={handleEditExpiresAtChange}
+                                                                    label="Expiration Date (Optional)"
+                                                                />
+                                                            </div>
                                                         </div>
-                                                        <div className="grid gap-2">
-                                                            <Label htmlFor="edit-message">Message</Label>
-                                                            <Textarea
-                                                                id="edit-message"
-                                                                value={editMessage.value}
-                                                                onChange={handleEditMessageChange}
-                                                            />
-                                                        </div>
-                                                        <div className="grid gap-2">
-                                                            <Label htmlFor="edit-expires">Expiration Date (Optional)</Label>
-                                                            <CalendarPickerInput
-                                                                value={editMessage.expiresAt}
-                                                                onChange={handleEditExpiresAtChange}
-                                                                label="Expiration Date (Optional)"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <DialogFooter>
-                                                        <DialogClose asChild>
+                                                        <DialogFooter>
+                                                            <DialogClose asChild>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    onClick={handleCancelEdit}
+                                                                    disabled={updateMessageMutation.isPending}
+                                                                >
+                                                                    Cancel
+                                                                </Button>
+                                                            </DialogClose>
                                                             <Button
-                                                                variant="outline"
-                                                                onClick={handleCancelEdit}
-                                                                disabled={updateMessageMutation.isPending}
+                                                                type="submit"
+                                                                disabled={updateMessageMutation.isPending || !editMessage.value.trim() || !editMessage.title.trim()}
                                                             >
-                                                                Cancel
+                                                                {updateMessageMutation.isPending ? "Saving..." : "Save changes"}
                                                             </Button>
-                                                        </DialogClose>
-                                                        <Button
-                                                            type="submit"
-                                                            disabled={updateMessageMutation.isPending || !editMessage.value.trim() || !editMessage.title.trim()}
-                                                        >
-                                                            {updateMessageMutation.isPending ? "Saving..." : "Save changes"}
-                                                        </Button>
-                                                    </DialogFooter>
-                                                </form>
-                                            </DialogContent>
-                                        </Dialog>
-                                        <Button
-                                            className="font-mono"
-                                            onClick={() => handleSendMessageToSubscribers(
-                                                message.value,
-                                                message.id,
-                                                message.title,
-                                                message.expiresAt
-                                            )}
-                                            disabled={sendingMessageId === message.id}
-                                        >
-                                            <Send className="mr-1" size={16} />
-                                            {sendingMessageId === message.id ? "Sending..." : "Post"}
-                                        </Button>
+                                                        </DialogFooter>
+                                                    </form>
+                                                </DialogContent>
+                                            </Dialog>
+                                            <Button
+                                                className="font-mono"
+                                                onClick={() => handleSendMessageToSubscribers(
+                                                    message.value,
+                                                    message.id,
+                                                    message.title,
+                                                    message.expiresAt
+                                                )}
+                                                disabled={sendingMessageId === message.id}
+                                            >
+                                                <Send className="mr-1" size={16} />
+                                                {sendingMessageId === message.id ? "Sending..." : "Post"}
+                                            </Button>
+                                        </div>
                                     </CardFooter>
                                 </Card>
                             ))
