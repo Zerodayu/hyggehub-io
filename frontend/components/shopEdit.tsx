@@ -114,21 +114,20 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
             </SheetTrigger>
             <SheetContent className="h-screen">
                 <SheetHeader>
-                    <SheetTitle>Edit profile</SheetTitle>
+                    <SheetTitle>Edit Shop Details</SheetTitle>
                     <SheetDescription>
-                        Make changes to your profile here. Click save when you&apos;re done.
+                        Make changes to your shop here. Click save when you&apos;re done.
                     </SheetDescription>
                 </SheetHeader>
                 <form onSubmit={handleSubmit}>
                     <div className="grid flex-1 auto-rows-min gap-4 px-4">
                         {/* Phone input replaces name input */}
-                        <PhoneNumInput
+                        {/* <PhoneNumInput
                             value={countryCode}
                             setValue={setCountryCode}
                             phoneNo={phoneNo}
                             setPhoneNo={setPhoneNo}
-                        />
-                        {/* Remove the success <span> */}
+                        /> */}
                         {mutation.isError && <span className="text-xs text-destructive">Error: {mutation.error instanceof Error ? mutation.error.message : "Unknown error"}</span>}
                         <div className="grid gap-3">
                             <Label htmlFor="shop-code-input">

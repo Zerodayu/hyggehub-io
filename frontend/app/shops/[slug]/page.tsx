@@ -5,7 +5,7 @@ import { Key, Phone } from "lucide-react"
 import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
 import ShopEditSheet from "@/components/shopEdit";
-import { getOrg } from '@/api/api-org'; 
+import { getOrg } from '@/api/api-org';
 import FollowersList from "@/components/followersPopup";
 
 export default async function Page({
@@ -38,10 +38,12 @@ export default async function Page({
                                     <Key size={16} />
                                     <p>{shopCode ?? "no shop code"}</p>
                                 </span>
-                                <span className="flex gap-2 items-center justify-center text-xs font-mono font-bold text-muted-foreground">
+
+                                {/* shops phone no. */}
+                                {/* <span className="flex gap-2 items-center justify-center text-xs font-mono font-bold text-muted-foreground">
                                     <Phone size={16} />
                                     <p>{shopNum ?? "no shop number"}</p>
-                                </span>
+                                </span> */}
                             </div>
                             <div className="flex flex-row gap-2 items-end justify-between w-full">
                                 <p className="text-5xl font-semibold">
