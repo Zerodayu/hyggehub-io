@@ -12,6 +12,7 @@ import CalendarPickerInput from "./calendarPicker"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { sendSmsToShopSubscribers } from "@/api/api-sms";
 import {
     Dialog,
     DialogClose,
@@ -50,6 +51,8 @@ export default function ShopCardSection() {
     const [newTitle, setNewTitle] = useState("")
     const [newExpiresAt, setNewExpiresAt] = useState("")
     const [editMessage, setEditMessage] = useState({ id: "", value: "", title: "", expiresAt: "" })
+    // Track which message is currently being sent to prevent multiple submissions
+    const [sendingMessageId, setSendingMessageId] = useState<string | null>(null)
 
     // Fetch shop data including messages
     const { data: orgData, isLoading } = useQuery({
@@ -57,6 +60,41 @@ export default function ShopCardSection() {
         queryFn: () => organization?.id ? getOrg(organization.id) : null,
         enabled: !!organization?.id
     })
+
+    const sendSmsMutation = useMutation({
+        mutationFn: ({ message, messageId }: { message: string, messageId: string }) => {
+            if (!organization?.id) throw new Error("No organization selected");
+            setSendingMessageId(messageId);
+            return sendSmsToShopSubscribers({
+                orgId: organization.id,
+                message: message
+            });
+        },
+        onSuccess: (data) => {
+            if (data.success) {
+                ToastSuccessPopup({
+                    queryClient,
+                    orgId: organization?.id,
+                    message: `Message sent to ${data.messages?.length || 0} subscribers`
+                });
+            } else {
+                ToastErrorPopup({
+                    message: data.message || "Failed to send message"
+                });
+            }
+            setSendingMessageId(null);
+        },
+        onError: (error) => {
+            ToastErrorPopup({
+                message: `Failed to send message: ${(error as Error).message}`
+            });
+            setSendingMessageId(null);
+        }
+    });
+
+    const handleSendMessageToSubscribers = (messageText: string, messageId: string) => {
+        sendSmsMutation.mutate({ message: messageText, messageId });
+    };
 
     // Message mutations
     const addMessageMutation = useMutation({
@@ -328,9 +366,13 @@ export default function ShopCardSection() {
                                                 </form>
                                             </DialogContent>
                                         </Dialog>
-                                        <Button className="font-mono">
-                                            <Send />
-                                            Post
+                                        <Button
+                                            className="font-mono"
+                                            onClick={() => handleSendMessageToSubscribers(message.value, message.id)}
+                                            disabled={sendingMessageId === message.id}
+                                        >
+                                            <Send className="mr-1" size={16} />
+                                            {sendingMessageId === message.id ? "Sending..." : "Post"}
                                         </Button>
                                     </CardFooter>
                                 </Card>
