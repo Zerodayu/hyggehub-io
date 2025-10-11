@@ -8,7 +8,7 @@ import { getOrg, addShopMessage, updateShopMessage } from "@/api/api-org"
 import { useOrganization, useUser } from "@clerk/nextjs"
 import { ToastSuccessPopup, ToastErrorPopup } from "@/components/sonnerShowHandler"
 import { formatDateForDatabase, formatDateForDisplay } from "@/utils/save-as-date"
-import { defaultMessage } from "@/lib/twilio-sms" // Import the message template
+import { formatMessage } from "@/lib/twilio-sms" // Import the message template function
 import CalendarPickerInput from "./calendarPicker"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -68,12 +68,16 @@ export default function ShopCardSection() {
             if (!organization?.id) throw new Error("No organization selected");
             setSendingMessageId(messageId);
 
-            // Format the message using the template
-            let formattedMessage = defaultMessage.body
-                .replace("{shopName}", orgData?.shop?.name || "unknown")
-                .replace("{title}", title || "")
-                .replace("{message}", message)
-                .replace("{expiresAt}", expiresAt ? formatDateForDisplay(expiresAt) : "not-set");
+            // Using the new template system
+            const templateData = {
+                shopName: orgData?.shop?.name || "unknown",
+                title: title || "",
+                message: message,
+                expiresAt: expiresAt ? formatDateForDisplay(expiresAt) : ""
+            };
+            
+            // Use the formatMessage function with the "promotion" template
+            const formattedMessage = formatMessage("promotion", templateData);
 
             return sendSmsToShopSubscribers({
                 orgId: organization.id,
