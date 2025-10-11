@@ -74,7 +74,7 @@ export async function sendSmsToCustomer({
   message: string
 }) {
   try {
-    const response = await api.post('/api/sms-notif/handler', {
+    const response = await api.post('/api/sms-notif', {
       to: phoneNumber,
       body: message
     });

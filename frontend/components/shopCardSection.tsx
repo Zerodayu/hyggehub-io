@@ -8,6 +8,7 @@ import { getOrg, addShopMessage, updateShopMessage } from "@/api/api-org"
 import { useOrganization, useUser } from "@clerk/nextjs"
 import { ToastSuccessPopup, ToastErrorPopup } from "@/components/sonnerShowHandler"
 import { formatDateForDatabase, formatDateForDisplay } from "@/utils/save-as-date"
+import { defaultMessage } from "@/lib/twilio-sms" // Import the message template
 import CalendarPickerInput from "./calendarPicker"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -29,7 +30,8 @@ import {
     SquarePen,
     Send,
     MessageSquare,
-    Plus
+    Plus,
+    RefreshCw
 } from "lucide-react"
 import {
     AlertDialog,
@@ -62,12 +64,20 @@ export default function ShopCardSection() {
     })
 
     const sendSmsMutation = useMutation({
-        mutationFn: ({ message, messageId }: { message: string, messageId: string }) => {
+        mutationFn: ({ message, messageId, title, expiresAt }: { message: string, messageId: string, title: string, expiresAt: string | null }) => {
             if (!organization?.id) throw new Error("No organization selected");
             setSendingMessageId(messageId);
+
+            // Format the message using the template
+            let formattedMessage = defaultMessage.body
+                .replace("{shopName}", orgData?.shop?.name || "unknown")
+                .replace("{title}", title || "")
+                .replace("{message}", message)
+                .replace("{expiresAt}", expiresAt ? formatDateForDisplay(expiresAt) : "not-set");
+
             return sendSmsToShopSubscribers({
                 orgId: organization.id,
-                message: message
+                message: formattedMessage
             });
         },
         onSuccess: (data) => {
@@ -92,11 +102,6 @@ export default function ShopCardSection() {
         }
     });
 
-    const handleSendMessageToSubscribers = (messageText: string, messageId: string) => {
-        sendSmsMutation.mutate({ message: messageText, messageId });
-    };
-
-    // Message mutations
     const addMessageMutation = useMutation({
         mutationFn: () => {
             if (!organization?.id) throw new Error("No organization selected")
@@ -153,6 +158,16 @@ export default function ShopCardSection() {
         }
     })
 
+    // Define all handler functions at the top
+    const handleSendMessageToSubscribers = (messageText: string, messageId: string, title: string, expiresAt: string | null) => {
+        sendSmsMutation.mutate({
+            message: messageText,
+            messageId,
+            title,
+            expiresAt
+        });
+    };
+
     const handleAddMessage = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (newMessage.trim() && newTitle.trim()) {
@@ -167,7 +182,44 @@ export default function ShopCardSection() {
         }
     }
 
-    const messages = orgData?.shop?.messages || []
+    const handleInitEditMessage = (message: { id: string; value: string; title: string; expiresAt: string | null }) => {
+        setEditMessage({
+            id: message.id,
+            value: message.value,
+            title: message.title || "",
+            expiresAt: message.expiresAt || ""
+        });
+    };
+
+    const handleEditTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditMessage({
+            ...editMessage,
+            title: e.target.value
+        });
+    };
+
+    const handleEditMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setEditMessage({
+            ...editMessage,
+            value: e.target.value
+        });
+    };
+
+    const handleEditExpiresAtChange = (date: string | ((prevDate: string) => string)) => {
+        // Ensure we're using a string here, not a function
+        if (typeof date === 'string') {
+            setEditMessage({
+                ...editMessage,
+                expiresAt: date
+            });
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditMessage({ id: "", value: "", title: "", expiresAt: "" });
+    };
+
+    const messages = orgData?.shop?.messages || [];
 
     return (
         <section className="flex-1 py-6 px-8">
@@ -211,7 +263,6 @@ export default function ShopCardSection() {
                                             onChange={setNewExpiresAt}
                                         />
                                     </div>
-                                    {/* Removed the button from here */}
                                 </form>
                             </AlertDialogDescription>
                         </AlertDialogHeader>
@@ -234,10 +285,18 @@ export default function ShopCardSection() {
                 {/* Shop Messages Section */}
                 <div>
                     <div className="grid grid-cols-1 gap-6">
-                        <span className="flex items-center gap-2 pt-4 border-t">
-                            <Settings2 size={16} />
-                            <h1 className="font-mono">Coupon Setups</h1>
-                        </span>
+                        <div className="flex items-center justify-between  pt-4 border-t">
+                            <span className="flex items-center gap-2">
+                                <Settings2 size={16} />
+                                <h1 className="font-mono">Coupon Setups</h1>
+                            </span>
+                            <Button
+                                variant="ghost"
+                                onClick={() => queryClient.invalidateQueries({ queryKey: ['org', organization?.id] })}
+                                aria-label="Refresh messages">
+                                <RefreshCw />
+                            </Button>
+                        </div>
                         {/* Message Cards */}
                         {isLoading ? (
                             <Card>
@@ -275,7 +334,11 @@ export default function ShopCardSection() {
                                     <CardFooter className="text-muted-foreground gap-2 justify-end">
                                         <Dialog>
                                             <DialogTrigger asChild>
-                                                <Button variant="secondary" className="font-mono">
+                                                <Button
+                                                    variant="secondary"
+                                                    className="font-mono"
+                                                    onClick={() => handleInitEditMessage(message)}
+                                                >
                                                     <SquarePen size={16} className="mr-1" />
                                                     Edit
                                                 </Button>
@@ -296,63 +359,34 @@ export default function ShopCardSection() {
                                                             <Label htmlFor="edit-title">Title</Label>
                                                             <Input
                                                                 id="edit-title"
-                                                                value={editMessage.id === message.id ? editMessage.title : message.title || ""}
-                                                                onClick={() => setEditMessage({
-                                                                    id: message.id,
-                                                                    value: message.value,
-                                                                    title: message.title || "",
-                                                                    expiresAt: message.expiresAt || ""
-                                                                })}
-                                                                onChange={(e) => setEditMessage({
-                                                                    ...editMessage,
-                                                                    title: e.target.value
-                                                                })}
+                                                                value={editMessage.title}
+                                                                onChange={handleEditTitleChange}
                                                             />
                                                         </div>
                                                         <div className="grid gap-2">
                                                             <Label htmlFor="edit-message">Message</Label>
                                                             <Textarea
                                                                 id="edit-message"
-                                                                value={editMessage.id === message.id ? editMessage.value : message.value}
-                                                                onClick={() => setEditMessage({
-                                                                    id: message.id,
-                                                                    value: message.value,
-                                                                    title: message.title || "",
-                                                                    expiresAt: message.expiresAt || ""
-                                                                })}
-                                                                onChange={(e) => setEditMessage({
-                                                                    ...editMessage,
-                                                                    value: e.target.value
-                                                                })}
+                                                                value={editMessage.value}
+                                                                onChange={handleEditMessageChange}
                                                             />
                                                         </div>
                                                         <div className="grid gap-2">
                                                             <Label htmlFor="edit-expires">Expiration Date (Optional)</Label>
-                                                            <div onClick={() => setEditMessage({
-                                                                id: message.id,
-                                                                value: message.value,
-                                                                title: message.title || "",
-                                                                expiresAt: message.expiresAt || ""
-                                                            })}>
-                                                                <CalendarPickerInput
-                                                                    value={editMessage.id === message.id ? editMessage.expiresAt : message.expiresAt || ""}
-                                                                    onChange={(date: string | ((prevDate: string) => string)) => {
-                                                                        // Ensure we're using a string here, not a function
-                                                                        if (typeof date === 'string') {
-                                                                            setEditMessage({
-                                                                                ...editMessage,
-                                                                                expiresAt: date
-                                                                            });
-                                                                        }
-                                                                    }}
-                                                                    label="Expiration Date (Optional)"
-                                                                />
-                                                            </div>
+                                                            <CalendarPickerInput
+                                                                value={editMessage.expiresAt}
+                                                                onChange={handleEditExpiresAtChange}
+                                                                label="Expiration Date (Optional)"
+                                                            />
                                                         </div>
                                                     </div>
                                                     <DialogFooter>
                                                         <DialogClose asChild>
-                                                            <Button variant="outline" onClick={() => setEditMessage({ id: "", value: "", title: "", expiresAt: "" })}>
+                                                            <Button
+                                                                variant="outline"
+                                                                onClick={handleCancelEdit}
+                                                                disabled={updateMessageMutation.isPending}
+                                                            >
                                                                 Cancel
                                                             </Button>
                                                         </DialogClose>
@@ -368,7 +402,12 @@ export default function ShopCardSection() {
                                         </Dialog>
                                         <Button
                                             className="font-mono"
-                                            onClick={() => handleSendMessageToSubscribers(message.value, message.id)}
+                                            onClick={() => handleSendMessageToSubscribers(
+                                                message.value,
+                                                message.id,
+                                                message.title,
+                                                message.expiresAt
+                                            )}
                                             disabled={sendingMessageId === message.id}
                                         >
                                             <Send className="mr-1" size={16} />
