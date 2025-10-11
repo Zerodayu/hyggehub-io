@@ -21,6 +21,17 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+// Define interface for organization data
+interface Organization {
+    id: string;
+    name: string;
+    imageUrl?: string;
+    slug?: string;
+    metadata?: {
+        description?: string;
+    };
+}
+
 export default function Page() {
     const { user } = useUser();
 
@@ -82,11 +93,11 @@ export default function Page() {
                     <div className="text-center text-red-500">Error loading your coffee shops</div>
                 ) : organizations.length === 0 ? (
                     <div className="text-center">
-                        <p className="mb-4">You don't have any coffee shops yet</p>
-                        <p className="mb-4">Click the "Add Coffee Shop" button above to create one</p>
+                        <p className="mb-4">You don&apos;t have any coffee shops yet</p>
+                        <p className="mb-4">Click the &quot;Add Coffee Shop&quot; button above to create one</p>
                     </div>
                 ) : (
-                    organizations.map((org: any) => (
+                    organizations.map((org: Organization) => (
                         <Card key={org.id} className="max-w-xs shadow-none gap-0 pt-0 min-w-[25vw]">
                             <CardHeader className="py-4 px-5 flex flex-row items-center gap-3 font-bold font-mono">
                                 <div className="h-8 w-8 flex items-center justify-center bg-primary text-primary-foreground rounded-full overflow-hidden">

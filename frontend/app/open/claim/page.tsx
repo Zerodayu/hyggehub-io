@@ -59,9 +59,9 @@ export default function Page() {
             setBirthday("");
             setCountryCode(countryCodes[0].value);
         },
-        onError: (error: any) => {
+        onError: (error: Error | { response?: { data?: { error?: string } } }) => {
             ToastErrorPopup({
-                message: error?.response?.data?.error || "Failed to claim code.",
+                message: 'response' in error && error.response?.data?.error || "Failed to claim code.",
             });
         },
     });
@@ -110,9 +110,9 @@ export default function Page() {
                         />
                         <div className="w-full py-2">
                             <Label className="text-foreground text-sm font-medium">Your Birthday</Label>
-                            <CalendarPickerInput 
-                                value={birthday} 
-                                onChange={setBirthday} 
+                            <CalendarPickerInput
+                                value={birthday}
+                                onChange={setBirthday}
                                 disabled={mutation.isPending}
                             />
                         </div>

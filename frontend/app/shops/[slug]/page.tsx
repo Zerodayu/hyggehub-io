@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import ShopCardSection from "@/components/shopCardSection";
 import ShopUsersDay from "@/components/shopUsersDay";
 import { Key, Phone } from "lucide-react"
-import { Button } from "@/components/ui/button";
 import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
 import ShopEditSheet from "@/components/shopEdit";

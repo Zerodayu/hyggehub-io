@@ -6,7 +6,6 @@ import {
   MessageSquare,
   TrendingUp,
   Shield,
-  CreditCard,
   Users,
   Clock,
   Info

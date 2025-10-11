@@ -287,7 +287,7 @@ export default function ShopCardSection() {
                                                         Edit Shop Message
                                                     </DialogTitle>
                                                     <DialogDescription>
-                                                        Update your shop message. Click save when you're done.
+                                                        Update your shop message. Click save when you&apos;re done.
                                                     </DialogDescription>
                                                 </DialogHeader>
                                                 <form onSubmit={handleUpdateMessage}>
