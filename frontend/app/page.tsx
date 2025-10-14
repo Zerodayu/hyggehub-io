@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import {
   Target,
   Coffee,
@@ -27,9 +28,17 @@ export default function Home() {
           </div>
 
           <div className="bg-foreground rounded-full p-2">
-            <Link href="/sign-in">
-              <Button variant="link" className="font-mono font-bold text-background">Sign-in</Button>
-            </Link>
+            <SignedIn>
+              <Link href="/shops">
+                <Button variant="link" className="font-mono font-bold text-background">Shops</Button>
+              </Link>
+            </SignedIn>
+
+            <SignedOut>
+              <Link href="/sign-in">
+                <Button variant="link" className="font-mono font-bold text-background">Sign-in</Button>
+              </Link>
+            </SignedOut>
 
             <Link href="/open/claim">
               <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
@@ -41,16 +50,16 @@ export default function Home() {
       <div className="flex h-screen items-center justify-center flex-col text-center px-4">
         <h1 className="text-8xl font-semibold">Coffee Shop SMS</h1>
         <p className="mt-6 text-xl text-muted-foreground">Streamline your coffee shop operations with SMS notifications</p>
-        <div className="mt-8">
+        <div className="flex mt-8 gap-6">
           <Link href="/sign-up">
-            <Button size="lg" className="mr-4">Get Started</Button>
+            <Button className="font-mono font-bold">Get Started</Button>
           </Link>
           <Link href="#features">
-            <Button variant="outline" size="lg">Learn More</Button>
+            <Button variant="outline" className="font-mono font-bold">Learn More</Button>
           </Link>
         </div>
       </div>
-      
+
       {/* Features Section */}
       <section id="features" className="py-20 w-full bg-muted/50">
         <div className="container mx-auto px-4">

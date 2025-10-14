@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { PricingTable } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
+import { ChevronRight, Store, Wallet } from 'lucide-react'
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -11,7 +12,6 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { ChevronRight, Store, Wallet } from 'lucide-react'
 
 
 export default function Page() {

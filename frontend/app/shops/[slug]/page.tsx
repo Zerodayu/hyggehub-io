@@ -1,12 +1,14 @@
 import { notFound } from "next/navigation";
 import ShopCardSection from "@/components/shopCardSection";
 import ShopUsersDay from "@/components/shopUsersDay";
-import { Key, Phone } from "lucide-react"
 import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
 import ShopEditSheet from "@/components/shopEdit";
 import { getOrg } from '@/api/api-org';
 import FollowersList from "@/components/followersPopup";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Key, Phone, ArrowLeft } from "lucide-react"
 
 export default async function Page({
     params,
@@ -22,14 +24,22 @@ export default async function Page({
 
     // Fetch shop metadata server-side
     const orgData = orgId ? await getOrg(orgId) : null;
-    const shopNum = orgData?.shop?.shopNum;
+    // const shopNum = orgData?.shop?.shopNum;
     const shopCode = orgData?.shop?.code;
     const shopName = orgData?.shop?.name;
 
     return (
         <section className="flex flex-col items-center justify-start min-h-screen px-4 gap-6">
             <ShopNavbar slug={slug} />
-            <div className="flex gap-12 pt-25 max-w-auto md:max-w-6xl w-full">
+
+            <Link href="/shops" className="self-start m-8">
+                <Button variant="link" className="font-mono">
+                    <ArrowLeft />
+                    Shops
+                </Button>
+            </Link>
+
+            <div className="flex gap-12 pt-auto max-w-auto md:max-w-6xl w-full">
                 <div className="grid col-span-1.5">
                     <div className="flex items-center w-full gap-6">
                         <div className="flex flex-col items-start w-full">
