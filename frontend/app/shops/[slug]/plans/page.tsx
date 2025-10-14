@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { PricingTable } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { ChevronRight, Store, Wallet } from 'lucide-react'
@@ -16,6 +16,8 @@ import {
 
 export default function Page() {
     const router = useRouter();
+    const params = useParams();
+    const slug = params.slug as string;
 
     return (
         <section className="flex flex-col items-center justify-start min-h-screen p-6 gap-6">
@@ -27,7 +29,7 @@ export default function Page() {
                                 <Button
                                     variant="link"
                                     className='font-mono text-muted-foreground'
-                                    onClick={() => router.back()}
+                                    onClick={() => router.push(`/shops/${slug}`)}
                                 >
                                     <Store />
                                     Shop
