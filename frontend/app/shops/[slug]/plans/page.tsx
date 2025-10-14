@@ -42,7 +42,7 @@ export default function Page() {
                         <BreadcrumbItem>
                             <BreadcrumbPage className='font-mono'>
                                 <span className='flex items-center gap-2'>
-                                    <Wallet size={16}/>
+                                    <Wallet size={16} />
                                     Plans
                                 </span>
                             </BreadcrumbPage>
@@ -52,7 +52,11 @@ export default function Page() {
             </div>
             <div className="flex w-full h-0.5 rounded bg-accent shadow-sm" />
             <div className='flex justify-center items-center w-[80vw]'>
-                <PricingTable forOrganizations ctaPosition="bottom" />
+                <PricingTable
+                    forOrganizations
+                    ctaPosition="bottom"
+                    newSubscriptionRedirectUrl={`/shops/${slug}`}
+                />
             </div>
         </section>
     )
