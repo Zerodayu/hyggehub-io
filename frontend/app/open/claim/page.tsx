@@ -188,7 +188,7 @@ const InputStartSelectDemo = ({
                     </PopoverTrigger>
                     <PopoverContent className="p-0">
                         <Command>
-                            <CommandInput placeholder="Search country..." className="h-9" disabled={disabled} />
+                            <CommandInput placeholder="Search code..." className="h-9" disabled={disabled} />
                             <CommandList>
                                 <CommandEmpty>No country found.</CommandEmpty>
                                 <CommandGroup>
