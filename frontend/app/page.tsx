@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import {
   Target,
-  Coffee,
-  MessageSquare,
-  TrendingUp,
+  Bell,
+  Gift,
+  Key,
   Shield,
   Users,
-  Clock,
+  Calendar,
   Info
 } from "lucide-react";
 
@@ -21,24 +21,26 @@ export default function Home() {
             <Target className="" size={30} />
           </div>
 
-          <div>
+          <div className="hidden lg:flex">
             <Button variant="link" className="font-mono font-bold" >Features</Button>
             <Button variant="link" className="font-mono font-bold" >Pricing</Button>
             <Button variant="link" className="font-mono font-bold" >About</Button>
           </div>
 
           <div className="bg-foreground rounded-full p-2">
-            <SignedIn>
-              <Link href="/shops">
-                <Button variant="link" className="font-mono font-bold text-background">Shops</Button>
-              </Link>
-            </SignedIn>
+            <span className="hidden lg:inline-flex">
+              <SignedIn>
+                <Link href="/shops">
+                  <Button variant="link" className="font-mono font-bold text-background">Shops</Button>
+                </Link>
+              </SignedIn>
 
-            <SignedOut>
-              <Link href="/sign-in">
-                <Button variant="link" className="font-mono font-bold text-background">Sign-in</Button>
-              </Link>
-            </SignedOut>
+              <SignedOut>
+                <Link href="/sign-in">
+                  <Button variant="link" className="font-mono font-bold text-background">Sign-in</Button>
+                </Link>
+              </SignedOut>
+            </span>
 
             <Link href="/open/claim">
               <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
@@ -48,8 +50,11 @@ export default function Home() {
       </section>
 
       <div className="flex h-screen items-center justify-center flex-col text-center px-4">
-        <h1 className="text-8xl font-semibold">Coffee Shop SMS</h1>
-        <p className="mt-6 text-xl text-muted-foreground">Streamline your coffee shop operations with SMS notifications</p>
+        <h1 className="text-8xl font-semibold">Vynoti</h1>
+        <p className="mt-6 text-xl text-muted-foreground">Notify Your Crowd. Instantly.</p>
+        <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
+          Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
+        </p>
         <div className="flex mt-8 gap-6">
           <Link href="/sign-up">
             <Button className="font-mono font-bold">Get Started</Button>
@@ -66,34 +71,34 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-center mb-12">Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <Coffee className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Order Notifications</h3>
-              <p className="text-muted-foreground">Instantly notify customers when their coffee order is ready with automated SMS alerts.</p>
+              <Bell className="h-12 w-12 mb-4 text-primary" />
+              <h3 className="text-xl font-bold mb-2">Instant Notifications</h3>
+              <p className="text-muted-foreground">Keep your followers informed with real-time alerts about special offers, events, and promotions.</p>
             </div>
             <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <MessageSquare className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Two-way Messaging</h3>
-              <p className="text-muted-foreground">Enable customers to respond or ask questions directly via text messages.</p>
+              <Gift className="h-12 w-12 mb-4 text-primary" />
+              <h3 className="text-xl font-bold mb-2">Birthday Offers</h3>
+              <p className="text-muted-foreground">Automatically send personalized birthday messages and special offers to enhance customer loyalty.</p>
             </div>
             <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <TrendingUp className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Analytics Dashboard</h3>
-              <p className="text-muted-foreground">Track customer engagement and measure the performance of your SMS campaigns.</p>
+              <Key className="h-12 w-12 mb-4 text-primary" />
+              <h3 className="text-xl font-bold mb-2">Shop Dashboard</h3>
+              <p className="text-muted-foreground">Manage your shop profile, track follower activity, and oversee all your notification campaigns in one place.</p>
             </div>
             <div className="bg-background p-6 rounded-lg shadow-sm border">
               <Shield className="h-12 w-12 mb-4 text-primary" />
               <h3 className="text-xl font-bold mb-2">Secure Platform</h3>
-              <p className="text-muted-foreground">End-to-end encryption and compliance with messaging regulations for peace of mind.</p>
+              <p className="text-muted-foreground">End-to-end encryption and compliance with data privacy regulations for peace of mind.</p>
             </div>
             <div className="bg-background p-6 rounded-lg shadow-sm border">
               <Users className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Customer Database</h3>
-              <p className="text-muted-foreground">Organize customer information and preferences for personalized messaging.</p>
+              <h3 className="text-xl font-bold mb-2">Follower Management</h3>
+              <p className="text-muted-foreground">Organize customer information and preferences for targeted, personalized messaging.</p>
             </div>
             <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <Clock className="h-12 w-12 mb-4 text-primary" />
+              <Calendar className="h-12 w-12 mb-4 text-primary" />
               <h3 className="text-xl font-bold mb-2">Scheduled Campaigns</h3>
-              <p className="text-muted-foreground">Set up promotional messages or special offers to be sent at specific times.</p>
+              <p className="text-muted-foreground">Plan and automate promotional messages or happy hour alerts to be sent at optimal times.</p>
             </div>
           </div>
         </div>
@@ -107,19 +112,19 @@ export default function Home() {
             <div className="bg-background p-8 rounded-lg shadow-sm border border-muted">
               <h3 className="text-2xl font-bold mb-2">Starter</h3>
               <p className="text-4xl font-bold mb-4">$29<span className="text-muted-foreground text-base font-normal">/month</span></p>
-              <p className="text-muted-foreground mb-6">Perfect for small coffee shops</p>
+              <p className="text-muted-foreground mb-6">Perfect for small local shops</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center">
                   <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Up to 500 SMS/month
+                  Up to 500 notifications/month
                 </li>
                 <li className="flex items-center">
                   <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Basic analytics
+                  Basic shop dashboard
                 </li>
                 <li className="flex items-center">
                   <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Order notifications
+                  Standard notification templates
                 </li>
               </ul>
               <Button className="w-full">Get Started</Button>
@@ -130,23 +135,23 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-bold mb-2">Business</h3>
               <p className="text-4xl font-bold mb-4">$79<span className="text-primary-foreground/80 text-base font-normal">/month</span></p>
-              <p className="text-primary-foreground/80 mb-6">For growing coffee shops</p>
+              <p className="text-primary-foreground/80 mb-6">For growing establishments</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center">
                   <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Up to 2,000 SMS/month
+                  Up to 2,000 notifications/month
                 </li>
                 <li className="flex items-center">
                   <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Advanced analytics
+                  Enhanced shop management
                 </li>
                 <li className="flex items-center">
                   <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Two-way messaging
+                  Custom notification templates
                 </li>
                 <li className="flex items-center">
                   <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Customer database
+                  Birthday automation
                 </li>
               </ul>
               <Button variant="secondary" className="w-full">Get Started</Button>
@@ -158,11 +163,11 @@ export default function Home() {
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center">
                   <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Up to 10,000 SMS/month
+                  Up to 10,000 notifications/month
                 </li>
                 <li className="flex items-center">
                   <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Enterprise analytics
+                  Multi-shop management
                 </li>
                 <li className="flex items-center">
                   <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
@@ -188,22 +193,22 @@ export default function Home() {
             <div>
               <h3 className="text-2xl font-bold mb-4">Our Story</h3>
               <p className="mb-4 text-muted-foreground">
-                Coffee Shop SMS was founded in 2023 by a team of coffee enthusiasts and tech experts who noticed a gap in the market for effective customer communication in coffee shops.
+                Vynoti was founded in 2023 by a team of local business enthusiasts and tech experts who noticed a gap in the market for effective customer communication in bars, cafés, and local shops.
               </p>
               <p className="mb-4 text-muted-foreground">
-                Our mission is to help coffee shops enhance customer experience, reduce wait times, and build stronger relationships with their community through effective SMS communication.
+                Our mission is to help local businesses enhance customer experience, increase loyalty, and build stronger relationships with their community through effective, personalized notifications.
               </p>
               <p className="text-muted-foreground">
-                Today, we serve hundreds of coffee shops across the country, from small indie cafes to major chains, all using our platform to keep their customers informed and engaged.
+                Today, we serve hundreds of establishments across the country, from small indie cafés to popular bars and local shops, all using our platform to keep their followers informed and engaged.
               </p>
             </div>
             <div className="bg-muted p-8 rounded-lg">
               <Info className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-4">Why Choose Us?</h3>
+              <h3 className="text-xl font-bold mb-4">Why Choose Vynoti?</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  <span>Built specifically for coffee shops</span>
+                  <span>Built specifically for local businesses</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
@@ -227,7 +232,7 @@ export default function Home() {
       <footer className="py-12 bg-background border-t">
         <div className="container mx-auto px-4 text-center">
           <Target className="mx-auto mb-4" size={30} />
-          <p className="text-muted-foreground">© {new Date().getFullYear()} Coffee Shop SMS. All rights reserved.</p>
+          <p className="text-muted-foreground">© {new Date().getFullYear()} Vynoti. All rights reserved.</p>
           <div className="flex justify-center space-x-4 mt-4">
             <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">Terms</Link>
             <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">Privacy</Link>
