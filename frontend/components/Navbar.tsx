@@ -4,8 +4,8 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 
 export default function Navbar() {
     return (
-        <section className="hidden md:flex">
-            <div className="flex fixed justify-end items-center w-fit right-0 py-6 px-8">
+        <section>
+            <div className="hidden md:flex fixed justify-end items-center w-fit right-0 py-6 px-8">
                 <div className="flex bg-muted/20 backdrop-blur-xs justify-end w-content outline outline-muted rounded-full">
                     <SignedIn>
                         <div className="flex flex-row gap-4 w-full justify-between items-center">
