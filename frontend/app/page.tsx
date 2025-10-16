@@ -28,6 +28,10 @@ export default function Home() {
           </div>
 
           <div className="bg-foreground rounded-full p-2">
+            <Link href="/open/claim">
+              <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
+            </Link>
+
             <span className="hidden lg:inline-flex">
               <SignedIn>
                 <Link href="/shops">
@@ -41,10 +45,6 @@ export default function Home() {
                 </Link>
               </SignedOut>
             </span>
-
-            <Link href="/open/claim">
-              <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
-            </Link>
           </div>
         </div>
       </section>
