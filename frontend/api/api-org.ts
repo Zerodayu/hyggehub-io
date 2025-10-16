@@ -93,3 +93,17 @@ export async function updateShopMessage({
   );
   return res.data;
 }
+
+// New function to delete a shop message
+export async function deleteShopMessage({ orgId, messageId }: { orgId: string, messageId: string }) {
+  const res = await api.delete(`/api/orgs`, {
+    headers: {
+      'x-clerk-org-id': orgId
+    },
+    params: {
+      type: 'message',
+      messageId
+    }
+  });
+  return res.data;
+}
