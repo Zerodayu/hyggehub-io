@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Textarea } from "./ui/textarea"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getOrg, addShopMessage, updateShopMessage } from "@/api/api-org"
+import { getOrg, addShopMessage, updateShopMessage, deleteShopMessage } from "@/api/api-org"
 import { useOrganization, useUser } from "@clerk/nextjs"
-import { ToastSuccessPopup, ToastErrorPopup } from "@/components/sonnerShowHandler"
+import { ToastSuccessPopup, ToastErrorPopup,ToastLoadingPopup, dismissToast } from "@/components/sonnerShowHandler"
 import { formatDateForDatabase, formatDateForDisplay } from "@/utils/save-as-date"
 import { formatMessage } from "@/lib/twilio-sms" // Import the message template function
 import CalendarPickerInput from "./calendarPicker"
@@ -110,11 +110,23 @@ export default function ShopCardSection() {
     const addMessageMutation = useMutation({
         mutationFn: () => {
             if (!organization?.id) throw new Error("No organization selected")
+            // Show a loading toast when adding a message and store the ID
+            const loadingToastId = ToastLoadingPopup({
+                message: "Adding message..."
+            })
             return addShopMessage({
                 orgId: organization.id,
                 title: newTitle,
                 message: newMessage,
                 expiresAt: formatDateForDatabase(newExpiresAt)
+            }).then(result => {
+                // Dismiss the loading toast when the operation completes
+                dismissToast(loadingToastId)
+                return result
+            }).catch(error => {
+                // Also dismiss on error
+                dismissToast(loadingToastId)
+                throw error
             })
         },
         onSuccess: () => {
@@ -159,6 +171,41 @@ export default function ShopCardSection() {
         onError: (error) => {
             ToastErrorPopup({
                 message: `Failed to update message: ${error.message}`
+            })
+        }
+    })
+
+    const deleteMessageMutation = useMutation({
+        mutationFn: (messageId: string) => {
+            if (!organization?.id) throw new Error("No organization selected")
+            // Show a warning toast when deletion starts and store the ID
+            const loadingToastId = ToastLoadingPopup({
+                message: "Deleting message..."
+            })
+            return deleteShopMessage({
+                orgId: organization.id,
+                messageId: messageId
+            }).then(result => {
+                // Dismiss the loading toast when the operation completes
+                dismissToast(loadingToastId)
+                return result
+            }).catch(error => {
+                // Also dismiss on error
+                dismissToast(loadingToastId)
+                throw error
+            })
+        },
+        onSuccess: () => {
+            ToastSuccessPopup({
+                queryClient,
+                orgId: organization?.id,
+                message: "Message deleted successfully"
+            })
+            queryClient.invalidateQueries({ queryKey: ['org', organization?.id] })
+        },
+        onError: (error) => {
+            ToastErrorPopup({
+                message: `Failed to delete message: ${(error as Error).message}`
             })
         }
     })
@@ -338,9 +385,40 @@ export default function ShopCardSection() {
                                     </CardContent>
                                     <CardFooter className="text-muted-foreground justify-between">
                                         <div>
-                                            <Button variant="destructive">
-                                                <Trash size={16} />
-                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="destructive">
+                                                        <Trash size={16} />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Delete Message</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This action cannot be undone. This will permanently delete this message
+                                                            and remove it from the system.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel disabled={deleteMessageMutation.isPending}>
+                                                            Cancel
+                                                        </AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => deleteMessageMutation.mutate(message.id)}
+                                                            disabled={deleteMessageMutation.isPending}
+                                                        >
+                                                            {deleteMessageMutation.isPending ? (
+                                                                <>
+                                                                    <RefreshCw className="mr-1 h-4 w-4 animate-spin" />
+                                                                    Deleting...
+                                                                </>
+                                                            ) : (
+                                                                "Delete"
+                                                            )}
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </div>
 
                                         <div className="flex gap-2">
