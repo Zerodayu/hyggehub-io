@@ -43,7 +43,12 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-async function handleCustomerDeletion(req: NextRequest, clerkOrgId: string, shop: any) {
+interface Shop {
+  shopId: string;
+  clerkOrgId: string;
+}
+
+async function handleCustomerDeletion(req: NextRequest, clerkOrgId: string, shop: Shop) {
   // Try to get customer ID from different sources
   const url = new URL(req.url);
   
@@ -93,7 +98,7 @@ async function handleCustomerDeletion(req: NextRequest, clerkOrgId: string, shop
   }));
 }
 
-async function handleMessageDeletion(req: NextRequest, clerkOrgId: string, shop: any) {
+async function handleMessageDeletion(req: NextRequest, clerkOrgId: string, shop: Shop) {
   // Try to get message ID from different sources
   const url = new URL(req.url);
   
