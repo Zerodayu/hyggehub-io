@@ -11,66 +11,130 @@ export async function DELETE(req: NextRequest) {
       return withCORS(Response.json({ success: false, error: "Missing clerkOrgId in headers" }, { status: 400 }));
     }
 
-    // Try to get customer ID from different sources
     const url = new URL(req.url);
+    const resourceType = url.searchParams.get("type");
     
-    // Try to get from search params (query string)
-    let customerId = url.searchParams.get("customerId");
-    
-    // If not found in query string, try to get from path segments
-    if (!customerId) {
-      const pathSegments = url.pathname.split('/');
-      // Find the last segment which might be the ID
-      const lastSegment = pathSegments[pathSegments.length - 1];
-      if (lastSegment && lastSegment !== 'del' && lastSegment !== 'orgs') {
-        customerId = lastSegment;
+    // Handle message deletion
+    if (resourceType === "message") {
+      let messageId = url.searchParams.get("messageId");
+      
+      // If messageId not in search params, try to get from path segments
+      if (!messageId) {
+        const pathSegments = url.pathname.split('/');
+        const lastSegment = pathSegments[pathSegments.length - 1];
+        if (lastSegment && lastSegment !== 'del' && lastSegment !== 'orgs') {
+          messageId = lastSegment;
+        }
       }
-    }
-    
-    // If still not found, try to parse request body
-    if (!customerId) {
-      try {
-        const body = await req.json();
-        customerId = body.customerId;
-      } catch (e) {
-        // Body parsing failed, continue with null customerId
+      
+      // If still not found, try to parse request body
+      if (!messageId) {
+        try {
+          const body = await req.json();
+          messageId = body.messageId;
+        } catch (e) {
+          // Body parsing failed, continue with null messageId
+        }
       }
-    }
-    
-    if (!customerId) {
-      return withCORS(Response.json({ success: false, error: "Customer ID is required" }, { status: 400 }));
-    }
-
-    // First, check if the shop exists
-    const shop = await prisma.shops.findUnique({
-      where: { clerkOrgId }
-    });
-
-    if (!shop) {
-      return withCORS(Response.json({ success: false, error: "Shop not found" }, { status: 404 }));
-    }
-
-    // First delete the shop subscription linking customer to shop
-    await prisma.shopSubscription.deleteMany({
-      where: {
-        shopId: clerkOrgId,
-        customerId: customerId
+      
+      if (!messageId) {
+        return withCORS(Response.json({ success: false, error: "Message ID is required" }, { status: 400 }));
       }
-    });
 
-    // Then delete the customer
-    await prisma.customers.delete({
-      where: { customerId }
-    });
+      // Check if the shop exists
+      const shop = await prisma.shops.findUnique({
+        where: { clerkOrgId }
+      });
 
-    return withCORS(Response.json({ 
-      success: true, 
-      message: "Customer deleted successfully" 
-    }));
+      if (!shop) {
+        return withCORS(Response.json({ success: false, error: "Shop not found" }, { status: 404 }));
+      }
+
+      // Get the message to check if it belongs to the shop
+      const message = await prisma.shopMessage.findUnique({
+        where: { id: messageId },
+        include: { shop: true }
+      });
+
+      if (!message) {
+        return withCORS(Response.json({ success: false, error: "Message not found" }, { status: 404 }));
+      }
+
+      // Verify the message belongs to the requesting organization
+      if (message.shop.clerkOrgId !== clerkOrgId) {
+        return withCORS(Response.json({ success: false, error: "Unauthorized to delete this message" }, { status: 403 }));
+      }
+
+      // Delete the message
+      await prisma.shopMessage.delete({
+        where: { id: messageId }
+      });
+
+      return withCORS(Response.json({ 
+        success: true, 
+        message: "Message deleted successfully" 
+      }));
+    }
+    // Handle customer deletion (existing functionality)
+    else {
+      // Try to get from search params (query string)
+      let customerId = url.searchParams.get("customerId");
+      
+      // If not found in query string, try to get from path segments
+      if (!customerId) {
+        const pathSegments = url.pathname.split('/');
+        // Find the last segment which might be the ID
+        const lastSegment = pathSegments[pathSegments.length - 1];
+        if (lastSegment && lastSegment !== 'del' && lastSegment !== 'orgs') {
+          customerId = lastSegment;
+        }
+      }
+      
+      // If still not found, try to parse request body
+      if (!customerId) {
+        try {
+          const body = await req.json();
+          customerId = body.customerId;
+        } catch (e) {
+          // Body parsing failed, continue with null customerId
+        }
+      }
+      
+      if (!customerId) {
+        return withCORS(Response.json({ success: false, error: "Customer ID is required" }, { status: 400 }));
+      }
+
+      // First, check if the shop exists
+      const shop = await prisma.shops.findUnique({
+        where: { clerkOrgId }
+      });
+
+      if (!shop) {
+        return withCORS(Response.json({ success: false, error: "Shop not found" }, { status: 404 }));
+      }
+
+      // First delete the shop subscription linking customer to shop
+      await prisma.shopSubscription.deleteMany({
+        where: {
+          shopId: clerkOrgId,
+          customerId: customerId
+        }
+      });
+
+      // Then delete the customer
+      await prisma.customers.delete({
+        where: { customerId }
+      });
+
+      return withCORS(Response.json({ 
+        success: true, 
+        message: "Customer deleted successfully" 
+      }));
+    }
   } catch (error: unknown) {
     // Check for Prisma-specific errors
     if ((error as PrismaClientKnownRequestError).code === 'P2025') {
-      return withCORS(Response.json({ success: false, error: "Customer not found" }, { status: 404 }));
+      return withCORS(Response.json({ success: false, error: "Resource not found" }, { status: 404 }));
     }
     
     return withCORS(Response.json({ 
