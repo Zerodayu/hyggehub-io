@@ -47,7 +47,7 @@ export default function RootLayout({
   return (
     <QueryProvider>
       <MyClerkProvider>
-        <html lang="en" className="dark">
+        <html lang="en" className="dark scroll-smooth">
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
             <Navbar />
             {children}

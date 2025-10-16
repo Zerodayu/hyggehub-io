@@ -9,22 +9,36 @@ import {
   Shield,
   Users,
   Calendar,
-  Info
+  Info,
+  SquareArrowOutUpRight,
+  BadgeAlert,
 } from "lucide-react";
 
 export default function Home() {
+  const navs = [
+    { name: "Features", href: "#features" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "About", href: "#about" },
+  ];
+
   return (
     <section className="flex flex-col items-center justify-center min-h-screen w-full">
       <section className="flex fixed top-0 py-4 z-10">
         <div className="flex justify-between items-center space-x-4 rounded-full bg-muted-foreground/20 border-2 border-foreground backdrop-blur-sm w-[80vw]">
           <div className="px-4">
+            <Link href="#hero">
             <Target className="" size={30} />
+            </Link>
           </div>
 
           <div className="hidden lg:flex">
-            <Button variant="link" className="font-mono font-bold" >Features</Button>
-            <Button variant="link" className="font-mono font-bold" >Pricing</Button>
-            <Button variant="link" className="font-mono font-bold" >About</Button>
+            {navs.map((nav) => (
+              <Link key={nav.name} href={nav.href}>
+                <Button variant="link" className="font-mono font-bold">
+                  {nav.name}
+                </Button>
+              </Link>
+            ))}
           </div>
 
           <div className="bg-foreground rounded-full p-2">
@@ -49,26 +63,41 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="flex h-screen items-center justify-center flex-col text-center px-4">
-        <h1 className="text-8xl font-semibold">Hyggehub.io</h1>
+      <section id="#hero" className="flex h-screen items-center justify-center flex-col text-center px-4">
+
+        <div className="flex self-start justify-center items-center border rounded-full my-4">
+          <span className="text-xs text-primary font-mono flex items-center justify-center bg-secondary/50 rounded-full px-2 gap-2">
+            <BadgeAlert size={14} className="animate-pulse" />
+            <h1>Updates!</h1>
+          </span>
+          <h1 className="text-xs font-mono font-bold px-2">asodasdiasuh</h1>
+        </div>
+
+        <h1 className="text-8xl font-mono font-bold">Hyggehub.io</h1>
         <p className="mt-6 text-xl text-muted-foreground">Notify Your Crowd. Instantly.</p>
         <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
           Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
         </p>
         <div className="flex mt-8 gap-6">
           <Link href="/sign-in">
-            <Button className="font-mono font-bold">Get Started</Button>
+            <Button className="font-mono font-bold">
+              <SquareArrowOutUpRight />
+              Get Started
+            </Button>
           </Link>
           <Link href="#features">
-            <Button variant="outline" className="font-mono font-bold">Learn More</Button>
+            <Button variant="outline" className="font-mono font-bold">
+              <BadgeAlert />
+              Updates
+            </Button>
           </Link>
         </div>
-      </div>
+      </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 w-full bg-muted/50">
+      <section id="features" className="py-20 w-full bg-muted/50 scroll-mt-30">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">Features</h2>
+          <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-background p-6 rounded-lg shadow-sm border">
               <Bell className="h-12 w-12 mb-4 text-primary" />
@@ -105,9 +134,9 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 w-full">
+      <section id="pricing" className="py-20 w-full scroll-mt-30">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">Pricing Plans</h2>
+          <h2 className="text-4xl font-bold font-mono mb-12">— Pricing Plans</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-background p-8 rounded-lg shadow-sm border border-muted">
               <h3 className="text-2xl font-bold mb-2">Starter</h3>
@@ -188,7 +217,7 @@ export default function Home() {
       {/* About Section */}
       <section id="about" className="py-20 w-full bg-muted/50">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">About Us</h2>
+          <h2 className="text-4xl font-bold font-mono mb-12">— About Us</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
             <div>
               <h3 className="text-2xl font-bold mb-4">Our Story</h3>
