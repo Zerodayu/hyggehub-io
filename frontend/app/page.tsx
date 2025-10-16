@@ -73,8 +73,8 @@ export default function Home() {
           <h1 className="text-xs font-mono font-bold px-2">asodasdiasuh</h1>
         </div>
 
-        <h1 className="text-8xl font-mono font-bold">Hyggehub.io</h1>
-        <p className="mt-6 text-xl text-muted-foreground">Notify Your Crowd. Instantly.</p>
+        <h1 className="text-8xl font-mono font-bold">Hyggehub<span className="text-primary">.io</span></h1>
+        <p className="mb-6 self-end font-mono text-primary">Notify Your Crowd. Instantly.</p>
         <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
           Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
         </p>
