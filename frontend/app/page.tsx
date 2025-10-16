@@ -50,7 +50,7 @@ export default function Home() {
       </section>
 
       <div className="flex h-screen items-center justify-center flex-col text-center px-4">
-        <h1 className="text-8xl font-semibold">Vynoti</h1>
+        <h1 className="text-8xl font-semibold">Hyggehub.io</h1>
         <p className="mt-6 text-xl text-muted-foreground">Notify Your Crowd. Instantly.</p>
         <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
           Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
@@ -193,7 +193,7 @@ export default function Home() {
             <div>
               <h3 className="text-2xl font-bold mb-4">Our Story</h3>
               <p className="mb-4 text-muted-foreground">
-                Vynoti was founded in 2023 by a team of local business enthusiasts and tech experts who noticed a gap in the market for effective customer communication in bars, cafés, and local shops.
+                hyggehub.io was founded in 2023 by a team of local business enthusiasts and tech experts who noticed a gap in the market for effective customer communication in bars, cafés, and local shops.
               </p>
               <p className="mb-4 text-muted-foreground">
                 Our mission is to help local businesses enhance customer experience, increase loyalty, and build stronger relationships with their community through effective, personalized notifications.
@@ -204,7 +204,7 @@ export default function Home() {
             </div>
             <div className="bg-muted p-8 rounded-lg">
               <Info className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-4">Why Choose Vynoti?</h3>
+              <h3 className="text-xl font-bold mb-4">Why Choose hyggehub.io?</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
@@ -232,7 +232,7 @@ export default function Home() {
       <footer className="py-12 bg-background border-t">
         <div className="container mx-auto px-4 text-center">
           <Target className="mx-auto mb-4" size={30} />
-          <p className="text-muted-foreground">© {new Date().getFullYear()} Vynoti. All rights reserved.</p>
+          <p className="text-muted-foreground">© {new Date().getFullYear()} hyggehub.io. All rights reserved.</p>
           <div className="flex justify-center space-x-4 mt-4">
             <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">Terms</Link>
             <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">Privacy</Link>
