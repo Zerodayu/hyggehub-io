@@ -111,7 +111,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-background p-8 rounded-lg shadow-sm border border-muted">
               <h3 className="text-2xl font-bold mb-2">Starter</h3>
-              <p className="text-4xl font-bold mb-4">$29<span className="text-muted-foreground text-base font-normal">/month</span></p>
+              <p className="text-4xl font-bold mb-4">$389<span className="text-muted-foreground text-base font-normal">/month</span></p>
               <p className="text-muted-foreground mb-6">Perfect for small local shops</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center">
@@ -134,7 +134,7 @@ export default function Home() {
                 <span className="bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-bold">MOST POPULAR</span>
               </div>
               <h3 className="text-2xl font-bold mb-2">Business</h3>
-              <p className="text-4xl font-bold mb-4">$79<span className="text-primary-foreground/80 text-base font-normal">/month</span></p>
+              <p className="text-4xl font-bold mb-4">$549<span className="text-primary-foreground/80 text-base font-normal">/month</span></p>
               <p className="text-primary-foreground/80 mb-6">For growing establishments</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center">
@@ -158,7 +158,7 @@ export default function Home() {
             </div>
             <div className="bg-background p-8 rounded-lg shadow-sm border border-muted">
               <h3 className="text-2xl font-bold mb-2">Enterprise</h3>
-              <p className="text-4xl font-bold mb-4">$199<span className="text-muted-foreground text-base font-normal">/month</span></p>
+              <p className="text-4xl font-bold mb-4">$700<span className="text-muted-foreground text-base font-normal">/month</span></p>
               <p className="text-muted-foreground mb-6">For multiple locations</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center">
