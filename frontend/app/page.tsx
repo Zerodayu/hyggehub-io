@@ -73,21 +73,21 @@ export default function Home() {
           <h1 className="text-xs font-mono font-bold px-2">asodasdiasuh</h1>
         </div>
 
-        <h1 className="text-8xl font-mono font-bold">Hyggehub<span className="text-primary">.io</span></h1>
-        <p className="mb-6 self-end font-mono text-primary">Notify Your Crowd. Instantly.</p>
-        <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold">Hyggehub<span className="text-primary">.io</span></h1>
+        <p className="mb-6 self-center md:self-end font-mono text-primary text-sm md:text-base">Notify Your Crowd. Instantly.</p>
+        <p className="mt-2 text-sm md:text-lg text-muted-foreground max-w-2xl">
           Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
         </p>
-        <div className="flex mt-8 gap-6">
-          <Link href="/sign-in">
-            <Button className="font-mono font-bold">
-              <SquareArrowOutUpRight />
+        <div className="flex flex-col sm:flex-row mt-6 gap-4">
+          <Link href="/sign-in" className="w-full">
+            <Button className="text-xs font-mono font-bold">
+              <SquareArrowOutUpRight className="h-4 w-4" />
               Get Started
             </Button>
           </Link>
-          <Link href="#features">
-            <Button variant="outline" className="font-mono font-bold">
-              <BadgeAlert />
+          <Link href="#features" className="w-full">
+            <Button variant="outline" className="text-xs font-mono font-bold">
+              <BadgeAlert className="h-4 w-4" />
               Updates
             </Button>
           </Link>
