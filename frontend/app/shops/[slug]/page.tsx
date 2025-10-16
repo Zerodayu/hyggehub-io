@@ -8,7 +8,7 @@ import { getOrg } from '@/api/api-org';
 import FollowersList from "@/components/followersPopup";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Key, Phone, ArrowLeft } from "lucide-react"
+import { Key, Phone, ArrowLeft, BadgeInfo } from "lucide-react"
 
 export default async function Page({
     params,
@@ -30,6 +30,16 @@ export default async function Page({
 
     return (
         <section className="flex flex-col items-center justify-start min-h-screen px-4 gap-6">
+
+            {/* mobile warning */}
+            <section className="fixed flex md:hidden items-center justify-center w-full h-screen bg-background/50 backdrop-blur z-20 overflow-hidden touch-none">
+                <div className="flex flex-col items-center justify-center gap-4 p-8 text-center max-w-sm mx-auto">
+                    <BadgeInfo />
+                    <h1 className="text-xl font-bold break-words sm:text-lg">This page works best on desktop devices</h1>
+                    <p className="text-sm text-muted-foreground">Mobile input may cause errors</p>
+                </div>
+            </section>
+
             <ShopNavbar slug={slug} />
 
             <Link href="/shops" className="self-start m-8">

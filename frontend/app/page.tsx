@@ -56,7 +56,7 @@ export default function Home() {
           Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
         </p>
         <div className="flex mt-8 gap-6">
-          <Link href="/sign-up">
+          <Link href="/sign-in">
             <Button className="font-mono font-bold">Get Started</Button>
           </Link>
           <Link href="#features">
