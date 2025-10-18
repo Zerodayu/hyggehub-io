@@ -1,6 +1,8 @@
+"use client";
+
 import React from 'react'
 import { useRouter } from 'next/navigation';
-import { useAuth } from "@clerk/nextjs";
+import { useOrganization } from "@clerk/nextjs";
 import { PricingTable } from "@clerk/nextjs";
 import { Button } from '@/components/ui/button'
 import { ChevronRight, House, Wallet } from 'lucide-react'
@@ -14,20 +16,25 @@ import {
 } from "@/components/ui/breadcrumb"
 
 export function CheckPlanHandle({ children }: { children: React.ReactNode }) {
-  const auth = useAuth();
-  // Check if the user is on a free plan
-  const freeUser = auth.isLoaded ? auth.has({ plan: 'free_user' }) : true;
+  const { organization, isLoaded } = useOrganization();
+  
+  // Check if the organization has an active subscription
+  const hasActivePlan = isLoaded && organization ? 
+    organization.publicMetadata?.subscribed === true : false;
 
   return (
     <>
-      {freeUser && <UpgradePlan />}
-      {!freeUser && children}
+      {isLoaded && !hasActivePlan && <UpgradePlan />}
+      {isLoaded && hasActivePlan && children}
+      {!isLoaded && <div>Loading...</div>}
     </>
   )
 }
 
 export function UpgradePlan() {
   const router = useRouter();
+  const { organization } = useOrganization();
+  const slug = organization?.slug;
 
   return (
     <div className="w-full h-screen flex flex-col items-center p-8">
@@ -39,10 +46,10 @@ export function UpgradePlan() {
                 <Button
                   variant="link"
                   className='font-mono text-muted-foreground'
-                  onClick={() => router.push(`/`)}
+                  onClick={() => router.push(`/shops`)}
                 >
                   <House />
-                  Main
+                  Shops
                 </Button>
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -66,6 +73,7 @@ export function UpgradePlan() {
       <p className='mb-8 text-center'>Click on a plan below to proceed with the upgrade process.</p>
       <PricingTable
         forOrganizations
+        newSubscriptionRedirectUrl={`/shops`}
       />
     </div>
   )
