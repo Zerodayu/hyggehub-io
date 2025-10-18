@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import {
@@ -27,7 +28,7 @@ export default function Home() {
         <div className="flex justify-between items-center space-x-4 rounded-full bg-muted-foreground/20 border-2 border-foreground backdrop-blur-sm w-[80vw]">
           <div className="px-4">
             <Link href="#hero">
-            <Target className="" size={30} />
+              <Image src="/HyggeHub-logo.svg" alt="Logo" width={30} height={30} />
             </Link>
           </div>
 
