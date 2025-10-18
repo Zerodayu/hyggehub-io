@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation';
-import { useOrganization } from "@clerk/nextjs";
+import { useOrganization, Protect } from "@clerk/nextjs";
 import { PricingTable } from "@clerk/nextjs";
 import { Button } from '@/components/ui/button'
 import { ChevronRight, House, Wallet } from 'lucide-react'
@@ -15,18 +15,22 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-export function CheckPlanHandle({ children }: { children: React.ReactNode }) {
-  const { organization, isLoaded } = useOrganization();
+export function CheckPlanHandle({ children }: { 
+  children: React.ReactNode
+}) {
+  const { isLoaded } = useOrganization();
   
-  // Check if the organization has an active subscription
-  const hasActivePlan = isLoaded && organization ? 
-    organization.publicMetadata?.subscribed === true : false;
-
   return (
     <>
-      {isLoaded && !hasActivePlan && <UpgradePlan />}
-      {isLoaded && hasActivePlan && children}
       {!isLoaded && <div>Loading...</div>}
+      {isLoaded && (
+        <Protect
+          plan="free_org"
+          fallback={children}
+        >
+          <UpgradePlan />
+        </Protect>
+      )}
     </>
   )
 }
@@ -73,7 +77,7 @@ export function UpgradePlan() {
       <p className='mb-8 text-center'>Click on a plan below to proceed with the upgrade process.</p>
       <PricingTable
         forOrganizations
-        newSubscriptionRedirectUrl={`/shops`}
+        newSubscriptionRedirectUrl={`/shops/${slug}`}
       />
     </div>
   )
