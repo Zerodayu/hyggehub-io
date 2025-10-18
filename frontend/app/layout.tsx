@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Hyggehub.io - Notify Your Crowd. Instantly',
+  title: 'HyggeHub.io - Notify Your Crowd. Instantly',
   description: 'Hyggehub helps bars, coffee shops, and local stores send personalized notifications to their followers — from birthday offers to new deals and happy hour alerts. Engage your customers instantly.',
   keywords: [
     // Primary keywords
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     'store promotion alerts',
     'birthday offer notifications',
     'follower marketing tool',
-    'Vynoti app',
+    'Hyggehub io',
     'notify customers online',
     'customer loyalty SaaS',
     
