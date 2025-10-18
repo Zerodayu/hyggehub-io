@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import {
-  Target,
+  Mail,
   Bell,
   Gift,
   Key,
@@ -13,6 +13,7 @@ import {
   Info,
   SquareArrowOutUpRight,
   BadgeAlert,
+  Phone,
 } from "lucide-react";
 
 export default function Home() {
@@ -74,7 +75,7 @@ export default function Home() {
           <h1 className="text-xs font-mono font-bold px-2">asodasdiasuh</h1>
         </div>
 
-        <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold">Hyggehub<span className="text-primary">.io</span></h1>
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold">HyggeHub<span className="text-primary">.io</span></h1>
         <p className="mb-6 self-center md:self-end font-mono text-primary text-sm md:text-base">Notify Your Crowd. Instantly.</p>
         <p className="mt-2 text-sm md:text-lg text-muted-foreground max-w-2xl">
           Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
@@ -259,14 +260,97 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 bg-background border-t">
-        <div className="container mx-auto px-4 text-center">
-          <Target className="mx-auto mb-4" size={30} />
-          <p className="text-muted-foreground">© {new Date().getFullYear()} hyggehub.io. All rights reserved.</p>
-          <div className="flex justify-center space-x-4 mt-4">
-            <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">Terms</Link>
-            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">Privacy</Link>
-            <Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link>
+      <footer className="w-full py-12 bg-background border-t">
+
+        <div className=" px-8 py-20 bg-background w-full relative overflow-hidden">
+          <div className=" mx-auto text-sm text-neutral-500 flex sm:flex-row flex-col justify-between items-start md:px-8">
+            <div>
+              <div className="mr-0 md:mr-4 md:flex mb-4">
+                <Link
+                  className="font-normal flex space-x-2 items-center text-sm mr-4 px-2 py-1 relative z-20"
+                  href="/"
+                >
+                  <Image
+                    alt="logo"
+                    loading="lazy"
+                    width={30}
+                    height={30}
+                    decoding="async"
+                    data-nimg="1"
+                    src="/HyggeHub-logo.svg"
+                    className="rounded size-[2rem]"
+                  />
+                  <span className="font-bold text-xl text-foreground">HyggeHub.io</span>
+                </Link>
+              </div>
+              <p className="mt-2 ml-2">© copyright HyggeHub.io {new Date().getFullYear()}. All rights reserved.</p>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 items-start mt-10 sm:mt-0 md:mt-0">
+              <div className="flex justify-center space-y-4 flex-col w-full">
+                <p className="font-bold font-mono text-primary">— Pages</p>
+                <ul className="list-none space-y-4 text-foreground">
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Home</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="/open/claim">Claim</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Plans</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Updates</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="/sign-in">Sign-in</Link>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex justify-center space-y-4 flex-col">
+                <p className="font-bold font-mono text-primary">— Contacts</p>
+                <ul className="list-none space-y-4 text-foreground">
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Facebook</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Instagram</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Twitter</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">LinkedIn</Link>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex justify-center space-y-4 flex-col">
+                <p className="font-bold font-mono text-primary">— Legal</p>
+                <ul className="list-none space-y-4 text-foreground">
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Privacy Policy</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Terms of Service</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Cookie Policy</Link>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex justify-center space-y-4 flex-col">
+                <h1 className="font-bold font-mono text-primary">— Contacts</h1>
+                <ul className="list-none space-y-4 text-foreground">
+                  <li className="flex gap-2 items-center list-none hover:underline">
+                    <Mail size={16} />
+                    <p>support@hyggehub.io</p>
+                  </li>
+                  <li className="flex gap-2 items-center list-none hover:underline">
+                    <Phone size={16} />
+                    <p>+45 42349115</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

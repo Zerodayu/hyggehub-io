@@ -59,7 +59,7 @@ export default function Page() {
     const organizations = data?.organizations || [];
 
     return (
-        <CheckPlanHandle>
+        // <CheckPlanHandle>
             <section>
                 <div className="fixed bg-muted-foreground/10 rounded-full backdrop-blur-xs items-center justify-between py-2 px-4 m-6">
                     <AlertDialog>
@@ -137,6 +137,6 @@ export default function Page() {
                     )}
                 </div>
             </section>
-        </CheckPlanHandle>
+        // </CheckPlanHandle>
     )
 }
