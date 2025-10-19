@@ -3,23 +3,12 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Shapes, CirclePlus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
-import { CreateOrganization } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
 import { getUserOrgs } from '@/api/api-users';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { Spinner } from '@/components/ui/spinner';
-import {
-    AlertDialog,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { useState } from 'react';
 
 // Define interface for organization data
@@ -61,30 +50,12 @@ export default function Page() {
     return (
         <section>
             <div className="fixed bg-muted-foreground/10 rounded-full backdrop-blur-xs items-center justify-between py-2 px-4 m-6">
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant="link" className="flex items-center gap-2">
-                            <CirclePlus className="h-4 w-4" />
-                            Add Coffee Shop
-                        </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent asChild>
-                        <div className='min-w-[32vw] justify-center items-center'>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle />
-                                <AlertDialogDescription asChild>
-                                    <span>
-                                        {/* clerk component */}
-                                        <CreateOrganization hideSlug />
-                                    </span>
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel className='w-full'>Cancel</AlertDialogCancel>
-                            </AlertDialogFooter>
-                        </div>
-                    </AlertDialogContent>
-                </AlertDialog>
+                <Link href="/shops/create-shop">
+                <Button variant="link" className="flex items-center gap-2">
+                    <CirclePlus className="h-4 w-4" />
+                    Add Coffee Shop
+                </Button>
+            </Link>
             </div>
 
             <div className="flex flex-wrap items-center justify-center min-h-screen max-w-screen gap-10 p-10">
