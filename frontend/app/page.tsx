@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import DynamicPricingPlans from "@/components/pricingList";
 import {
   Mail,
   Bell,
@@ -139,79 +140,7 @@ export default function Home() {
       <section id="pricing" className="py-20 w-full scroll-mt-30">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold font-mono mb-12">— Pricing Plans</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="bg-background p-8 rounded-lg shadow-sm border border-muted">
-              <h3 className="text-2xl font-bold mb-2">Starter</h3>
-              <p className="text-4xl font-bold mb-4">$389<span className="text-muted-foreground text-base font-normal">/month</span></p>
-              <p className="text-muted-foreground mb-6">Perfect for small local shops</p>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Up to 500 notifications/month
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Basic shop dashboard
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Standard notification templates
-                </li>
-              </ul>
-              <Button className="w-full">Get Started</Button>
-            </div>
-            <div className="bg-primary text-primary-foreground p-8 rounded-lg shadow-lg scale-105 border border-primary">
-              <div className="absolute -top-4 left-0 right-0 flex justify-center">
-                <span className="bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-bold">MOST POPULAR</span>
-              </div>
-              <h3 className="text-2xl font-bold mb-2">Business</h3>
-              <p className="text-4xl font-bold mb-4">$549<span className="text-primary-foreground/80 text-base font-normal">/month</span></p>
-              <p className="text-primary-foreground/80 mb-6">For growing establishments</p>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Up to 2,000 notifications/month
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Enhanced shop management
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Custom notification templates
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Birthday automation
-                </li>
-              </ul>
-              <Button variant="secondary" className="w-full">Get Started</Button>
-            </div>
-            <div className="bg-background p-8 rounded-lg shadow-sm border border-muted">
-              <h3 className="text-2xl font-bold mb-2">Enterprise</h3>
-              <p className="text-4xl font-bold mb-4">$700<span className="text-muted-foreground text-base font-normal">/month</span></p>
-              <p className="text-muted-foreground mb-6">For multiple locations</p>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Up to 10,000 notifications/month
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Multi-shop management
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Priority support
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Custom integrations
-                </li>
-              </ul>
-              <Button className="w-full">Contact Sales</Button>
-            </div>
-          </div>
+          <DynamicPricingPlans />
           <p className="text-center mt-8 text-muted-foreground">All plans include free setup and 24/7 customer support.</p>
         </div>
       </section>
