@@ -36,7 +36,10 @@ export const metadata: Metadata = {
     'local shop marketing tools',
     'digital loyalty notifications',
     'bar promotion manager'
-  ]
+  ],
+  verification: {
+    google: 'R6aYZ5CCHZLgTGtEHN5X0-qHFgTRELLMhd_CsuTZcg4',
+  }
 }
 
 export default function RootLayout({
