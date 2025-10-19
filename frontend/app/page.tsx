@@ -20,7 +20,6 @@ export default function Home() {
   const navs = [
     { name: "Features", href: "#features" },
     { name: "Pricing", href: "#pricing" },
-    { name: "Updates", href: "/updates" },
     { name: "About", href: "#about" },
   ];
 
@@ -45,7 +44,7 @@ export default function Home() {
           </div>
 
           <div className="bg-foreground rounded-full p-2">
-            <Link href="/open/claim">
+            <Link href="/claim">
               <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
             </Link>
 
