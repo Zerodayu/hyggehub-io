@@ -20,6 +20,7 @@ export default function Home() {
   const navs = [
     { name: "Features", href: "#features" },
     { name: "Pricing", href: "#pricing" },
+    { name: "Updates", href: "/updates" },
     { name: "About", href: "#about" },
   ];
 
@@ -68,11 +69,11 @@ export default function Home() {
       <section id="#hero" className="flex h-screen items-center justify-center flex-col text-center px-4">
 
         <div className="flex self-start justify-center items-center border rounded-full my-4">
-          <span className="text-xs text-primary font-mono flex items-center justify-center bg-secondary/50 rounded-full px-2 gap-2">
+          <span className="text-xs text-primary font-bold font-mono flex items-center justify-center bg-secondary/50 rounded-full px-2 gap-2">
             <BadgeAlert size={14} className="animate-pulse" />
             <h1>Updates!</h1>
           </span>
-          <h1 className="text-xs font-mono font-bold px-2">asodasdiasuh</h1>
+          <h1 className="text-xs font-mono font-bold px-2">v0.1 Released!</h1>
         </div>
 
         <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold">HyggeHub<span className="text-primary">.io</span></h1>
@@ -87,7 +88,7 @@ export default function Home() {
               Get Started
             </Button>
           </Link>
-          <Link href="#features" className="w-full">
+          <Link href="/updates" className="w-full">
             <Button variant="outline" className="text-xs font-mono font-bold">
               <BadgeAlert className="h-4 w-4" />
               Updates
@@ -293,13 +294,10 @@ export default function Home() {
                     <Link className="transition-colors hover:text-text-neutral-800" href="#">Home</Link>
                   </li>
                   <li className="list-none hover:underline">
-                    <Link className="transition-colors hover:text-text-neutral-800" href="/open/claim">Claim</Link>
+                    <Link className="transition-colors hover:text-text-neutral-800" href="/claim">Claim</Link>
                   </li>
                   <li className="list-none hover:underline">
-                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Plans</Link>
-                  </li>
-                  <li className="list-none hover:underline">
-                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Updates</Link>
+                    <Link className="transition-colors hover:text-text-neutral-800" href="/updates">Updates</Link>
                   </li>
                   <li className="list-none hover:underline">
                     <Link className="transition-colors hover:text-text-neutral-800" href="/sign-in">Sign-in</Link>

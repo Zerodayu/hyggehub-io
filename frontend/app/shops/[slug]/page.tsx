@@ -54,7 +54,7 @@ export default async function Page({
                 </Link>
 
                 <div className="flex gap-12 pt-auto max-w-auto md:max-w-6xl w-full">
-                    <div className="grid col-span-1.5">
+                    <div className="flex-1 grid col-span-1.5">
                         <div className="flex items-center w-full gap-6">
                             <div className="flex flex-col items-start w-full">
                                 <div className="flex flex-row gap-10 w-full">
@@ -90,8 +90,9 @@ export default async function Page({
                             </div>
                         </div>
                     </div>
-
-                    <ShopUsersDay />
+                    <div>
+                        <ShopUsersDay />
+                    </div>
                 </div>
             </section>
         </CheckPlanHandle>
