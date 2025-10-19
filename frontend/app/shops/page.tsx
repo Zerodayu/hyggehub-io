@@ -97,7 +97,7 @@ export default function Page() {
                             </CardHeader>
                             <CardContent className="mt-1 text-[15px] text-muted-foreground px-5">
                                 <p>
-                                    Manage {org.name}'s shop settings and menu
+                                    Manage {org.name}&apos;s shop settings and menu
                                 </p>
                             </CardContent>
                             <CardFooter className="flex mt-6 w-full">
