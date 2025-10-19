@@ -11,6 +11,7 @@ import FollowersList from "@/components/followersPopup";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CheckPlanHandle } from '@/components/checkPlan';
+import QrDownload from "@/components/downloadQr";
 import { Key, Phone, ArrowLeft, BadgeInfo } from "lucide-react"
 
 export default async function Page({
@@ -86,6 +87,7 @@ export default async function Page({
 
                         <div className="grid w-full">
                             <div>
+                                <QrDownload />
                                 <ShopCardSection />
                             </div>
                         </div>
