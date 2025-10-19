@@ -20,6 +20,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useState } from 'react';
 
 // Define interface for organization data
 interface Organization {
@@ -34,6 +35,7 @@ interface Organization {
 
 export default function Page() {
     const { user } = useUser();
+    const [loadingShop, setLoadingShop] = useState<string | null>(null);
 
     // Fetch user organizations using Tanstack Query
     const { data, isLoading, error } = useQuery({
@@ -118,13 +120,17 @@ export default function Page() {
                                 <p>
                                     {org.metadata?.description || `Manage ${org.name}'s shop settings and menu`}
                                 </p>
-                                <div className="mt-5 w-full aspect-video bg-muted rounded-xl" />
+                                {/* <div className="mt-5 w-full aspect-video bg-muted rounded-xl" /> */}
                             </CardContent>
-                            <CardFooter className="mt-6">
-                                <Link href={`/shops/${org.slug || org.id}`}>
-                                    <Button>
+                            <CardFooter className="flex mt-6 w-full">
+                                <Link href={`/shops/${org.slug || org.id}`} onClick={() => setLoadingShop(org.id)} className='w-full'>
+                                    <Button disabled={loadingShop === org.id} className="w-full">
                                         <span className="flex items-center justify-between font-mono text-xs gap-2">
-                                            Open <ArrowRight />
+                                            {loadingShop === org.id ? (
+                                                <>Loading <Spinner /></>
+                                            ) : (
+                                                <>Open <ArrowRight /></>
+                                            )}
                                         </span>
                                     </Button>
                                 </Link>
