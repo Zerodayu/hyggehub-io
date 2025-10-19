@@ -41,7 +41,7 @@ export default function Page() {
                         </BreadcrumbSeparator>
                         <BreadcrumbItem>
                             <BreadcrumbPage className='font-mono'>
-                                <span className='flex items-center gap-2'>
+                                <span className='flex items-center gap-2 text-primary'>
                                     <Wallet size={16} />
                                     Plans
                                 </span>
@@ -50,7 +50,7 @@ export default function Page() {
                     </BreadcrumbList>
                 </Breadcrumb>
             </div>
-            <div className="flex w-full h-0.5 rounded bg-accent shadow-sm" />
+            <div className="flex w-full h-0.5 rounded-full bg-accent shadow-sm" />
             <div className='flex justify-center items-center w-[80vw]'>
                 <PricingTable
                     forOrganizations

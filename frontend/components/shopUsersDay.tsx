@@ -24,7 +24,7 @@ export default function ShopUsersDay() {
                                 </span>
                             </AccordionTrigger>
                             <AccordionContent>
-                                <div className="flex flex-col gap-4">
+                                {/* <div className="flex flex-col gap-4">
                                     <span className="flex items-center gap-2">
                                         <Avatar>
                                             <AvatarImage src="https://github.com/shadcn.png" />
@@ -46,7 +46,7 @@ export default function ShopUsersDay() {
                                         </Avatar>
                                         <p>Users Username</p>
                                     </span>
-                                </div>
+                                </div> */}
 
                                 <div>
                                     <span className="flex items-center justify-center gap-4 text-muted-foreground">

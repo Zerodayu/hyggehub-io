@@ -3,94 +3,74 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Shapes, CirclePlus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
-import { CreateOrganization } from '@clerk/nextjs';
-import { useQuery } from '@tanstack/react-query';
-import { getUserOrgs } from '@/api/api-users';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useUser } from '@clerk/nextjs';
+import { useOrganizationList } from '@clerk/nextjs';
 import { Spinner } from '@/components/ui/spinner';
-import {
-    AlertDialog,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 // Define interface for organization data
 interface Organization {
     id: string;
     name: string;
     imageUrl?: string;
-    slug?: string;
+    slug?: string | null;
     metadata?: {
         description?: string;
     };
 }
 
 export default function Page() {
-    const { user } = useUser();
+    const [loadingShop, setLoadingShop] = useState<string | null>(null);
+    const router = useRouter();
 
-    // Fetch user organizations using Tanstack Query
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['user-organizations', user?.id],
-        queryFn: async () => {
-            console.log('API call initiated - Attempting to fetch user orgs');
-            if (!user?.id) {
-                throw new Error("User not authenticated");
-            }
-            try {
-                const result = await getUserOrgs(user.id);
-                console.log('API connection successful:', result);
-                return result;
-            } catch (err) {
-                console.error('API connection failed:', err);
-                throw err;
-            }
+    // Use Clerk's useOrganizationList hook instead of the custom API call
+    const { isLoaded, userMemberships, setActive } = useOrganizationList({
+        userMemberships: {
+            infinite: true,
         },
-        enabled: !!user?.id, // Only run the query when user ID is available
     });
 
-    const organizations = data?.organizations || [];
+    // Transform the organizations data to match our expected format
+    const organizations = userMemberships?.data?.map(mem => ({
+        id: mem.organization.id,
+        name: mem.organization.name,
+        imageUrl: mem.organization.imageUrl,
+        slug: mem.organization.slug,
+    })) || [];
+
+    // Handle opening a shop - set active org and then navigate
+    const handleOpenShop = async (org: Organization) => {
+        if (!setActive) {
+            console.error("setActive function is not available");
+            return;
+        }
+
+        try {
+            setLoadingShop(org.id);
+            await setActive({ organization: org.id });
+            router.push(`/shops/${org.slug || org.id}`);
+        } catch (error) {
+            console.error("Error setting active organization:", error);
+            setLoadingShop(null);
+        }
+    };
 
     return (
         <section>
             <div className="fixed bg-muted-foreground/10 rounded-full backdrop-blur-xs items-center justify-between py-2 px-4 m-6">
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant="link" className="flex items-center gap-2">
-                            <CirclePlus className="h-4 w-4" />
-                            Add Coffee Shop
-                        </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent asChild>
-                        <div className='min-w-[32vw] justify-center items-center'>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle />
-                                <AlertDialogDescription asChild>
-                                    <span>
-                                        {/* clerk component */}
-                                        <CreateOrganization hideSlug />
-                                    </span>
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel className='w-full'>Cancel</AlertDialogCancel>
-                            </AlertDialogFooter>
-                        </div>
-                    </AlertDialogContent>
-                </AlertDialog>
+                <Link href="/shops/create-shop">
+                    <Button variant="link" className="flex items-center gap-2">
+                        <CirclePlus className="h-4 w-4" />
+                        Add Coffee Shop
+                    </Button>
+                </Link>
             </div>
 
             <div className="flex flex-wrap items-center justify-center min-h-screen max-w-screen gap-10 p-10">
-                {isLoading ? (
+                {!isLoaded ? (
                     <div className="text-center"><Spinner className="size-8" /></div>
-                ) : error ? (
-                    <div className="text-center text-red-500">Error loading your coffee shops</div>
                 ) : organizations.length === 0 ? (
                     <div className="text-center">
                         <p className="mb-4">You don&apos;t have any coffee shops yet</p>
@@ -117,23 +97,41 @@ export default function Page() {
                             </CardHeader>
                             <CardContent className="mt-1 text-[15px] text-muted-foreground px-5">
                                 <p>
-                                    {org.metadata?.description || `Manage ${org.name}'s shop settings and menu`}
+                                    Manage {org.name}'s shop settings and menu
                                 </p>
-                                <div className="mt-5 w-full aspect-video bg-muted rounded-xl" />
                             </CardContent>
-                            <CardFooter className="mt-6">
-                                <Link href={`/shops/${org.slug || org.id}`}>
-                                    <Button>
-                                        <span className="flex items-center justify-between font-mono text-xs gap-2">
-                                            Open <ArrowRight />
-                                        </span>
-                                    </Button>
-                                </Link>
+                            <CardFooter className="flex mt-6 w-full">
+                                <Button 
+                                    disabled={loadingShop === org.id || !setActive} 
+                                    className="w-full"
+                                    onClick={() => handleOpenShop(org)}
+                                >
+                                    <span className="flex items-center justify-between font-mono text-xs gap-2">
+                                        {loadingShop === org.id ? (
+                                            <>Loading <Spinner /></>
+                                        ) : (
+                                            <>Open <ArrowRight /></>
+                                        )}
+                                    </span>
+                                </Button>
                             </CardFooter>
                         </Card>
                     ))
                 )}
             </div>
+
+            {/* Load more organizations button */}
+            {userMemberships?.hasNextPage && (
+                <div className="text-center pb-8">
+                    <Button
+                        variant="outline"
+                        onClick={() => userMemberships?.fetchNext?.()}
+                        disabled={!userMemberships?.hasNextPage}
+                    >
+                        Load more shops
+                    </Button>
+                </div>
+            )}
         </section>
     )
 }

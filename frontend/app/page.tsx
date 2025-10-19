@@ -1,33 +1,53 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import {
-  Target,
+  Mail,
   Bell,
   Gift,
   Key,
   Shield,
   Users,
   Calendar,
-  Info
+  Info,
+  SquareArrowOutUpRight,
+  BadgeAlert,
+  Phone,
 } from "lucide-react";
 
 export default function Home() {
+  const navs = [
+    { name: "Features", href: "#features" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "About", href: "#about" },
+  ];
+
   return (
     <section className="flex flex-col items-center justify-center min-h-screen w-full">
       <section className="flex fixed top-0 py-4 z-10">
         <div className="flex justify-between items-center space-x-4 rounded-full bg-muted-foreground/20 border-2 border-foreground backdrop-blur-sm w-[80vw]">
           <div className="px-4">
-            <Target className="" size={30} />
+            <Link href="#hero">
+              <Image src="/HyggeHub-logo.svg" alt="Logo" width={30} height={30} />
+            </Link>
           </div>
 
           <div className="hidden lg:flex">
-            <Button variant="link" className="font-mono font-bold" >Features</Button>
-            <Button variant="link" className="font-mono font-bold" >Pricing</Button>
-            <Button variant="link" className="font-mono font-bold" >About</Button>
+            {navs.map((nav) => (
+              <Link key={nav.name} href={nav.href}>
+                <Button variant="link" className="font-mono font-bold">
+                  {nav.name}
+                </Button>
+              </Link>
+            ))}
           </div>
 
           <div className="bg-foreground rounded-full p-2">
+            <Link href="/claim">
+              <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
+            </Link>
+
             <span className="hidden lg:inline-flex">
               <SignedIn>
                 <Link href="/shops">
@@ -41,34 +61,45 @@ export default function Home() {
                 </Link>
               </SignedOut>
             </span>
-
-            <Link href="/open/claim">
-              <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
-            </Link>
           </div>
         </div>
       </section>
 
-      <div className="flex h-screen items-center justify-center flex-col text-center px-4">
-        <h1 className="text-8xl font-semibold">Hyggehub.io</h1>
-        <p className="mt-6 text-xl text-muted-foreground">Notify Your Crowd. Instantly.</p>
-        <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
+      <section id="#hero" className="flex h-screen items-center justify-center flex-col text-center px-4">
+
+        <div className="flex self-start justify-center items-center border rounded-full my-4">
+          <span className="text-xs text-primary font-bold font-mono flex items-center justify-center bg-secondary/50 rounded-full px-2 gap-2">
+            <BadgeAlert size={14} className="animate-pulse" />
+            <h1>Updates!</h1>
+          </span>
+          <h1 className="text-xs font-mono font-bold px-2">v0.1 Released!</h1>
+        </div>
+
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold">HyggeHub<span className="text-primary">.io</span></h1>
+        <p className="mb-6 self-center md:self-end font-mono text-primary text-sm md:text-base">Notify Your Crowd. Instantly.</p>
+        <p className="mt-2 text-sm md:text-lg text-muted-foreground max-w-2xl">
           Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
         </p>
-        <div className="flex mt-8 gap-6">
-          <Link href="/sign-in">
-            <Button className="font-mono font-bold">Get Started</Button>
+        <div className="flex flex-col sm:flex-row mt-6 gap-4">
+          <Link href="/sign-in" className="w-full">
+            <Button className="text-xs font-mono font-bold">
+              <SquareArrowOutUpRight className="h-4 w-4" />
+              Get Started
+            </Button>
           </Link>
-          <Link href="#features">
-            <Button variant="outline" className="font-mono font-bold">Learn More</Button>
+          <Link href="/updates" className="w-full">
+            <Button variant="outline" className="text-xs font-mono font-bold">
+              <BadgeAlert className="h-4 w-4" />
+              Updates
+            </Button>
           </Link>
         </div>
-      </div>
+      </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 w-full bg-muted/50">
+      <section id="features" className="py-20 w-full bg-muted/50 scroll-mt-30">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">Features</h2>
+          <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-background p-6 rounded-lg shadow-sm border">
               <Bell className="h-12 w-12 mb-4 text-primary" />
@@ -105,9 +136,9 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 w-full">
+      <section id="pricing" className="py-20 w-full scroll-mt-30">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">Pricing Plans</h2>
+          <h2 className="text-4xl font-bold font-mono mb-12">— Pricing Plans</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-background p-8 rounded-lg shadow-sm border border-muted">
               <h3 className="text-2xl font-bold mb-2">Starter</h3>
@@ -188,7 +219,7 @@ export default function Home() {
       {/* About Section */}
       <section id="about" className="py-20 w-full bg-muted/50">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">About Us</h2>
+          <h2 className="text-4xl font-bold font-mono mb-12">— About Us</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
             <div>
               <h3 className="text-2xl font-bold mb-4">Our Story</h3>
@@ -229,14 +260,94 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 bg-background border-t">
-        <div className="container mx-auto px-4 text-center">
-          <Target className="mx-auto mb-4" size={30} />
-          <p className="text-muted-foreground">© {new Date().getFullYear()} hyggehub.io. All rights reserved.</p>
-          <div className="flex justify-center space-x-4 mt-4">
-            <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">Terms</Link>
-            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">Privacy</Link>
-            <Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link>
+      <footer className="w-full py-12 bg-background border-t">
+
+        <div className=" px-8 py-20 bg-background w-full relative overflow-hidden">
+          <div className=" mx-auto text-sm text-neutral-500 flex sm:flex-row flex-col justify-between items-start md:px-8">
+            <div>
+              <div className="mr-0 md:mr-4 md:flex mb-4">
+                <Link
+                  className="font-normal flex space-x-2 items-center text-sm mr-4 px-2 py-1 relative z-20"
+                  href="/"
+                >
+                  <Image
+                    alt="logo"
+                    loading="lazy"
+                    width={30}
+                    height={30}
+                    decoding="async"
+                    data-nimg="1"
+                    src="/HyggeHub-logo.svg"
+                    className="rounded size-[2rem]"
+                  />
+                  <span className="font-bold text-xl text-foreground">HyggeHub.io</span>
+                </Link>
+              </div>
+              <p className="mt-2 ml-2">© copyright HyggeHub.io {new Date().getFullYear()}. All rights reserved.</p>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 items-start mt-10 sm:mt-0 md:mt-0">
+              <div className="flex justify-center space-y-4 flex-col w-full">
+                <p className="font-bold font-mono text-primary">— Pages</p>
+                <ul className="list-none space-y-4 text-foreground">
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Home</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="/claim">Claim</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="/updates">Updates</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="/sign-in">Sign-in</Link>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex justify-center space-y-4 flex-col">
+                <p className="font-bold font-mono text-primary">— Contacts</p>
+                <ul className="list-none space-y-4 text-foreground">
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Facebook</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Instagram</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Twitter</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">LinkedIn</Link>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex justify-center space-y-4 flex-col">
+                <p className="font-bold font-mono text-primary">— Legal</p>
+                <ul className="list-none space-y-4 text-foreground">
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Privacy Policy</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Terms of Service</Link>
+                  </li>
+                  <li className="list-none hover:underline">
+                    <Link className="transition-colors hover:text-text-neutral-800" href="#">Cookie Policy</Link>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex justify-center space-y-4 flex-col">
+                <h1 className="font-bold font-mono text-primary">— Contacts</h1>
+                <ul className="list-none space-y-4 text-foreground">
+                  <li className="flex gap-2 items-center list-none hover:underline">
+                    <Mail size={16} />
+                    <p>support@hyggehub.io</p>
+                  </li>
+                  <li className="flex gap-2 items-center list-none hover:underline">
+                    <Phone size={16} />
+                    <p>+45 42349115</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

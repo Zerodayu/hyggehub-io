@@ -41,7 +41,7 @@ export default function Page() {
                         </BreadcrumbSeparator>
                         <BreadcrumbItem>
                             <BreadcrumbPage className='font-mono'>
-                                <span className='flex items-center gap-2'>
+                                <span className='flex items-center gap-2 text-primary'>
                                     <Settings2 size={16} />
                                     Shop Profile
                                 </span>
@@ -51,7 +51,7 @@ export default function Page() {
                 </Breadcrumb>
             </div>
             <div className="flex w-full h-0.5 rounded bg-accent shadow-sm" />
-            <div className='flex justify-center items-center w-full'>
+            <div className='flex justify-center items-start w-full'>
                 <OrganizationProfile routing='hash' />
             </div>
         </section>
