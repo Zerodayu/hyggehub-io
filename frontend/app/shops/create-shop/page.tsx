@@ -55,7 +55,7 @@ export default function Page() {
         </div>
         <CreateOrganization
           hideSlug
-          afterCreateOrganizationUrl="/shops"
+          afterCreateOrganizationUrl={`/shops?refresh=${Date.now()}`}
         />
       </div>
     </section>
