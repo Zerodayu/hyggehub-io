@@ -27,6 +27,7 @@ export const metadata: Metadata = {
     'birthday offer notifications',
     'follower marketing tool',
     'Hyggehub io',
+    'hyggehub',
     'notify customers online',
     'customer loyalty SaaS',
     
