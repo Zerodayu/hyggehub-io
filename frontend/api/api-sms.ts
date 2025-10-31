@@ -13,14 +13,17 @@ interface Customer {
  * Send SMS to all users subscribed to a shop
  * @param orgId - The clerk organization ID of the shop
  * @param message - The message body to send
+ * @param senderName - Optional custom sender name
  * @returns The API response
  */
 export async function sendSmsToShopSubscribers({ 
   orgId,
-  message 
+  message,
+  senderName
 }: { 
   orgId: string, 
-  message: string 
+  message: string,
+  senderName?: string
 }) {
   try {
     // First, get all customer phone numbers for this shop
@@ -47,7 +50,8 @@ export async function sendSmsToShopSubscribers({
     // Call the SMS notification endpoint
     const response = await api.post('/api/sms-notif', {
       to: phoneNumbers,
-      body: message
+      body: message,
+      senderName
     });
     
     return response.data;
@@ -64,19 +68,23 @@ export async function sendSmsToShopSubscribers({
  * Send SMS to a specific customer
  * @param phoneNumber - The recipient's phone number
  * @param message - The message body to send
+ * @param senderName - Optional custom sender name
  * @returns The API response
  */
 export async function sendSmsToCustomer({
   phoneNumber,
-  message
+  message,
+  senderName
 }: {
   phoneNumber: string,
-  message: string
+  message: string,
+  senderName?: string
 }) {
   try {
     const response = await api.post('/api/sms-notif', {
       to: phoneNumber,
-      body: message
+      body: message,
+      senderName
     });
     
     return response.data;
