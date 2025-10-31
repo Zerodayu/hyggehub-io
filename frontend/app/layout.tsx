@@ -40,7 +40,16 @@ export const metadata: Metadata = {
   ],
   verification: {
     google: 'R6aYZ5CCHZLgTGtEHN5X0-qHFgTRELLMhd_CsuTZcg4',
-  }
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/HyggeHub-logo.svg' },
+    ],
+    apple: [
+      { url: '/HyggeHub-logo.svg' },
+    ],
+  },
 }
 
 export default function RootLayout({
