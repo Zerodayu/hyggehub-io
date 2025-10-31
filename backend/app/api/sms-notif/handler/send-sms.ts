@@ -1,6 +1,7 @@
 import { Twilio } from "twilio";
 import { withCORS } from "@/cors";
 import { NextRequest, NextResponse } from "next/server";
+import { validateSenderName } from "@/lib/senderNameValidator";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -38,29 +39,16 @@ export async function POST(request: NextRequest) {
 
     // Validate sender name format if provided
     if (senderName) {
-      // Allow only valid characters
-      const formattedSenderName = senderName
-        .replace(/[^A-Za-z0-9\s+\-_&.]/g, '')
-        .trim()
-        .slice(0, 11);
+      const validation = validateSenderName(senderName);
       
-      // Must contain at least one letter
-      if (!formattedSenderName.match(/[A-Za-z]/)) {
+      if (!validation.isValid) {
         return withCORS(NextResponse.json(
-          { error: "Sender name must contain at least one letter" },
+          { error: validation.error },
           { status: 400 }
         ));
       }
 
-      // Validate overall format
-      if (!formattedSenderName.match(/^[A-Za-z0-9\s+\-_&.]{1,11}$/)) {
-        return withCORS(NextResponse.json(
-          { error: "Sender name must be 1-11 characters and can only contain letters, numbers, spaces, and the special characters: + - _ & ." },
-          { status: 400 }
-        ));
-      }
-
-      body.senderName = formattedSenderName;
+      body.senderName = validation.formattedName;
     }
 
     const client = new Twilio(accountSid, authToken);
