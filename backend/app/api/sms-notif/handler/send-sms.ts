@@ -7,6 +7,13 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
 
+// Add interface for request body
+interface SmsRequestBody {
+  to: string;
+  body: string;
+  senderName?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Validate environment variables
@@ -18,7 +25,7 @@ export async function POST(request: NextRequest) {
       ));
     }
 
-    const body = await request.json();
+    const body = await request.json() as SmsRequestBody;
     const { to, body: messageBody, senderName } = body;
 
     // Validate request parameters
@@ -69,13 +76,13 @@ export async function POST(request: NextRequest) {
         senderName: body.senderName,
         message: "SMS sent successfully",
       }));
-    } catch (twilioError: Error | any) {
+    } catch (twilioError: unknown) {
       console.error("Twilio API error:", twilioError);
       return withCORS(NextResponse.json(
         { 
           error: "Twilio API error", 
-          code: twilioError.code,
-          details: twilioError.message 
+          code: (twilioError as Error).name,
+          details: (twilioError as Error).message 
         },
         { status: 500 }
       ));
