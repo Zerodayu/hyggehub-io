@@ -82,8 +82,7 @@ export default function ShopCardSection() {
 
             return sendSmsToShopSubscribers({
                 orgId: organization.id,
-                message: formattedMessage,
-                senderName: orgData?.shop?.shopCode // Add the shopCode as senderName
+                message: formattedMessage
             });
         },
         onSuccess: (data) => {
