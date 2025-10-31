@@ -9,10 +9,10 @@ export function validateSenderName(senderName: string): SenderNameValidationResu
     return { isValid: false, error: "Sender name is required" };
   }
 
-  // Format the sender name
+  // Remove spaces and format the sender name
   const formattedName = senderName
-    .replace(/[^A-Za-z0-9\s+\-_&.]/g, '')
-    .trim()
+    .replace(/\s/g, '') // Remove all whitespace
+    .replace(/[^A-Za-z0-9+\-_&.]/g, '')
     .slice(0, 11);
   
   // Check if it contains at least one letter
@@ -24,10 +24,10 @@ export function validateSenderName(senderName: string): SenderNameValidationResu
   }
 
   // Validate overall format
-  if (!formattedName.match(/^[A-Za-z0-9\s+\-_&.]{1,11}$/)) {
+  if (!formattedName.match(/^[A-Za-z0-9+\-_&.]{1,11}$/)) {
     return { 
       isValid: false, 
-      error: "Sender name must be 1-11 characters and can only contain letters, numbers, spaces, and the special characters: + - _ & ." 
+      error: "Sender name must be 1-11 characters and can only contain letters, numbers, and the special characters: + - _ & ." 
     };
   }
 

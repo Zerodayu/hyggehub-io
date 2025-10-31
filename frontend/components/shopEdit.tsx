@@ -18,9 +18,8 @@ import { useOrganization, useUser } from "@clerk/nextjs"
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getOrg, updateOrgPhoneNo } from '@/api/api-org'
 import { countryCodes } from "@/utils/country-code"
-import { PhoneNumInput } from "./phoneSelector"
 import { Key, Settings2 } from "lucide-react"
-import { removeSpaces } from "@/lib/utils"
+import { validateSenderName } from "@/lib/senderNameValidator"
 import { ToastSuccessPopup, ToastErrorPopup } from "./sonnerShowHandler"
 
 export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void }) {
@@ -42,6 +41,7 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
 
     const originalShopCode = orgCode ?? ""
     const [shopCode, setShopCode] = useState(originalShopCode)
+    const [shopCodeError, setShopCodeError] = useState<string>("")
 
     const [countryCode, setCountryCode] = useState(() => {
         if (orgPhoneNo) {
@@ -79,9 +79,9 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
     const queryClient = useQueryClient()
 
     const mutation = useMutation({
-        mutationFn: async (fullPhoneNo: string) => {
+        mutationFn: async ({ fullPhoneNo, shopCode }: { fullPhoneNo: string, shopCode: string }) => {
             if (!orgId || !userId) throw new Error("Missing orgId or userId")
-            return updateOrgPhoneNo({ orgId, userId, phoneNo: fullPhoneNo, shopCode: shopCode })
+            return updateOrgPhoneNo({ orgId, userId, phoneNo: fullPhoneNo, shopCode })
         },
         onSuccess: () => {
             ToastSuccessPopup({
@@ -98,10 +98,31 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
         }
     })
 
+    const handleShopCodeChange = (value: string) => {
+        const validation = validateSenderName(value)
+        const formattedValue = validation.formattedName || value
+        setShopCode(formattedValue)
+        setShopCodeError(validation.error || "")
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!orgId || !isChanged) return
-        mutation.mutate(`${countryCode}${phoneNo}`)
+
+        // Clear any previous errors
+        setShopCodeError("")
+
+        const validation = validateSenderName(shopCode)
+        if (!validation.isValid) {
+            setShopCodeError(validation.error || "Invalid shop code")
+            return
+        }
+
+        // Use the current shopCode value directly since it's already formatted
+        mutation.mutate({ 
+            fullPhoneNo: `${countryCode}${phoneNo}`,
+            shopCode: shopCode.trim() // Ensure no whitespace
+        })
     }
 
     return (
@@ -131,7 +152,7 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
                         {mutation.isError && <span className="text-xs text-destructive">Error: {mutation.error instanceof Error ? mutation.error.message : "Unknown error"}</span>}
                         <div className="grid gap-3">
                             <Label htmlFor="shop-code-input">
-                                Shop code
+                                Shop code & Sender Name
                                 {originalShopCode && (
                                     <span className="ml-2 text-xs text-muted-foreground">(Current: {originalShopCode})</span>
                                 )}
@@ -139,11 +160,11 @@ export default function ShopEditSheet({ onUpdated }: { onUpdated?: () => void })
                             <div className="relative">
                                 <Input
                                     id="shop-code-input"
-                                    placeholder="Enter shop code"
+                                    placeholder="SAMPLEshop"
                                     type="text"
-                                    className='text-foreground font-mono'
+                                    className={`text-foreground font-mono ${shopCodeError ? 'border-destructive' : ''}`}
                                     value={shopCode}
-                                    onChange={e => setShopCode(removeSpaces(e.target.value))}
+                                    onChange={e => handleShopCodeChange(e.target.value)}
                                 />
                                 <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 peer-disabled:opacity-50">
                                     <Key size={16} aria-hidden="true" />
