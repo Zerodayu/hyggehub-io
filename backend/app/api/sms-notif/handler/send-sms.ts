@@ -36,13 +36,21 @@ export async function POST(request: NextRequest) {
       ));
     }
 
-    // Validate phone number format
-    if (!to.match(/^\+[1-9]\d{1,14}$/)) {
+    // Simplified phone number validation for database numbers
+    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+
+    if (!phoneRegex.test(to)) {
       return withCORS(NextResponse.json(
-        { error: "Invalid phone number format. Must be E.164 format (e.g., +1234567890)" },
+        { 
+          error: "Invalid phone number format. Must be in E.164 format starting with '+' (e.g., +1234567890)",
+          providedNumber: to
+        },
         { status: 400 }
       ));
     }
+
+    // No need for normalization since database numbers are already in correct format
+    body.to = to;
 
     // Validate sender name format if provided
     if (senderName) {
