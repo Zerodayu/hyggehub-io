@@ -7,11 +7,11 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'HyggeHub.io - Notify Your Crowd. Instantly.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#fff',
+    background_color: '#000',
     theme_color: '#fff',
     icons: [
       {
-        src: '/favicon.ico',
+        src: '/HyggeHub-logo.svg',
         sizes: 'any',
         type: 'image/x-icon',
       },
