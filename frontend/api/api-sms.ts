@@ -17,13 +17,13 @@ interface Customer {
  */
 export async function sendSmsToShopSubscribers({ 
   orgId,
-  message 
+  message
 }: { 
   orgId: string, 
-  message: string 
+  message: string
 }) {
   try {
-    // First, get all customer phone numbers for this shop
+    // First, get all customer phone numbers and shop details for this shop
     const orgResponse = await api.get('/api/orgs', {
       headers: {
         'x-clerk-org-id': orgId
@@ -31,6 +31,7 @@ export async function sendSmsToShopSubscribers({
     });
     
     const customers: Customer[] = orgResponse.data.connectedCustomers || [];
+    const shopCode = orgResponse.data.shop?.code;
     
     // Extract phone numbers from customers
     const phoneNumbers = customers
@@ -43,11 +44,19 @@ export async function sendSmsToShopSubscribers({
         message: "No subscribers with phone numbers found" 
       };
     }
+
+    if (!shopCode) {
+      return {
+        success: false,
+        message: "Shop code not found. Please set up a shop code first."
+      };
+    }
     
-    // Call the SMS notification endpoint
+    // Call the SMS notification endpoint with shopCode as senderName
     const response = await api.post('/api/sms-notif', {
       to: phoneNumbers,
-      body: message
+      body: message,
+      senderName: shopCode // Always use shopCode as senderName
     });
     
     return response.data;
@@ -64,19 +73,23 @@ export async function sendSmsToShopSubscribers({
  * Send SMS to a specific customer
  * @param phoneNumber - The recipient's phone number
  * @param message - The message body to send
+ * @param senderName - Optional custom sender name
  * @returns The API response
  */
 export async function sendSmsToCustomer({
   phoneNumber,
-  message
+  message,
+  senderName
 }: {
   phoneNumber: string,
-  message: string
+  message: string,
+  senderName?: string
 }) {
   try {
     const response = await api.post('/api/sms-notif', {
       to: phoneNumber,
-      body: message
+      body: message,
+      senderName
     });
     
     return response.data;

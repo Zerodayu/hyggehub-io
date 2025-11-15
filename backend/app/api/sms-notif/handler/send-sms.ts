@@ -1,0 +1,106 @@
+import { Twilio } from "twilio";
+import { withCORS } from "@/cors";
+import { NextRequest, NextResponse } from "next/server";
+import { validateSenderName } from "@/lib/senderNameValidator";
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
+
+// Add interface for request body
+interface SmsRequestBody {
+  to: string;
+  body: string;
+  senderName?: string;
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    // Validate environment variables
+    if (!accountSid || !authToken || !messagingServiceSid) {
+      console.error("Missing Twilio credentials");
+      return withCORS(NextResponse.json(
+        { error: "Missing required Twilio environment variables" },
+        { status: 500 }
+      ));
+    }
+
+    const body = await request.json() as SmsRequestBody;
+    const { to, body: messageBody, senderName } = body;
+
+    // Validate request parameters
+    if (!to || !messageBody) {
+      return withCORS(NextResponse.json(
+        { error: "Missing required parameters: 'to' or 'body'" },
+        { status: 400 }
+      ));
+    }
+
+    // Simplified phone number validation for database numbers
+    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+
+    if (!phoneRegex.test(to)) {
+      return withCORS(NextResponse.json(
+        { 
+          error: "Invalid phone number format. Must be in E.164 format starting with '+' (e.g., +1234567890)",
+          providedNumber: to
+        },
+        { status: 400 }
+      ));
+    }
+
+    // No need for normalization since database numbers are already in correct format
+    body.to = to;
+
+    // Validate sender name format if provided
+    if (senderName) {
+      const validation = validateSenderName(senderName);
+      
+      if (!validation.isValid) {
+        return withCORS(NextResponse.json(
+          { error: validation.error },
+          { status: 400 }
+        ));
+      }
+
+      body.senderName = validation.formattedName;
+    }
+
+    const client = new Twilio(accountSid, authToken);
+    
+    try {
+      const messageParams = {
+        body: messageBody,
+        to: to,
+        messagingServiceSid,
+        ...(body.senderName && { from: body.senderName })
+      };
+
+      const message = await client.messages.create(messageParams);
+
+      return withCORS(NextResponse.json({
+        success: true,
+        messageSid: message.sid,
+        senderName: body.senderName,
+        message: "SMS sent successfully",
+      }));
+    } catch (twilioError: unknown) {
+      console.error("Twilio API error:", twilioError);
+      return withCORS(NextResponse.json(
+        { 
+          error: "Twilio API error", 
+          code: (twilioError as Error).name,
+          details: (twilioError as Error).message 
+        },
+        { status: 500 }
+      ));
+    }
+
+  } catch (error) {
+    console.error("Error sending SMS:", error);
+    return withCORS(NextResponse.json(
+      { error: "Failed to send SMS", details: (error as Error).message },
+      { status: 500 }
+    ));
+  }
+}

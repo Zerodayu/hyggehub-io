@@ -1,1 +1,1 @@
-export { POST } from "./handler/sendts"
+export { POST } from "./handler/send-sms"
