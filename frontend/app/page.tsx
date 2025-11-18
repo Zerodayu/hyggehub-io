@@ -98,43 +98,7 @@ export default function Page() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 w-full bg-muted/50 scroll-mt-30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <Bell className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Instant Notifications</h3>
-              <p className="text-muted-foreground">Keep your followers informed with real-time alerts about special offers, events, and promotions.</p>
-            </div>
-            <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <Gift className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Birthday Offers</h3>
-              <p className="text-muted-foreground">Automatically send personalized birthday messages and special offers to enhance customer loyalty.</p>
-            </div>
-            <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <Key className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Shop Dashboard</h3>
-              <p className="text-muted-foreground">Manage your shop profile, track follower activity, and oversee all your notification campaigns in one place.</p>
-            </div>
-            <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <Shield className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Secure Platform</h3>
-              <p className="text-muted-foreground">End-to-end encryption and compliance with data privacy regulations for peace of mind.</p>
-            </div>
-            <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <Users className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Follower Management</h3>
-              <p className="text-muted-foreground">Organize customer information and preferences for targeted, personalized messaging.</p>
-            </div>
-            <div className="bg-background p-6 rounded-lg shadow-sm border">
-              <Calendar className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-2">Scheduled Campaigns</h3>
-              <p className="text-muted-foreground">Plan and automate promotional messages or happy hour alerts to be sent at optimal times.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Features />
 
       {/* Pricing Section */}
       <section id="pricing" className="py-20 w-full scroll-mt-30">
@@ -154,9 +118,45 @@ export default function Page() {
   );
 }
 
-export function Features() {
+function Features() {
   return (
-    <div>page</div>
+    <section id="features" className="py-20 w-full bg-muted/50 scroll-mt-30">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-background p-6 rounded-lg shadow-sm border">
+            <Bell className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-bold mb-2">Instant Notifications</h3>
+            <p className="text-muted-foreground">Keep your followers informed with real-time alerts about special offers, events, and promotions.</p>
+          </div>
+          <div className="bg-background p-6 rounded-lg shadow-sm border">
+            <Gift className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-bold mb-2">Birthday Offers</h3>
+            <p className="text-muted-foreground">Automatically send personalized birthday messages and special offers to enhance customer loyalty.</p>
+          </div>
+          <div className="bg-background p-6 rounded-lg shadow-sm border">
+            <Key className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-bold mb-2">Shop Dashboard</h3>
+            <p className="text-muted-foreground">Manage your shop profile, track follower activity, and oversee all your notification campaigns in one place.</p>
+          </div>
+          <div className="bg-background p-6 rounded-lg shadow-sm border">
+            <Shield className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-bold mb-2">Secure Platform</h3>
+            <p className="text-muted-foreground">End-to-end encryption and compliance with data privacy regulations for peace of mind.</p>
+          </div>
+          <div className="bg-background p-6 rounded-lg shadow-sm border">
+            <Users className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-bold mb-2">Follower Management</h3>
+            <p className="text-muted-foreground">Organize customer information and preferences for targeted, personalized messaging.</p>
+          </div>
+          <div className="bg-background p-6 rounded-lg shadow-sm border">
+            <Calendar className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-bold mb-2">Scheduled Campaigns</h3>
+            <p className="text-muted-foreground">Plan and automate promotional messages or happy hour alerts to be sent at optimal times.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
