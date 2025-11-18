@@ -4,6 +4,15 @@ import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import DynamicPricingPlans from "@/components/pricingList";
 import {
+  Stepper,
+  StepperDescription,
+  StepperIndicator,
+  StepperItem,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
+} from "@/components/ui/stepper"
+import {
   Mail,
   Bell,
   Gift,
@@ -16,12 +25,6 @@ import {
   BadgeAlert,
   Phone,
 } from "lucide-react";
-import {
-  Marquee,
-  MarqueeContent,
-  MarqueeFade,
-  MarqueeItem,
-} from "@/components/ui/marquee";
 
 export default function Page() {
 
@@ -32,6 +35,7 @@ export default function Page() {
       <Hero />
       <Partners />
       <Features />
+      <Demo />
       <Pricing />
       <About />
       <Footer />
@@ -136,7 +140,7 @@ function Partners() {
 
   return (
     <section className="flex w-full items-center gap-2 bg-secondary">
-      <p className="font-mono px-4 text-muted-foreground">Our Partners:</p>
+      <p className="px-4 text-muted-foreground">Our Partners:</p>
       {shops.map((shop, id) => (
         <div className="flex w-full items-center justify-center p-2">
           <span key={id}>
@@ -149,40 +153,108 @@ function Partners() {
 }
 
 function Features() {
+  const features = [
+    {
+      name: "Instant Notifications",
+      icon: Bell,
+      description: "Keep your followers informed with real-time alerts about special offers, events, and promotions."
+    },
+    {
+      name: "Birthday Offers",
+      icon: Gift,
+      description: "Automatically send personalized birthday messages and special offers to enhance customer loyalty."
+    },
+    {
+      name: "Shop Dashboard",
+      icon: Key,
+      description: "Manage your shop profile, track follower activity, and oversee all your notification campaigns in one place."
+    },
+    {
+      name: "Secure Platform",
+      icon: Shield,
+      description: "End-to-end encryption and compliance with data privacy regulations for peace of mind."
+    },
+    {
+      name: "Follower Management",
+      icon: Users,
+      description: "Organize customer information and preferences for targeted, personalized messaging."
+    },
+    {
+      name: "Scheduled Campaigns",
+      icon: Calendar,
+      description: "Plan and automate promotional messages or happy hour alerts to be sent at optimal times."
+    },
+  ]
   return (
     <section id="features" className="py-20 w-full bg-muted/50 scroll-mt-30">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-background p-6 rounded-lg shadow-sm border">
-            <Bell className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-bold mb-2">Instant Notifications</h3>
-            <p className="text-muted-foreground">Keep your followers informed with real-time alerts about special offers, events, and promotions.</p>
-          </div>
-          <div className="bg-background p-6 rounded-lg shadow-sm border">
-            <Gift className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-bold mb-2">Birthday Offers</h3>
-            <p className="text-muted-foreground">Automatically send personalized birthday messages and special offers to enhance customer loyalty.</p>
-          </div>
-          <div className="bg-background p-6 rounded-lg shadow-sm border">
-            <Key className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-bold mb-2">Shop Dashboard</h3>
-            <p className="text-muted-foreground">Manage your shop profile, track follower activity, and oversee all your notification campaigns in one place.</p>
-          </div>
-          <div className="bg-background p-6 rounded-lg shadow-sm border">
-            <Shield className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-bold mb-2">Secure Platform</h3>
-            <p className="text-muted-foreground">End-to-end encryption and compliance with data privacy regulations for peace of mind.</p>
-          </div>
-          <div className="bg-background p-6 rounded-lg shadow-sm border">
-            <Users className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-bold mb-2">Follower Management</h3>
-            <p className="text-muted-foreground">Organize customer information and preferences for targeted, personalized messaging.</p>
-          </div>
-          <div className="bg-background p-6 rounded-lg shadow-sm border">
-            <Calendar className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-bold mb-2">Scheduled Campaigns</h3>
-            <p className="text-muted-foreground">Plan and automate promotional messages or happy hour alerts to be sent at optimal times.</p>
+          {features.map((feat, index) => (
+            <div key={index} className="bg-background p-6 rounded-md shadow-sm border">
+              <feat.icon className="h-12 w-12 mb-4 text-primary" />
+              <h3 className="text-xl font-bold mb-2">{feat.name}</h3>
+              <p className="text-muted-foreground">{feat.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Demo() {
+  const steps = [
+    {
+      step: 1,
+      title: "Step One",
+      description: "Create your shop profile",
+    },
+    {
+      step: 2,
+      title: "Step Two",
+      description: "Setup your notification preferences",
+    },
+    {
+      step: 3,
+      title: "Step Two",
+      description: "Let Customers follow your shop through QR code",
+    },
+    {
+      step: 4,
+      title: "Step Three",
+      description: "Start sending notifications to your followers",
+    },
+  ]
+
+  return (
+    <section id="demo" className="py-20 w-full h-[80vh] scroll-mt-30">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold font-mono mb-12">— How It Works</h2>
+        <div className="flex w-full justify-center items-center">
+          <div className="w-full space-y-8 text-center py-50">
+            <Stepper defaultValue={2}>
+              {steps.map(({ step, title, description }) => (
+                <StepperItem
+                  key={step}
+                  step={step}
+                  className="relative flex-1 flex-col!"
+                >
+                  <StepperTrigger className="flex-col gap-3 rounded">
+                    <StepperIndicator />
+                    <div className="space-y-0.5 px-2">
+                      <StepperTitle>{title}</StepperTitle>
+                      <StepperDescription className="max-sm:hidden">
+                        {description}
+                      </StepperDescription>
+                    </div>
+                  </StepperTrigger>
+                  {step < steps.length && (
+                    <StepperSeparator className="absolute inset-x-0 top-3 left-[calc(50%+0.75rem+0.125rem)] -order-1 m-0 -translate-y-1/2 group-data-[orientation=horizontal]/stepper:w-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=horizontal]/stepper:flex-none" />
+                  )}
+                </StepperItem>
+              ))}
+            </Stepper>
           </div>
         </div>
       </div>
@@ -192,7 +264,7 @@ function Features() {
 
 function Pricing() {
   return (
-    <section id="pricing" className="py-20 w-full scroll-mt-30">
+    <section id="pricing" className="py-20 w-full bg-muted/50 scroll-mt-30">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">— Pricing Plans</h2>
         <DynamicPricingPlans />
@@ -204,7 +276,7 @@ function Pricing() {
 
 function About() {
   return (
-    <section id="about" className="py-20 w-full bg-muted/50">
+    <section id="about" className="py-20 w-full">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">— About Us</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
@@ -250,8 +322,8 @@ function About() {
 
 function Footer() {
   return (
-    <footer className="w-full py-12 bg-background border-t">
-      <div className=" px-8 py-20 bg-background w-full relative overflow-hidden">
+    <footer className="w-full py-12">
+      <div className="px-8 py-20 bg-muted/50 w-full relative overflow-hidden">
         <div className=" mx-auto text-sm text-neutral-500 flex sm:flex-row flex-col justify-between items-start md:px-8">
           <div>
             <div className="mr-0 md:mr-4 md:flex mb-4">
