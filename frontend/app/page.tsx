@@ -146,47 +146,7 @@ export default function Page() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 w-full bg-muted/50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold font-mono mb-12">— About Us</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
-            <div>
-              <h3 className="text-2xl font-bold mb-4">Our Story</h3>
-              <p className="mb-4 text-muted-foreground">
-                hyggehub.io was founded in 2023 by a team of local business enthusiasts and tech experts who noticed a gap in the market for effective customer communication in bars, cafés, and local shops.
-              </p>
-              <p className="mb-4 text-muted-foreground">
-                Our mission is to help local businesses enhance customer experience, increase loyalty, and build stronger relationships with their community through effective, personalized notifications.
-              </p>
-              <p className="text-muted-foreground">
-                Today, we serve hundreds of establishments across the country, from small indie cafés to popular bars and local shops, all using our platform to keep their followers informed and engaged.
-              </p>
-            </div>
-            <div className="bg-muted p-8 rounded-lg">
-              <Info className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-bold mb-4">Why Choose hyggehub.io?</h3>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  <span>Built specifically for local businesses</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  <span>99.9% uptime reliability</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  <span>Dedicated customer support team</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  <span>Regular feature updates based on client feedback</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+      <About />
 
       {/* Footer */}
       <Footer />
@@ -206,9 +166,49 @@ export function Pricing() {
   )
 }
 
-export function About() {
+function About() {
   return (
-    <div>page</div>
+    <section id="about" className="py-20 w-full bg-muted/50">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold font-mono mb-12">— About Us</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
+          <div>
+            <h3 className="text-2xl font-bold mb-4">Our Story</h3>
+            <p className="mb-4 text-muted-foreground">
+              hyggehub.io was founded in 2023 by a team of local business enthusiasts and tech experts who noticed a gap in the market for effective customer communication in bars, cafés, and local shops.
+            </p>
+            <p className="mb-4 text-muted-foreground">
+              Our mission is to help local businesses enhance customer experience, increase loyalty, and build stronger relationships with their community through effective, personalized notifications.
+            </p>
+            <p className="text-muted-foreground">
+              Today, we serve hundreds of establishments across the country, from small indie cafés to popular bars and local shops, all using our platform to keep their followers informed and engaged.
+            </p>
+          </div>
+          <div className="bg-muted p-8 rounded-lg">
+            <Info className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-bold mb-4">Why Choose hyggehub.io?</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                <span>Built specifically for local businesses</span>
+              </li>
+              <li className="flex items-start">
+                <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                <span>99.9% uptime reliability</span>
+              </li>
+              <li className="flex items-start">
+                <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                <span>Dedicated customer support team</span>
+              </li>
+              <li className="flex items-start">
+                <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                <span>Regular feature updates based on client feedback</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
