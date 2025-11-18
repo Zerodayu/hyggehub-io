@@ -212,7 +212,7 @@ export function About() {
   )
 }
 
-export function Footer() {
+function Footer() {
   return (
     <footer className="w-full py-12 bg-background border-t">
       <div className=" px-8 py-20 bg-background w-full relative overflow-hidden">
