@@ -22,51 +22,11 @@ export default function Page() {
 
   return (
     <section className="flex flex-col items-center justify-center min-h-screen w-full">
-
-      {/* Navbar */}
       <Navbar />
-
-      <section id="#hero" className="flex h-screen items-center justify-center flex-col text-center px-4">
-
-        <div className="flex self-start justify-center items-center border rounded-full my-4">
-          <span className="text-xs text-primary font-bold font-mono flex items-center justify-center bg-secondary/50 rounded-full px-2 gap-2">
-            <BadgeAlert size={14} className="animate-pulse" />
-            <h1>Updates!</h1>
-          </span>
-          <h1 className="text-xs font-mono font-bold px-2">v0.1 Released!</h1>
-        </div>
-
-        <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold">HyggeHub<span className="text-primary">.io</span></h1>
-        <p className="mb-6 self-center md:self-end font-mono text-primary text-sm md:text-base">Notify Your Crowd. Instantly.</p>
-        <p className="mt-2 text-sm md:text-lg text-muted-foreground max-w-2xl">
-          Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
-        </p>
-        <div className="flex flex-col sm:flex-row mt-6 gap-4">
-          <Link href="/sign-in" className="w-full">
-            <Button className="text-xs font-mono font-bold">
-              <SquareArrowOutUpRight className="h-4 w-4" />
-              Get Started
-            </Button>
-          </Link>
-          <Link href="/updates" className="w-full">
-            <Button variant="outline" className="text-xs font-mono font-bold">
-              <BadgeAlert className="h-4 w-4" />
-              Updates
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Features Section */}
+      <Hero />
       <Features />
-
-      {/* Pricing Section */}
       <Pricing />
-
-      {/* About Section */}
       <About />
-
-      {/* Footer */}
       <Footer />
     </section>
   );
@@ -122,6 +82,41 @@ function Navbar() {
   )
 }
 
+function Hero() {
+  return (
+    <section id="#hero" className="flex h-screen items-center justify-center flex-col text-center px-4">
+
+      <div className="flex self-start justify-center items-center border rounded-full my-4">
+        <span className="text-xs text-primary font-bold font-mono flex items-center justify-center bg-secondary/50 rounded-full px-2 gap-2">
+          <BadgeAlert size={14} className="animate-pulse" />
+          <h1>Updates!</h1>
+        </span>
+        <h1 className="text-xs font-mono font-bold px-2">v0.1 Released!</h1>
+      </div>
+
+      <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold">HyggeHub<span className="text-primary">.io</span></h1>
+      <p className="mb-6 self-center md:self-end font-mono text-primary text-sm md:text-base">Notify Your Crowd. Instantly.</p>
+      <p className="mt-2 text-sm md:text-lg text-muted-foreground max-w-2xl">
+        Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.
+      </p>
+      <div className="flex flex-col sm:flex-row mt-6 gap-4">
+        <Link href="/sign-in" className="w-full">
+          <Button className="text-xs font-mono font-bold">
+            <SquareArrowOutUpRight className="h-4 w-4" />
+            Get Started
+          </Button>
+        </Link>
+        <Link href="/updates" className="w-full">
+          <Button variant="outline" className="text-xs font-mono font-bold">
+            <BadgeAlert className="h-4 w-4" />
+            Updates
+          </Button>
+        </Link>
+      </div>
+    </section>
+  )
+}
+
 function Features() {
   return (
     <section id="features" className="py-20 w-full bg-muted/50 scroll-mt-30">
@@ -164,7 +159,7 @@ function Features() {
   )
 }
 
-export function Pricing() {
+function Pricing() {
   return (
     <section id="pricing" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4">
