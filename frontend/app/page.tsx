@@ -101,13 +101,7 @@ export default function Page() {
       <Features />
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 w-full scroll-mt-30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold font-mono mb-12">— Pricing Plans</h2>
-          <DynamicPricingPlans />
-          <p className="text-center mt-8 text-muted-foreground">All plans include free setup and 24/7 customer support.</p>
-        </div>
-      </section>
+      <Pricing />
 
       {/* About Section */}
       <About />
@@ -162,7 +156,13 @@ function Features() {
 
 export function Pricing() {
   return (
-    <div>page</div>
+    <section id="pricing" className="py-20 w-full scroll-mt-30">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold font-mono mb-12">— Pricing Plans</h2>
+        <DynamicPricingPlans />
+        <p className="text-center mt-8 text-muted-foreground">All plans include free setup and 24/7 customer support.</p>
+      </div>
+    </section>
   )
 }
 
