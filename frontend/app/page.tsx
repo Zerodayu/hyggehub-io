@@ -18,53 +18,13 @@ import {
 } from "lucide-react";
 
 export default function Page() {
-  const navs = [
-    { name: "Features", href: "#features" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "About", href: "#about" },
-  ];
+
 
   return (
     <section className="flex flex-col items-center justify-center min-h-screen w-full">
-      <section className="flex fixed top-0 py-4 z-10">
-        <div className="flex justify-between items-center space-x-4 rounded-full bg-muted-foreground/20 border-2 border-foreground backdrop-blur-sm w-[80vw]">
-          <div className="px-4">
-            <Link href="#hero">
-              <Image src="/HyggeHub-logo.svg" alt="Logo" width={30} height={30} />
-            </Link>
-          </div>
 
-          <div className="hidden lg:flex">
-            {navs.map((nav) => (
-              <Link key={nav.name} href={nav.href}>
-                <Button variant="link" className="font-mono font-bold">
-                  {nav.name}
-                </Button>
-              </Link>
-            ))}
-          </div>
-
-          <div className="bg-foreground rounded-full p-2">
-            <Link href="/claim">
-              <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
-            </Link>
-
-            <span className="hidden lg:inline-flex">
-              <SignedIn>
-                <Link href="/shops">
-                  <Button variant="link" className="font-mono font-bold text-background">Shops</Button>
-                </Link>
-              </SignedIn>
-
-              <SignedOut>
-                <Link href="/sign-in">
-                  <Button variant="link" className="font-mono font-bold text-background">Sign-in</Button>
-                </Link>
-              </SignedOut>
-            </span>
-          </div>
-        </div>
-      </section>
+      {/* Navbar */}
+      <Navbar />
 
       <section id="#hero" className="flex h-screen items-center justify-center flex-col text-center px-4">
 
@@ -110,6 +70,56 @@ export default function Page() {
       <Footer />
     </section>
   );
+}
+
+function Navbar() {
+  const navs = [
+    { name: "Features", href: "#features" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "About", href: "#about" },
+  ];
+
+  return (
+    <section className="flex fixed top-0 py-4 z-10">
+      <div className="flex justify-between items-center space-x-4 rounded-full bg-muted-foreground/20 border-2 border-foreground backdrop-blur-sm w-[80vw]">
+        <div className="px-4">
+          <Link href="#hero">
+            <Image src="/HyggeHub-logo.svg" alt="Logo" width={30} height={30} />
+          </Link>
+        </div>
+
+        <div className="hidden lg:flex">
+          {navs.map((nav) => (
+            <Link key={nav.name} href={nav.href}>
+              <Button variant="link" className="font-mono font-bold">
+                {nav.name}
+              </Button>
+            </Link>
+          ))}
+        </div>
+
+        <div className="bg-foreground rounded-full p-2">
+          <Link href="/claim">
+            <Button variant="link" className="font-mono font-bold text-background">Claim</Button>
+          </Link>
+
+          <span className="hidden lg:inline-flex">
+            <SignedIn>
+              <Link href="/shops">
+                <Button variant="link" className="font-mono font-bold text-background">Shops</Button>
+              </Link>
+            </SignedIn>
+
+            <SignedOut>
+              <Link href="/sign-in">
+                <Button variant="link" className="font-mono font-bold text-background">Sign-in</Button>
+              </Link>
+            </SignedOut>
+          </span>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 function Features() {
