@@ -16,6 +16,12 @@ import {
   BadgeAlert,
   Phone,
 } from "lucide-react";
+import {
+  Marquee,
+  MarqueeContent,
+  MarqueeFade,
+  MarqueeItem,
+} from "@/components/ui/marquee";
 
 export default function Page() {
 
@@ -24,6 +30,7 @@ export default function Page() {
     <section className="flex flex-col items-center justify-center min-h-screen w-full">
       <Navbar />
       <Hero />
+      <Partners />
       <Features />
       <Pricing />
       <About />
@@ -113,6 +120,30 @@ function Hero() {
           </Button>
         </Link>
       </div>
+    </section>
+  )
+}
+
+function Partners() {
+  const shops = [
+    { name: "Café Vendi" },
+    { name: "Café Pronto" },
+    { name: "Bagericaféet" },
+    { name: "Café i København" },
+    { name: "Kaffebar i Malmö" },
+    { name: "Café i Skåne" }
+  ]
+
+  return (
+    <section className="flex w-full items-center gap-2 bg-secondary">
+      <p className="font-mono px-4 text-muted-foreground">Our Partners:</p>
+      {shops.map((shop, id) => (
+        <div className="flex w-full items-center justify-center p-2">
+          <span key={id}>
+            <h1 className="font-mono font-bold text-2xl hover:tracking-widest transition-all duration-500">{shop.name}</h1>
+          </span>
+        </div>
+      ))}
     </section>
   )
 }
