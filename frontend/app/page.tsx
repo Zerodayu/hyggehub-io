@@ -16,6 +16,12 @@ import {
   StepperTrigger,
 } from "@/components/ui/stepper"
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion';
+import {
   Mail,
   Bell,
   Gift,
@@ -40,6 +46,7 @@ export default function Page() {
       <Features />
       <Demo />
       <Pricing />
+      <Faq />
       <About />
       <Footer />
     </section>
@@ -49,7 +56,9 @@ export default function Page() {
 function Navbar() {
   const navs = [
     { name: "Features", href: "#features" },
+    { name: "Setup", href: "#demo" },
     { name: "Pricing", href: "#pricing" },
+    { name: "Faq", href: "#faq" },
     { name: "About", href: "#about" },
   ];
 
@@ -62,7 +71,7 @@ function Navbar() {
           </Link>
         </div>
 
-        <div className="hidden lg:flex">
+        <div className="hidden lg:flex gap-4">
           {navs.map((nav) => (
             <Link key={nav.name} href={nav.href}>
               <Button variant="link" className="font-mono font-bold">
@@ -283,9 +292,41 @@ function Pricing() {
   )
 }
 
+function Faq() {
+  const faqs = [
+    {
+      question: "What is ReUI?",
+      answer: "ReUI provides ready-to-use CRUD examples for developers."
+    },
+    {
+      question: "Who benefits from ReUI?",
+      answer: "Developers looking to save time with pre-built CRUD solutions."
+    },
+    {
+      question: "Why choose ReUI?",
+      answer: "ReUI simplifies development with plug-and-play CRUDs."
+    }
+  ]
+
+  return (
+    <section id="faq" className="py-20 w-full scroll-mt-30">
+      <div className="container mx-auto px-4 flex flex-col items-center">
+        <Accordion type="single" collapsible className="w-full lg:w-[75%]">
+          {faqs.map((faqs, idx) => (
+            <AccordionItem key={idx} value={idx.toString()}>
+              <AccordionTrigger className="text-primary font-mono font-bold">{faqs.question}</AccordionTrigger>
+              <AccordionContent>{faqs.answer}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </section>
+  )
+}
+
 function About() {
   return (
-    <section id="about" className="py-20 w-full">
+    <section id="about" className="py-20 bg-muted/50 w-full">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">— About Us</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
@@ -331,8 +372,8 @@ function About() {
 
 function Footer() {
   return (
-    <footer className="w-full py-12">
-      <div className="px-8 py-20 bg-muted/50 w-full relative overflow-hidden">
+    <footer className="w-full">
+      <div className="px-8 py-20 w-full relative overflow-hidden">
         <div className=" mx-auto text-sm text-neutral-500 flex sm:flex-row flex-col justify-between items-start md:px-8">
           <div>
             <div className="mr-0 md:mr-4 md:flex mb-4">
