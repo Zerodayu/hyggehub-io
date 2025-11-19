@@ -246,29 +246,29 @@ function Demo() {
   ]
 
   return (
-    <section id="demo" className="py-20 w-full h-[80vh] scroll-mt-30">
+    <section id="demo" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">— How It Works</h2>
         <div className="flex w-full justify-center items-center">
-          <div className="w-full space-y-8 text-center py-50">
-            <Stepper defaultValue={2}>
+          <div className="flex w-full space-y-8 items-center justify-center">
+            <Stepper defaultValue={2} orientation="vertical">
               {steps.map(({ step, title, description }) => (
                 <StepperItem
                   key={step}
                   step={step}
-                  className="relative flex-1 flex-col!"
+                  className="relative items-start not-last:flex-1"
                 >
-                  <StepperTrigger className="flex-col gap-3 rounded">
+                  <StepperTrigger className="items-start rounded pb-12 last:pb-0">
                     <StepperIndicator />
-                    <div className="space-y-0.5 px-2">
-                      <StepperTitle>{title}</StepperTitle>
-                      <StepperDescription className="max-sm:hidden">
+                    <div className="mt-0.5 space-y-0.5 px-2 text-left">
+                      <StepperTitle className="font-mono font-bold">{title}</StepperTitle>
+                      <StepperDescription>
                         {description}
                       </StepperDescription>
                     </div>
                   </StepperTrigger>
                   {step < steps.length && (
-                    <StepperSeparator className="absolute inset-x-0 top-3 left-[calc(50%+0.75rem+0.125rem)] -order-1 m-0 -translate-y-1/2 group-data-[orientation=horizontal]/stepper:w-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=horizontal]/stepper:flex-none" />
+                    <StepperSeparator className="absolute inset-y-0 top-[calc(1.5rem+0.125rem)] left-3 -order-1 m-0 -translate-x-1/2 group-data-[orientation=horizontal]/stepper:w-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=horizontal]/stepper:flex-none group-data-[orientation=vertical]/stepper:h-[calc(100%-1.5rem-0.25rem)]" />
                   )}
                 </StepperItem>
               ))}
@@ -341,9 +341,9 @@ function Faq() {
 
 function Cta() {
   return (
-    <section id="cta" className="flex flex-col h-[60vh] py-20 justify-center bg-gradient-to-r from-muted/50 to-background w-full">
+    <section id="cta" className="flex flex-col py-20 justify-center bg-gradient-to-r from-muted/50 to-background w-full">
       <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
-        <h1 className="font-mono text-primary font-bold text-6xl mb-4 max-w-6xl tracking-tighter">Elevate your experience with our premium services</h1>
+        <h1 className="font-mono text-primary font-bold text-4xl md:text-6xl mb-4 max-w-6xl tracking-tighter">Elevate your experience with our premium services</h1>
         <p>Get access to advanced features, priority support, and powerful functions.</p>
       </div>
       <div className="flex gap-2 items-center justify-center my-8">
