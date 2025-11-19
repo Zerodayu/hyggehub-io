@@ -42,7 +42,6 @@ export default function Page() {
     <section className="flex flex-col items-center justify-center min-h-screen w-full">
       <Navbar />
       <Hero />
-      <Partners />
       <Features />
       <Demo />
       <Pricing />
@@ -135,6 +134,9 @@ function Hero() {
             Claim Codes
           </Button>
         </Link>
+      </div>
+      <div className="absolute w-full bottom-0">
+        <Partners />
       </div>
     </section>
   )
