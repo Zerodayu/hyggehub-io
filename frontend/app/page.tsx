@@ -343,7 +343,7 @@ function Faq() {
 
 function Cta() {
   return (
-    <section id="cta" className="flex flex-col py-20 justify-center bg-gradient-to-r from-muted/50 to-background w-full">
+    <section id="cta" className="flex flex-col py-20 justify-center bg-gradient-to-r from-secondary/50 to-background w-full">
       <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
         <h1 className="font-mono text-primary font-bold text-4xl md:text-6xl mb-4 max-w-6xl tracking-tighter">Elevate your experience with our premium services</h1>
         <p>Get access to advanced features, priority support, and powerful functions.</p>
