@@ -20,6 +20,7 @@
   },
   "registries": {
     "@clerk": "https://clerk.com/r/{name}.json",
-    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json"
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json",
+    "@reui": "https://reui.io/r/{name}.json"
   }
 }

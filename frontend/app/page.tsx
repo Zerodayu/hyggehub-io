@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import DynamicPricingPlans from "@/components/pricingList";
+import { Marquee } from '@/components/ui/marquee';
 import {
   Stepper,
   StepperDescription,
@@ -138,16 +141,22 @@ function Partners() {
     { name: "Café i Skåne" }
   ]
 
+  function ShopsMap() {
+    return (
+      <div className="flex w-full items-center justify-between">
+        {shops.map((shop, id) => (
+          <h1 key={id} className="font-mono text-primary font-bold text-2xl mx-18">{shop.name}</h1>
+        ))}
+      </div>
+
+    )
+  }
+
   return (
-    <section className="flex w-full items-center gap-2 bg-secondary">
-      <p className="px-4 text-muted-foreground">Our Partners:</p>
-      {shops.map((shop, id) => (
-        <div className="flex w-full items-center justify-center p-2">
-          <span key={id}>
-            <h1 className="font-mono font-bold text-2xl hover:tracking-widest transition-all duration-500">{shop.name}</h1>
-          </span>
-        </div>
-      ))}
+    <section className="relative flex w-full items-center justify-center bg-secondary">
+      <Marquee repeat={4} className="[--duration:60s] gap-16">
+        <ShopsMap />
+      </Marquee>
     </section>
   )
 }
