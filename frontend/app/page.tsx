@@ -29,7 +29,6 @@ import {
   Shield,
   Users,
   Calendar,
-  Info,
   SquareArrowOutUpRight,
   BadgeAlert,
   Phone,
@@ -47,7 +46,7 @@ export default function Page() {
       <Demo />
       <Pricing />
       <Faq />
-      <About />
+      <Cta />
       <Footer />
     </section>
   );
@@ -59,7 +58,7 @@ function Navbar() {
     { name: "Setup", href: "#demo" },
     { name: "Pricing", href: "#pricing" },
     { name: "Faq", href: "#faq" },
-    { name: "About", href: "#about" },
+    { name: "About", href: "#cta" },
   ];
 
   return (
@@ -310,63 +309,43 @@ function Faq() {
 
   return (
     <section id="faq" className="py-20 w-full scroll-mt-30">
-      <div className="container mx-auto px-4 flex flex-col items-center">
-        <Accordion type="single" collapsible className="w-full lg:w-[75%]">
-          {faqs.map((faqs, idx) => (
-            <AccordionItem key={idx} value={idx.toString()}>
-              <AccordionTrigger className="text-primary font-mono font-bold">{faqs.question}</AccordionTrigger>
-              <AccordionContent>{faqs.answer}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+      <div className="container mx-auto px-4 flex flex-col">
+        <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
+        <div className="flex w-full justify-center items-center">
+          <Accordion type="single" collapsible className="w-full lg:w-[60%]">
+            {faqs.map((faqs, idx) => (
+              <AccordionItem key={idx} value={idx.toString()}>
+                <AccordionTrigger className="text-primary font-mono font-bold">{faqs.question}</AccordionTrigger>
+                <AccordionContent>{faqs.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
       </div>
     </section>
   )
 }
 
-function About() {
+function Cta() {
   return (
-    <section id="about" className="py-20 bg-muted/50 w-full">
-      <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold font-mono mb-12">— About Us</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
-          <div>
-            <h3 className="text-2xl font-bold mb-4">Our Story</h3>
-            <p className="mb-4 text-muted-foreground">
-              hyggehub.io was founded in 2023 by a team of local business enthusiasts and tech experts who noticed a gap in the market for effective customer communication in bars, cafés, and local shops.
-            </p>
-            <p className="mb-4 text-muted-foreground">
-              Our mission is to help local businesses enhance customer experience, increase loyalty, and build stronger relationships with their community through effective, personalized notifications.
-            </p>
-            <p className="text-muted-foreground">
-              Today, we serve hundreds of establishments across the country, from small indie cafés to popular bars and local shops, all using our platform to keep their followers informed and engaged.
-            </p>
-          </div>
-          <div className="bg-muted p-8 rounded-lg">
-            <Info className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-bold mb-4">Why Choose hyggehub.io?</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                <span>Built specifically for local businesses</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                <span>99.9% uptime reliability</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                <span>Dedicated customer support team</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                <span>Regular feature updates based on client feedback</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+    <section id="cta" className="flex flex-col h-[60vh] py-20 justify-center bg-gradient-to-r from-muted/50 to-background w-full">
+      <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
+        <h1 className="font-mono text-primary font-bold text-6xl mb-4 max-w-6xl tracking-tighter">Elevate your experience with our premium services</h1>
+        <p>Get access to advanced features, priority support, and powerful fucntions.</p>
       </div>
-    </section>
+      <div className="flex gap-2 items-center justify-center my-8">
+        <Link href="/sign-in">
+          <Button variant="secondary">
+            Register Now
+          </Button>
+        </Link>
+        <Link href="#pricing">
+          <Button variant="outline">
+            Compare Plans
+          </Button>
+        </Link>
+      </div>
+    </section >
   )
 }
 
