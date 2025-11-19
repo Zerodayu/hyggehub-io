@@ -22,6 +22,7 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import {
+  Tickets,
   Mail,
   Bell,
   Gift,
@@ -128,10 +129,10 @@ function Hero() {
             Get Started
           </Button>
         </Link>
-        <Link href="/updates" className="w-full">
+        <Link href="/claim" className="w-full">
           <Button variant="outline" className="text-xs font-mono font-bold">
-            <BadgeAlert className="h-4 w-4" />
-            Updates
+            <Tickets className="h-4 w-4" />
+            Claim Codes
           </Button>
         </Link>
       </div>
@@ -294,16 +295,28 @@ function Pricing() {
 function Faq() {
   const faqs = [
     {
-      question: "What is ReUI?",
-      answer: "ReUI provides ready-to-use CRUD examples for developers."
+      question: "What is HyggeHub?",
+      answer: "HyggeHub is a notification platform that allows shops and businesses to engage customers with personalized notifications about special offers, birthday deals, happy hour alerts, and new promotions."
     },
     {
-      question: "Who benefits from ReUI?",
-      answer: "Developers looking to save time with pre-built CRUD solutions."
+      question: "How do customers follow my shop?",
+      answer: "Customers can follow your shop by scanning a QR code that you display at your location. Once they scan it, they'll start receiving your notifications about offers and events."
     },
     {
-      question: "Why choose ReUI?",
-      answer: "ReUI simplifies development with plug-and-play CRUDs."
+      question: "What types of notifications can I send?",
+      answer: "You can send various types of notifications including birthday offers, happy hour alerts, special promotions, new deals, and event announcements to keep your followers engaged."
+    },
+    {
+      question: "Is customer data secure?",
+      answer: "Yes, HyggeHub uses end-to-end encryption and complies with data privacy regulations to ensure all customer information is protected and secure."
+    },
+    {
+      question: "Can I schedule notifications in advance?",
+      answer: "Absolutely! You can plan and automate promotional messages or happy hour alerts to be sent at optimal times using our scheduled campaigns feature."
+    },
+    {
+      question: "How do I manage my followers?",
+      answer: "Through the Shop Dashboard, you can organize customer information, track follower activity, manage preferences for targeted messaging, and oversee all your notification campaigns in one place."
     }
   ]
 
@@ -331,7 +344,7 @@ function Cta() {
     <section id="cta" className="flex flex-col h-[60vh] py-20 justify-center bg-gradient-to-r from-muted/50 to-background w-full">
       <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
         <h1 className="font-mono text-primary font-bold text-6xl mb-4 max-w-6xl tracking-tighter">Elevate your experience with our premium services</h1>
-        <p>Get access to advanced features, priority support, and powerful fucntions.</p>
+        <p>Get access to advanced features, priority support, and powerful functions.</p>
       </div>
       <div className="flex gap-2 items-center justify-center my-8">
         <Link href="/sign-in">
