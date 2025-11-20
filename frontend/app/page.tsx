@@ -325,7 +325,7 @@ function Faq() {
   return (
     <section id="faq" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4 flex flex-col">
-        <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
+        <h2 className="text-4xl font-bold font-mono mb-12">— FAQ</h2>
         <div className="flex w-full justify-center items-center">
           <Accordion type="single" collapsible className="w-full lg:w-[60%]">
             {faqs.map((faqs, idx) => (
