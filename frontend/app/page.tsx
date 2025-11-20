@@ -36,18 +36,18 @@ import {
 } from "lucide-react";
 
 export default function Page() {
-
-
   return (
     <section className="flex flex-col items-center justify-center min-h-screen w-full">
       <Navbar />
       <Hero />
-      <Features />
-      <Demo />
-      <Pricing />
-      <Faq />
-      <Cta />
-      <Footer />
+      <div className="w-full [&>section:nth-child(odd)]:bg-muted/50">
+        <Features />
+        <Demo />
+        <Pricing />
+        <Faq />
+        <Cta />
+        <Footer />
+      </div>
     </section>
   );
 }
@@ -206,7 +206,7 @@ function Features() {
     },
   ]
   return (
-    <section id="features" className="py-20 w-full bg-muted/50 scroll-mt-30">
+    <section id="features" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -284,7 +284,7 @@ function Demo() {
 
 function Pricing() {
   return (
-    <section id="pricing" className="py-20 w-full bg-muted/50 scroll-mt-30">
+    <section id="pricing" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">— Pricing Plans</h2>
         <DynamicPricingPlans />
@@ -325,7 +325,7 @@ function Faq() {
   return (
     <section id="faq" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4 flex flex-col">
-        <h2 className="text-4xl font-bold font-mono mb-12">— Features</h2>
+        <h2 className="text-4xl font-bold font-mono mb-12">— FAQ</h2>
         <div className="flex w-full justify-center items-center">
           <Accordion type="single" collapsible className="w-full lg:w-[60%]">
             {faqs.map((faqs, idx) => (
@@ -343,7 +343,7 @@ function Faq() {
 
 function Cta() {
   return (
-    <section id="cta" className="flex flex-col py-20 justify-center bg-gradient-to-r from-secondary/50 to-background w-full">
+    <section id="cta" className="flex flex-col py-20 justify-center w-full">
       <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
         <h1 className="font-mono text-primary font-bold text-4xl md:text-6xl mb-4 max-w-6xl tracking-tighter">Elevate your experience with our premium services</h1>
         <p>Get access to advanced features, priority support, and powerful functions.</p>
