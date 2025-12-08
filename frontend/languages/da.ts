@@ -4,7 +4,6 @@ export const da = {
     setup: "Opsætning",
     pricing: "Priser",
     faq: "FAQ",
-    about: "Om",
     claim: "Indløs",
     shops: "Butikker",
     signIn: "Log ind"
@@ -81,7 +80,7 @@ export const da = {
   },
   pricing: {
     title: "— Prisplaner",
-    supportText: "Alle planer inkluderer gratis opsætning og 24/7 kundesupport."
+    supportText: "Starter Plan har 30 dages gratis prøveperiode"
   },
   faq: {
     title: "— FAQ",
@@ -113,8 +112,8 @@ export const da = {
     ]
   },
   cta: {
-    title: "Forbedre din oplevelse med vores premium-tjenester",
-    description: "Få adgang til avancerede funktioner, prioritetssupport og kraftfulde funktioner.",
+    title: "De første 50 kunder får Growth-planen for evigt til 799 USD! Begrænset tilbud.",
+    description: "Forbedr din oplevelse med vores premium-tjenester",
     registerNow: "Registrer Nu",
     comparePlans: "Sammenlign Planer"
   },

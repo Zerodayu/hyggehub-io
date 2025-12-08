@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { danish } from "@/languages/lang";
+import { danish, english } from "@/languages/lang";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import DynamicPricingPlans from "@/components/pricingList";
@@ -48,8 +48,8 @@ export default function Page() {
         <Features />
         <Demo />
         <Pricing />
-        <Faq />
         <Cta />
+        <Faq />
         <Footer />
       </div>
     </section>
@@ -62,7 +62,6 @@ function Navbar() {
     { name: lang.navbar.setup, href: "#demo" },
     { name: lang.navbar.pricing, href: "#pricing" },
     { name: lang.navbar.faq, href: "#faq" },
-    { name: lang.navbar.about, href: "#cta" },
   ];
 
   return (
@@ -263,7 +262,7 @@ function Cta() {
     <section id="cta" className="flex flex-col py-20 justify-center w-full bg-gradient-to-tr from-secondary/50 to-background">
       <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
         <h1 className="font-mono text-primary font-bold text-4xl md:text-6xl mb-4 max-w-6xl tracking-tighter">{lang.cta.title}</h1>
-        <p>{lang.cta.description}</p>
+        <p className="text-lg font-semibold text-muted-foreground">{lang.cta.description}</p>
       </div>
       <div className="flex gap-2 items-center justify-center my-8">
         <Link href="/sign-in">

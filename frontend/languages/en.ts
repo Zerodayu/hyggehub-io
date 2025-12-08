@@ -4,7 +4,6 @@ export const en = {
     setup: "Setup",
     pricing: "Pricing",
     faq: "Faq",
-    about: "About",
     claim: "Claim",
     shops: "Shops",
     signIn: "Sign-in"
@@ -81,7 +80,7 @@ export const en = {
   },
   pricing: {
     title: "— Pricing Plans",
-    supportText: "All plans include free setup and 24/7 customer support."
+    supportText: "Starter Plan have 30 days free trial"
   },
   faq: {
     title: "— FAQ",
@@ -113,8 +112,8 @@ export const en = {
     ]
   },
   cta: {
-    title: "Elevate your experience with our premium services",
-    description: "Get access to advanced features, priority support, and powerful functions.",
+    title: "First 50 customers get the Growth plan forever at 125 USD! Limited time offer.",
+    description: "Elevate your experience with our premium services",
     registerNow: "Register Now",
     comparePlans: "Compare Plans"
   },
