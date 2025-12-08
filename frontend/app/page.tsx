@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 
 // Language configuration
-const lang = english;
+const lang = danish;
 
 export default function Page() {
   return (
