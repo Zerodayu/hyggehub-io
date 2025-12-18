@@ -15,20 +15,6 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Check if customer with the same phone already exists
-        const existingCustomer = await prisma.customers.findUnique({
-            where: { phone },
-        });
-
-        if (existingCustomer) {
-            return withCORS(
-                Response.json(
-                    { success: false, error: "Customer with this phone already exists" },
-                    { status: 400 }
-                )
-            );
-        }
-
         // Find shop by code
         const shop = await prisma.shops.findUnique({
             where: { code: shopCode },
