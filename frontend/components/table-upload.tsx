@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import {
   CloudUpload,
   Download,
+  FileBracesCorner,
   FileArchiveIcon,
   FileSpreadsheetIcon,
   FileTextIcon,
@@ -191,6 +192,7 @@ export default function TableUpload({
 
   const getFileIcon = (file: File | FileMetadata) => {
     const type = file instanceof File ? file.type : file.type;
+    if (type.includes('csv')) return <FileBracesCorner className="size-4" />;
     if (type.startsWith('image/')) return <ImageIcon className="size-4" />;
     if (type.startsWith('video/')) return <VideoIcon className="size-4" />;
     if (type.startsWith('audio/')) return <HeadphonesIcon className="size-4" />;
@@ -203,6 +205,7 @@ export default function TableUpload({
 
   const getFileTypeLabel = (file: File | FileMetadata) => {
     const type = file instanceof File ? file.type : file.type;
+    if (type.includes('csv')) return 'CSV';
     if (type.startsWith('image/')) return 'Image';
     if (type.startsWith('video/')) return 'Video';
     if (type.startsWith('audio/')) return 'Audio';

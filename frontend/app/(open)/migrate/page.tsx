@@ -51,7 +51,7 @@ export default function Page() {
       </div>
       <div className="flex w-full h-0.5 rounded-full bg-accent shadow-sm" />
       <div className="flex w-content sm:min-w-lg flex-col items-center justify-start gap-6">
-        <TableUpload />
+        <TableUpload accept="text/csv"/>
       </div>
 
     </section>
