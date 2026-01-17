@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { danish, english } from "@/languages/lang";
+import { activeLang } from "@/languages/lang";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import DynamicPricingPlans from "@/components/pricingList";
@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 
 // Language configuration
-const lang = danish;
+const lang = activeLang;
 
 export default function Page() {
   return (
