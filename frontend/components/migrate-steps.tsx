@@ -229,12 +229,12 @@ export default function MigrateSteps() {
           <p className="text-muted-foreground">
             {jsonData?.length} rows with {selectedColumns.size} columns ready to be imported
           </p>
-          <div className="flex gap-2 mt-4 w-full">
-            <Button variant="outline" className='font-semibold w-full' onClick={prevStep}>
+          <div className="flex justify-between gap-2 mt-4 w-full">
+            <Button variant="outline" className='font-semibold' onClick={prevStep}>
               <ArrowLeft />
               Back
             </Button>
-            <Button className='font-semibold w-full'>
+            <Button className='font-semibold'>
               Confirm Import
             </Button>
           </div>
