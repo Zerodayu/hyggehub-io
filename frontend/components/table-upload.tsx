@@ -55,51 +55,6 @@ export default function TableUpload({
   onFilesChange,
   simulateUpload = true,
 }: TableUploadProps) {
-  // Create default files using FileMetadata type
-  // const defaultFiles: FileMetadata[] = [
-  //   {
-  //     id: 'default-doc-1',
-  //     name: 'document.pdf',
-  //     size: 529254,
-  //     type: 'application/pdf',
-  //     url: toAbsoluteUrl('/media/files/document.pdf'),
-  //   },
-  //   {
-  //     id: 'default-doc-2',
-  //     name: 'intro.zip',
-  //     size: 252846,
-  //     type: 'application/zip',
-  //     url: toAbsoluteUrl('/media/files/intro.zip'),
-  //   },
-  //   {
-  //     id: 'default-doc-3',
-  //     name: 'conclusion.xlsx',
-  //     size: 353126,
-  //     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  //     url: toAbsoluteUrl('/media/files/conclusion.xlsx'),
-  //   },
-  //   {
-  //     id: 'default-doc-4',
-  //     name: 'package.json',
-  //     size: 697,
-  //     type: 'application/json',
-  //     url: toAbsoluteUrl('/media/files/package.json'),
-  //   },
-  // ];
-
-  // Convert default files to FileUploadItem format
-  // const defaultUploadFiles: FileUploadItem[] = defaultFiles.map((file) => ({
-  //   id: file.id,
-  //   file: {
-  //     name: file.name,
-  //     size: file.size,
-  //     type: file.type,
-  //   } as File,
-  //   preview: file.url,
-  //   progress: 100,
-  //   status: 'completed' as const,
-  // }));
-
   const [uploadFiles, setUploadFiles] = useState<FileUploadItem[]>([]);
 
   const [
@@ -121,19 +76,15 @@ export default function TableUpload({
     multiple,
     initialFiles: [],
     onFilesChange: (newFiles) => {
-      // Convert to upload items when files change, preserving existing status
       const newUploadFiles = newFiles.map((file) => {
-        // Check if this file already exists in uploadFiles
         const existingFile = uploadFiles.find((existing) => existing.id === file.id);
 
         if (existingFile) {
-          // Preserve existing file status and progress
           return {
             ...existingFile,
-            ...file, // Update any changed properties from the file
+            ...file,
           };
         } else {
-          // New file - set to uploading
           return {
             ...file,
             progress: 0,
@@ -142,18 +93,17 @@ export default function TableUpload({
         }
       });
       setUploadFiles(newUploadFiles);
-      // Remove the direct call here
-      // onFilesChange?.(newFiles);
     },
   });
 
-  // Add useEffect to notify parent component
+  // Call onFilesChange only when upload completes
   useEffect(() => {
-    const completedFiles = uploadFiles
-      .filter(f => f.status === 'completed')
-      .map(({ id, file, preview }) => ({ id, file, preview }));
-    onFilesChange?.(completedFiles);
-  }, [uploadFiles, onFilesChange]);
+    const allCompleted = uploadFiles.length > 0 && uploadFiles.every(f => f.status === 'completed');
+    if (allCompleted) {
+      const completedFiles = uploadFiles.map(({ id, file, preview }) => ({ id, file, preview }));
+      onFilesChange?.(completedFiles);
+    }
+  }, [uploadFiles]); // Remove onFilesChange from dependencies
 
   // Simulate upload progress
   useEffect(() => {
