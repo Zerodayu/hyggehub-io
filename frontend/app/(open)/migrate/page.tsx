@@ -55,9 +55,8 @@ export default function Page() {
       <div className="flex w-full h-0.5 rounded-full bg-accent shadow-sm" />
       {/* breadcrumb end */}
 
-      <div className="flex w-content sm:min-w-lg flex-col items-center justify-start gap-6">
+      <div className="flex w-full px-8 sm:min-w-lg flex-col items-center justify-start gap-6">
         <MigrateSteps />
-        
       </div>
 
     </section>

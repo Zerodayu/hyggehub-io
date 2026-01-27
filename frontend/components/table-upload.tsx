@@ -142,9 +142,18 @@ export default function TableUpload({
         }
       });
       setUploadFiles(newUploadFiles);
-      onFilesChange?.(newFiles);
+      // Remove the direct call here
+      // onFilesChange?.(newFiles);
     },
   });
+
+  // Add useEffect to notify parent component
+  useEffect(() => {
+    const completedFiles = uploadFiles
+      .filter(f => f.status === 'completed')
+      .map(({ id, file, preview }) => ({ id, file, preview }));
+    onFilesChange?.(completedFiles);
+  }, [uploadFiles, onFilesChange]);
 
   // Simulate upload progress
   useEffect(() => {
