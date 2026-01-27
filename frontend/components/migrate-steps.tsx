@@ -229,6 +229,23 @@ export default function MigrateSteps() {
           <p className="text-muted-foreground">
             {jsonData?.length} rows with {selectedColumns.size} columns ready to be imported
           </p>
+          {parsedData && selectedColumns.size > 0 && (
+            <div className="w-full rounded-lg border p-4 bg-muted/50">
+              <h3 className="text-sm font-semibold mb-2">Selected Columns:</h3>
+              <div className="flex flex-wrap gap-2">
+                {parsedData.headers
+                  .filter((_, index) => selectedColumns.has(index))
+                  .map((header, index) => (
+                    <span 
+                      key={index}
+                      className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-md font-medium"
+                    >
+                      {header}
+                    </span>
+                  ))}
+              </div>
+            </div>
+          )}
           <div className="flex justify-between gap-2 mt-4 w-full">
             <Button variant="outline" className='font-semibold' onClick={prevStep}>
               <ArrowLeft />
