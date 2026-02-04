@@ -16,8 +16,19 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { usePapaParse } from 'react-papaparse';
 import { Checkbox } from './ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox"
 
 const steps = [{ title: 'Upload File' }, { title: 'Select Columns' }, { title: 'Validating' }, { title: 'Confirmation' }];
+
+// API-compatible field names based on api-customer.ts
+const apiFields = ['name', 'phone', 'birthday', 'shopCode'] as const;
 
 interface ParsedData {
   headers: string[];
@@ -29,6 +40,7 @@ export default function MigrateSteps() {
   const [uploadedFiles, setUploadedFiles] = useState<FileWithPreview[]>([]);
   const [parsedData, setParsedData] = useState<ParsedData | null>(null);
   const [selectedColumns, setSelectedColumns] = useState<Set<number>>(new Set());
+  const [headerMapping, setHeaderMapping] = useState<Record<string, string>>({});
   const [jsonData, setJsonData] = useState<any[] | null>(null);
   const { readString } = usePapaParse();
 
@@ -80,14 +92,22 @@ export default function MigrateSteps() {
     }
   };
 
+  const handleHeaderMapping = (originalHeader: string, mappedField: string) => {
+    setHeaderMapping(prev => ({
+      ...prev,
+      [originalHeader]: mappedField
+    }));
+  };
+
   const handleValidate = () => {
     if (parsedData) {
       const selectedHeaders = parsedData.headers.filter((_, index) => selectedColumns.has(index));
       const selectedData = parsedData.rows.map(row => {
         const obj: any = {};
-        selectedHeaders.forEach((header, headerIndex) => {
+        selectedHeaders.forEach((header) => {
           const originalIndex = parsedData.headers.indexOf(header);
-          obj[header] = row[originalIndex];
+          const mappedHeader = headerMapping[header] || header;
+          obj[mappedHeader] = row[originalIndex];
         });
         return obj;
       });
@@ -208,19 +228,76 @@ export default function MigrateSteps() {
           )}
         </StepperContent>
 
-        <StepperContent value={3} className="flex flex-col items-center justify-center gap-4">
-          <h1 className='text-2xl font-semibold'>Validating Data</h1>
-          {jsonData && (
-            <div className="w-full">
-              <pre className="bg-muted p-4 rounded-lg overflow-auto max-h-[400px] text-xs">
-                {JSON.stringify(jsonData, null, 2)}
-              </pre>
+        <StepperContent value={3} className="flex flex-col gap-4">
+          <h1 className='text-2xl font-semibold'>Map Column Headers</h1>
+          <p className="text-sm text-muted-foreground">
+            Map your CSV columns to the required API fields
+          </p>
+          <code className='text-destructive text-center underline'>
+            Required: name, phone, birthday
+          </code>
+          
+          {parsedData && (
+            <div className="space-y-4">
+              <div className="rounded-lg border p-4 space-y-4">
+                {parsedData.headers
+                  .filter((_, index) => selectedColumns.has(index))
+                  .map((header, index) => (
+                    <div key={index} className="flex items-center justify-center gap-4">
+                      <div className="w-1/3 font-medium">{header}</div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">→</span>
+                      </div>
+                      <div className="w-1/2">
+                        <Combobox
+                          items={apiFields}
+                          value={headerMapping[header] || header}
+                          onValueChange={(value) => handleHeaderMapping(header, value as string)}
+                        >
+                          <ComboboxInput placeholder="Select API field" />
+                          <ComboboxContent>
+                            <ComboboxEmpty>No matching field.</ComboboxEmpty>
+                            <ComboboxList>
+                              {(item) => (
+                                <ComboboxItem key={item} value={item}>
+                                  {item}
+                                </ComboboxItem>
+                              )}
+                            </ComboboxList>
+                          </ComboboxContent>
+                        </Combobox>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <div className="rounded-sm border p-4 bg-muted/50">
+                <h3 className="text-sm font-semibold mb-2">Preview:</h3>
+                <pre className="text-xs overflow-auto max-h-[200px]">
+                  {JSON.stringify(
+                    parsedData.rows.slice(0, 1).map(row => {
+                      const obj: any = {};
+                      parsedData.headers
+                        .filter((_, index) => selectedColumns.has(index))
+                        .forEach((header) => {
+                          const originalIndex = parsedData.headers.indexOf(header);
+                          const mappedHeader = headerMapping[header] || header;
+                          obj[mappedHeader] = row[originalIndex];
+                        });
+                      return obj;
+                    }),
+                    null,
+                    2
+                  )}
+                </pre>
+              </div>
+
               <div className="flex justify-between gap-2 mt-4 w-full">
                 <Button variant="ghost" className='font-semibold' onClick={prevStep}>
                   <ArrowLeft />
                   Back
                 </Button>
-                <Button variant="outline" className='font-semibold' onClick={nextStep}>
+                <Button variant="outline" className='font-semibold' onClick={handleValidate}>
                   Next
                   <ArrowRight />
                 </Button>
