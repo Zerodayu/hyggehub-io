@@ -53,7 +53,7 @@ export default function Page() {
             <div className="flex w-full h-0.5 rounded-full bg-accent shadow-sm" />
             <div className='flex justify-center items-center w-[80vw]'>
                 <PricingTable
-                    forOrganizations
+                    for='organization'
                     ctaPosition="bottom"
                     newSubscriptionRedirectUrl={`/shops/${slug}`}
                 />
