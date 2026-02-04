@@ -131,6 +131,7 @@ export default function MigrateSteps() {
         <StepperContent value={2} className="flex flex-col gap-4">
           <h1 className='text-2xl font-semibold'>Select Columns</h1>
           <p className="text-sm text-muted-foreground">Choose which columns to include in the import</p>
+          <code className='text-destructive text-center underline'>Required: Name, Phone, Bday</code>
           {parsedData && (
             <>
               <div className="flex items-center gap-2 mb-2">
