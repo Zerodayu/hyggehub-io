@@ -8,11 +8,13 @@ const isPublicRoute = createRouteMatcher([
   '/(open)/(.*)'  // Added the dynamic [open] route pattern
 ])
 
-export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    await auth.protect()
-  }
-})
+export default function proxy() {
+  return clerkMiddleware(async (auth, req) => {
+    if (!isPublicRoute(req)) {
+      await auth.protect()
+    }
+  })
+}
 
 export const config = {
   matcher: [
