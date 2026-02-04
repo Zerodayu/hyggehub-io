@@ -9,7 +9,7 @@ export default function proxy(req: NextRequest) {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, x-api-key, x-clerk-user-id, x-clerk-org-id',
+        'Access-Control-Allow-Headers': 'Content-Type, x-api-key, x-clerk-user-id, x-clerk-org-id, x-vercel-protection-bypass'
       },
     });
   }
