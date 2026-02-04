@@ -97,6 +97,10 @@ export default function MigrateSteps() {
     }
   };
 
+  const handleConfirmImport = () => {
+    console.log('Selected JSON data:', jsonData);
+  };
+
   return (
     <Stepper value={currentStep} className="space-y-8 w-full">
       <StepperNav className="gap-3.5 mb-15">
@@ -252,7 +256,7 @@ export default function MigrateSteps() {
               <ArrowLeft />
               Back
             </Button>
-            <Button className='font-semibold'>
+            <Button className='font-semibold' onClick={handleConfirmImport}>
               Confirm Import
             </Button>
           </div>
