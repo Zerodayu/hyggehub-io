@@ -76,7 +76,7 @@ export function UpgradePlan() {
       <p className='mb-4 text-center'>To access this feature, please upgrade your plan. Choose the plan that best fits your needs and enjoy additional benefits and features.</p>
       <p className='mb-8 text-center'>Click on a plan below to proceed with the upgrade process.</p>
       <PricingTable
-        forOrganizations
+        for='organization'
         newSubscriptionRedirectUrl={`/shops/${slug}`}
       />
     </div>
