@@ -24,24 +24,30 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox"
+import { countryCodes } from '@/utils/country-code';
 
 const steps = [{ title: 'Upload File' }, { title: 'Select Columns' }, { title: 'Validating' }, { title: 'Confirmation' }];
 
 // API-compatible field names based on api-customer.ts
-const apiFields = ['name', 'phone', 'birthday', 'shopCode'] as const;
+const apiFields = ['name', 'phone', 'birthday'] as const;
 
 interface ParsedData {
   headers: string[];
   rows: any[][];
 }
 
-export default function MigrateSteps() {
+interface MigrateStepsProps {
+  shopCode?: string | null;
+}
+
+export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [uploadedFiles, setUploadedFiles] = useState<FileWithPreview[]>([]);
   const [parsedData, setParsedData] = useState<ParsedData | null>(null);
   const [selectedColumns, setSelectedColumns] = useState<Set<number>>(new Set());
   const [headerMapping, setHeaderMapping] = useState<Record<string, string>>({});
   const [jsonData, setJsonData] = useState<any[] | null>(null);
+  const [phoneCountryCode, setPhoneCountryCode] = useState(countryCodes[0].value);
   const { readString } = usePapaParse();
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 4))
@@ -99,6 +105,14 @@ export default function MigrateSteps() {
     }));
   };
 
+  // Check if all selected headers are mapped
+  const areAllHeadersMapped = () => {
+    if (!parsedData) return false;
+    
+    const selectedHeaders = parsedData.headers.filter((_, index) => selectedColumns.has(index));
+    return selectedHeaders.every(header => headerMapping[header] && headerMapping[header].trim() !== '');
+  };
+
   const handleValidate = () => {
     if (parsedData) {
       const selectedHeaders = parsedData.headers.filter((_, index) => selectedColumns.has(index));
@@ -107,8 +121,19 @@ export default function MigrateSteps() {
         selectedHeaders.forEach((header) => {
           const originalIndex = parsedData.headers.indexOf(header);
           const mappedHeader = headerMapping[header] || header;
-          obj[mappedHeader] = row[originalIndex];
+          // Add country code prefix to phone numbers
+          if (mappedHeader === 'phone') {
+            const phoneValue = row[originalIndex];
+            const cleanedPhone = phoneValue.replace(/\D/g, '').replace(/^0+/, '');
+            obj[mappedHeader] = `${phoneCountryCode}${cleanedPhone}`;
+          } else {
+            obj[mappedHeader] = row[originalIndex];
+          }
         });
+        // Add shopCode to each object
+        if (shopCode) {
+          obj.shopCode = shopCode;
+        }
         return obj;
       });
       
@@ -118,6 +143,7 @@ export default function MigrateSteps() {
   };
 
   const handleConfirmImport = () => {
+    console.log('Shop Code:', shopCode);
     console.log('Selected JSON data:', jsonData);
   };
 
@@ -239,6 +265,31 @@ export default function MigrateSteps() {
           
           {parsedData && (
             <div className="space-y-4">
+              {/* Country Code Selector for Phone */}
+              <div className="rounded-lg border p-4 bg-muted/10">
+                <label className="text-sm font-medium mb-2 block">Select Country Code for Phone Numbers</label>
+                <Combobox
+                  items={countryCodes.map(c => c.value)}
+                  value={phoneCountryCode}
+                  onValueChange={(value) => setPhoneCountryCode(value as string)}
+                >
+                  <ComboboxInput placeholder="Select country code" />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No matching country.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item) => {
+                        const code = countryCodes.find(c => c.value === item);
+                        return (
+                          <ComboboxItem key={item} value={item}>
+                            {code?.label}
+                          </ComboboxItem>
+                        );
+                      }}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
+
               <div className="rounded-lg border p-4 space-y-4">
                 {parsedData.headers
                   .filter((_, index) => selectedColumns.has(index))
@@ -251,7 +302,7 @@ export default function MigrateSteps() {
                       <div className="w-1/2">
                         <Combobox
                           items={apiFields}
-                          value={headerMapping[header] || header}
+                          value={headerMapping[header] || ''}
                           onValueChange={(value) => handleHeaderMapping(header, value as string)}
                         >
                           <ComboboxInput placeholder="Select API field" />
@@ -282,7 +333,13 @@ export default function MigrateSteps() {
                         .forEach((header) => {
                           const originalIndex = parsedData.headers.indexOf(header);
                           const mappedHeader = headerMapping[header] || header;
-                          obj[mappedHeader] = row[originalIndex];
+                          if (mappedHeader === 'phone') {
+                            const phoneValue = row[originalIndex];
+                            const cleanedPhone = phoneValue.replace(/\D/g, '').replace(/^0+/, '');
+                            obj[mappedHeader] = `${phoneCountryCode}${cleanedPhone}`;
+                          } else {
+                            obj[mappedHeader] = row[originalIndex];
+                          }
                         });
                       return obj;
                     }),
@@ -297,7 +354,12 @@ export default function MigrateSteps() {
                   <ArrowLeft />
                   Back
                 </Button>
-                <Button variant="outline" className='font-semibold' onClick={handleValidate}>
+                <Button 
+                  variant="outline" 
+                  className='font-semibold' 
+                  onClick={handleValidate}
+                  disabled={!areAllHeadersMapped()}
+                >
                   Next
                   <ArrowRight />
                 </Button>

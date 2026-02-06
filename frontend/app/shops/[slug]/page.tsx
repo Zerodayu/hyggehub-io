@@ -1,36 +1,33 @@
-
-
 import { notFound } from "next/navigation";
 import ShopCardSection from "@/components/shopCardSection";
 import ShopUsersDay from "@/components/shopUsersDay";
 import { auth } from '@clerk/nextjs/server'
 import ShopNavbar from "@/components/shopNavbar";
 import ShopEditSheet from "@/components/shopEdit";
-import { getOrg } from '@/api/api-org';
 import FollowersList from "@/components/followersPopup";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CheckPlanHandle } from '@/components/checkPlan';
 import QrDownload from "@/components/downloadQr";
 import { Key, Phone, ArrowLeft, BadgeInfo } from "lucide-react"
+import { getShopData } from "@/lib/server/shop";
 
 export default async function Page({
     params,
 }: {
     params: Promise<{ slug: string }>;
 }) {
-    const { orgSlug, orgId } = await auth()
+    const { orgSlug } = await auth()
     const { slug } = await params
 
     if (slug !== orgSlug) {
         return notFound()
     }
 
-    // Fetch shop metadata server-side
-    const orgData = orgId ? await getOrg(orgId) : null;
-    // const shopNum = orgData?.shop?.shopNum;
-    const shopCode = orgData?.shop?.code;
-    const shopName = orgData?.shop?.name;
+    // Fetch shop data using the server function
+    const shopData = await getShopData();
+    const shopCode = shopData?.shopCode;
+    const shopName = shopData?.shopName;
 
     return (
         <CheckPlanHandle>

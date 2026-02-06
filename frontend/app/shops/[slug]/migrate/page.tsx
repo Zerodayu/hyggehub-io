@@ -12,11 +12,13 @@ import { Button } from '@/components/ui/button'
 import { useRouter, useParams } from 'next/navigation'
 import { ChevronRight, Store, Ungroup } from 'lucide-react'
 import MigrateSteps from "@/components/migrate-steps"
+import { useShop } from '@/hooks/contexts/shop-context';
 
-export default function Page() {
+export default async function Page() {
   const router = useRouter();
   const params = useParams();
   const slug = params.slug as string;
+  const { shopCode, shopName } = useShop();
 
   return (
     <section className="flex flex-col items-center justify-start min-h-screen p-6 gap-6">
@@ -55,7 +57,7 @@ export default function Page() {
       {/* breadcrumb end */}
 
       <div className="flex w-full px-8 sm:min-w-lg flex-col items-center justify-start gap-6">
-        <MigrateSteps />
+        <MigrateSteps shopCode={shopCode}/>
       </div>
 
     </section>
