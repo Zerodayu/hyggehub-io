@@ -16,6 +16,10 @@ export default function ShopNavbar({ slug }: ShopNavbarProps) {
             title: "Pricing",
             href: `/shops/${slug}/plans`
         },
+        {
+            title: "Migrate",
+            href: `/shops/${slug}/migrate`
+        },
     ]
     return (
         <section className="fixed py-6 px-8 z-10">
