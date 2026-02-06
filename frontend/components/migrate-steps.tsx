@@ -55,13 +55,13 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
 
   const handleFilesChange = useCallback(async (files: FileWithPreview[]) => {
     setUploadedFiles(files);
-    
+
     if (files.length > 0) {
       const file = files[0].file;
-      
+
       if (file instanceof File) {
         const text = await file.text();
-        
+
         readString(text, {
           header: false,
           skipEmptyLines: true,
@@ -108,7 +108,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
   // Check if all selected headers are mapped
   const areAllHeadersMapped = () => {
     if (!parsedData) return false;
-    
+
     const selectedHeaders = parsedData.headers.filter((_, index) => selectedColumns.has(index));
     return selectedHeaders.every(header => headerMapping[header] && headerMapping[header].trim() !== '');
   };
@@ -136,7 +136,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
         }
         return obj;
       });
-      
+
       setJsonData(selectedData);
       nextStep();
     }
@@ -185,7 +185,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
           {parsedData && (
             <>
               <div className="flex items-center gap-2 mb-2">
-                <Checkbox 
+                <Checkbox
                   checked={selectedColumns.size === parsedData.headers.length}
                   onCheckedChange={handleSelectAll}
                 />
@@ -193,7 +193,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                   Select All ({selectedColumns.size}/{parsedData.headers.length} selected)
                 </span>
               </div>
-              
+
               <div className="rounded-lg border max-h-[400px] overflow-auto">
                 <Table>
                   <TableHeader>
@@ -201,7 +201,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                       {parsedData.headers.map((header, index) => (
                         <TableHead key={index}>
                           <div className="flex items-center gap-2">
-                            <Checkbox 
+                            <Checkbox
                               checked={selectedColumns.has(index)}
                               onCheckedChange={() => handleColumnToggle(index)}
                             />
@@ -215,7 +215,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                     {parsedData.rows.slice(0, 5).map((row, rowIndex) => (
                       <TableRow key={rowIndex}>
                         {row.map((cell, cellIndex) => (
-                          <TableCell 
+                          <TableCell
                             key={cellIndex}
                             className={!selectedColumns.has(cellIndex) ? 'opacity-30' : ''}
                           >
@@ -240,9 +240,9 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                   <ArrowLeft />
                   Back
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className='font-semibold' 
+                <Button
+                  variant="outline"
+                  className='font-semibold'
                   onClick={handleValidate}
                   disabled={selectedColumns.size === 0}
                 >
@@ -262,7 +262,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
           <code className='text-destructive text-center underline'>
             Required: name, phone, birthday
           </code>
-          
+
           {parsedData && (
             <div className="space-y-4">
               {/* Country Code Selector for Phone */}
@@ -354,9 +354,9 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                   <ArrowLeft />
                   Back
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className='font-semibold' 
+                <Button
+                  variant="outline"
+                  className='font-semibold'
                   onClick={handleValidate}
                   disabled={!areAllHeadersMapped()}
                 >
@@ -380,7 +380,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                 {parsedData.headers
                   .filter((_, index) => selectedColumns.has(index))
                   .map((header, index) => (
-                    <span 
+                    <span
                       key={index}
                       className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-md font-medium"
                     >
