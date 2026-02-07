@@ -25,6 +25,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox"
 import { countryCodes } from '@/utils/country-code';
+import { claimShopCode } from "@/api/api-customer"; // Import the claimShopCode function
 
 const steps = [{ title: 'Upload File' }, { title: 'Select Columns' }, { title: 'Validating' }, { title: 'Confirmation' }];
 
@@ -142,9 +143,20 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
     }
   };
 
-  const handleConfirmImport = () => {
-    console.log('Shop Code:', shopCode);
-    console.log('Selected JSON data:', jsonData);
+  const handleConfirmImport = async () => {
+    if (jsonData) {
+      try {
+        // Send the entire array instead of just the first item
+        const response = await claimShopCode({
+          customers: jsonData, // Pass all customers
+          shopCode: shopCode || '',
+        });
+        console.log('Import successful:', response);
+      } catch (error) {
+        console.log(jsonData)
+        console.error('Error during import:', error);
+      }
+    }
   };
 
   return (
@@ -326,7 +338,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                 <h3 className="text-sm font-semibold mb-2">Preview:</h3>
                 <pre className="text-xs overflow-auto max-h-[200px]">
                   {JSON.stringify(
-                    parsedData.rows.slice(0, 1).map(row => {
+                    parsedData.rows.map(row => {
                       const obj: any = {};
                       parsedData.headers
                         .filter((_, index) => selectedColumns.has(index))

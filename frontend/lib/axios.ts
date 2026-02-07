@@ -5,9 +5,9 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    "Access-Control-Allow-Origin": "*",
+    // "Access-Control-Allow-Origin": "*",
     "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
-    "x-vercel-protection-bypass": process.env.VERCEL_AUTOMATION_BYPASS_SECRET || ""
+    "x-vercel-protection-bypass": process.env.VERCEL_AUTOMATION_BYPASS_SECRET!
   },
 });
 

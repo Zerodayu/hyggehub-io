@@ -81,9 +81,11 @@ export default function Page() {
         const formattedPhone = formatToInternational(countryCode, phoneNo);
 
         mutation.mutate({
-            name,
-            phone: formattedPhone,
-            birthday: formatDateForDatabase(birthday),
+            customers: {
+                name,
+                phone: formattedPhone,
+                birthday: formatDateForDatabase(birthday),
+            },
             shopCode,
         });
     };
