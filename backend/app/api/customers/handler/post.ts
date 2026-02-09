@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
         // Support both single object and array
         const customersData = Array.isArray(body) ? body : [body];
         
+        let skippedCount = 0;
+        
         const results = await Promise.all(
             customersData.map(async ({ name, phone, shopCode, birthday }) => {
                 if (!name || !phone || !shopCode) {
@@ -22,6 +24,24 @@ export async function POST(req: NextRequest) {
 
                 if (!shop) {
                     return { success: false, error: "Shop code does not exist" };
+                }
+
+                // Check if customer with same name and phone already exists and is subscribed to this shop
+                const existingCustomer = await prisma.customers.findFirst({
+                    where: {
+                        name,
+                        phone,
+                        shops: {
+                            some: {
+                                shopId: shop.clerkOrgId
+                            }
+                        }
+                    }
+                });
+
+                if (existingCustomer) {
+                    skippedCount++;
+                    return { success: true, skipped: true };
                 }
 
                 // Create new customer
@@ -45,10 +65,15 @@ export async function POST(req: NextRequest) {
             })
         );
 
+        const message = skippedCount > 0 
+            ? `Customers subscribed successfully (skipped ${skippedCount})`
+            : "Customers subscribed successfully";
+
         return withCORS(
             Response.json({
                 success: true,
                 customers: results,
+                message,
             }, { status: 201 })
         );
     } catch (err: string | unknown) {
