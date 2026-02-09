@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/combobox"
 import { countryCodes } from '@/utils/country-code';
 import { claimShopCode } from "@/api/api-customer"; // Import the claimShopCode function
+import { ToastSuccessPopup, ToastErrorPopup } from "@/components/sonnerShowHandler";
+import { useQueryClient } from "@tanstack/react-query";
 
 const steps = [{ title: 'Upload File' }, { title: 'Select Columns' }, { title: 'Validating' }, { title: 'Confirmation' }];
 
@@ -49,7 +51,9 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
   const [headerMapping, setHeaderMapping] = useState<Record<string, string>>({});
   const [jsonData, setJsonData] = useState<any[] | null>(null);
   const [phoneCountryCode, setPhoneCountryCode] = useState(countryCodes[0].value);
+  const [isImporting, setIsImporting] = useState(false);
   const { readString } = usePapaParse();
+  const queryClient = useQueryClient();
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 4))
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1))
@@ -145,16 +149,34 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
 
   const handleConfirmImport = async () => {
     if (jsonData) {
+      setIsImporting(true);
       try {
-        // Send the entire array instead of just the first item
         const response = await claimShopCode({
-          customers: jsonData, // Pass all customers
+          customers: jsonData,
           shopCode: shopCode || '',
         });
-        console.log('Import successful:', response);
-      } catch (error) {
-        console.log(jsonData)
+        
+        ToastSuccessPopup({
+          queryClient,
+          orgId: undefined,
+          message: response?.message || 'Import successful!',
+        });
+
+        // Reset form after successful import
+        setUploadedFiles([]);
+        setParsedData(null);
+        setSelectedColumns(new Set());
+        setHeaderMapping({});
+        setJsonData(null);
+        setCurrentStep(1);
+      } catch (error: any) {
         console.error('Error during import:', error);
+        
+        ToastErrorPopup({
+          message: error?.response?.data?.error || 'Failed to import customers.',
+        });
+      } finally {
+        setIsImporting(false);
       }
     }
   };
@@ -403,12 +425,12 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
             </div>
           )}
           <div className="flex justify-between gap-2 mt-4 w-full">
-            <Button variant="outline" className='font-semibold' onClick={prevStep}>
+            <Button variant="outline" className='font-semibold' onClick={prevStep} disabled={isImporting}>
               <ArrowLeft />
               Back
             </Button>
-            <Button className='font-semibold' onClick={handleConfirmImport}>
-              Confirm Import
+            <Button className='font-semibold' onClick={handleConfirmImport} disabled={isImporting}>
+              {isImporting ? 'Importing...' : 'Confirm Import'}
             </Button>
           </div>
         </StepperContent>
