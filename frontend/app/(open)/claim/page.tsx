@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useId, useState } from "react";
 import { ChevronsUpDown, Check, Key, Ticket, Send } from "lucide-react";
-import { cn, filterNumbers, removeSpaces } from "@/lib/utils";
-import { countryCodes } from "@/utils/country-code";
+import { cn, removeSpaces } from "@/lib/utils";
+import { countryCodes, formatForDisplay, formatToInternational, validatePhoneNumber, getMaxLength } from "@/utils/country-code";
 import CalendarPickerInput from '@/components/calendarPicker';
 import { formatDateForDatabase } from '@/utils/save-as-date';
 import {
@@ -68,10 +68,24 @@ export default function Page() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // Validate phone number before submitting
+        if (!validatePhoneNumber(phoneNo, countryCode)) {
+            ToastErrorPopup({
+                message: "Please enter a valid phone number.",
+            });
+            return;
+        }
+
+        // Format phone number for database
+        const formattedPhone = formatToInternational(countryCode, phoneNo);
+
         mutation.mutate({
-            name,
-            phone: countryCode + phoneNo,
-            birthday: formatDateForDatabase(birthday),
+            customers: {
+                name,
+                phone: formattedPhone,
+                birthday: formatDateForDatabase(birthday),
+            },
             shopCode,
         });
     };
@@ -150,7 +164,6 @@ export default function Page() {
     );
 }
 
-// Update InputStartSelectDemo to accept disabled prop
 const InputStartSelectDemo = ({
     value,
     setValue,
@@ -166,6 +179,25 @@ const InputStartSelectDemo = ({
 }) => {
     const id = useId();
     const [open, setOpen] = useState(false);
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target.value;
+        const country = countryCodes.find(c => c.value === value);
+        
+        if (!country) return;
+        
+        // Extract only digits
+        const digitsOnly = input.replace(/\D/g, '');
+        
+        // Check if digits exceed max length
+        if (digitsOnly.length > country.maxLength) {
+            return;
+        }
+        
+        // Format as user types based on selected country
+        const formatted = formatForDisplay(input, value);
+        setPhoneNo(formatted);
+    };
 
     return (
         <div className="w-full space-y-2 py-2">
@@ -195,9 +227,14 @@ const InputStartSelectDemo = ({
                                     {countryCodes.map((code) => (
                                         <CommandItem
                                             key={code.value}
-                                            value={code.value}
-                                            onSelect={(currentValue) => {
-                                                setValue(currentValue);
+                                            value={code.label}
+                                            onSelect={() => {
+                                                setValue(code.value);
+                                                // Reformat phone number when country changes
+                                                if (phoneNo) {
+                                                    const formatted = formatForDisplay(phoneNo.replace(/\D/g, ''), code.value);
+                                                    setPhoneNo(formatted);
+                                                }
                                                 setOpen(false);
                                             }}
                                             disabled={disabled}
@@ -222,7 +259,7 @@ const InputStartSelectDemo = ({
                     placeholder="Enter number"
                     className="-ms-px rounded-l-none text-foreground font-mono"
                     value={phoneNo}
-                    onChange={(e) => setPhoneNo(filterNumbers(e.target.value))}
+                    onChange={handlePhoneChange}
                     disabled={disabled}
                 />
             </div>

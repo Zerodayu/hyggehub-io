@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack -p 3001",
     "build": "prisma generate && next build --turbopack",
     "start": "next start",
     "lint": "eslint"
@@ -20,7 +20,8 @@
     "react-dom": "^19.2.1",
     "svix": "^1.76.1",
     "tailwind-merge": "^3.3.1",
-    "twilio": "^5.10.2"
+    "twilio": "^5.10.2",
+    "vercel": "^50.10.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -28,6 +29,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9",
     "eslint-config-next": "^16.0.7",
     "prisma": "^6.16.2",

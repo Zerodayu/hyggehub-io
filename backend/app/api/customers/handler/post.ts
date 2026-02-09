@@ -4,57 +4,77 @@ import prisma from "@/prisma/PrismaClient";
 
 export async function POST(req: NextRequest) {
     try {
-        const { name, phone, shopCode, birthday } = await req.json();
+        const body = await req.json();
+        
+        // Support both single object and array
+        const customersData = Array.isArray(body) ? body : [body];
+        
+        let skippedCount = 0;
+        
+        const results = await Promise.all(
+            customersData.map(async ({ name, phone, shopCode, birthday }) => {
+                if (!name || !phone || !shopCode) {
+                    return { success: false, error: "Missing name, phone, or shopCode" };
+                }
 
-        if (!name || !phone || !shopCode) {
-            return withCORS(
-                Response.json(
-                    { success: false, error: "Missing name, phone, or shopCode" },
-                    { status: 400 }
-                )
-            );
-        }
+                // Find shop by code
+                const shop = await prisma.shops.findUnique({
+                    where: { code: shopCode },
+                });
 
-        // Find shop by code
-        const shop = await prisma.shops.findUnique({
-            where: { code: shopCode },
-        });
+                if (!shop) {
+                    return { success: false, error: "Shop code does not exist" };
+                }
 
-        if (!shop) {
-            return withCORS(
-                Response.json(
-                    { success: false, error: "Shop code does not exist" },
-                    { status: 404 }
-                )
-            );
-        }
+                // Check if customer with same name and phone already exists and is subscribed to this shop
+                const existingCustomer = await prisma.customers.findFirst({
+                    where: {
+                        name,
+                        phone,
+                        shops: {
+                            some: {
+                                shopId: shop.clerkOrgId
+                            }
+                        }
+                    }
+                });
 
-        // Create new customer
-        const newCustomer = await prisma.customers.create({
-            data: { 
-                name, 
-                phone,
-                birthday // Add birthday field to the customer record
-            },
-        });
+                if (existingCustomer) {
+                    skippedCount++;
+                    return { success: true, skipped: true };
+                }
 
-        // Link customer to shop via ShopSubscription
-        await prisma.shopSubscription.create({
-            data: {
-                customerId: newCustomer.customerId,
-                shopId: shop.clerkOrgId,
-            },
-        });
+                // Create new customer
+                const newCustomer = await prisma.customers.create({
+                    data: { 
+                        name, 
+                        phone,
+                        birthday // Add birthday field to the customer record
+                    },
+                });
+
+                // Link customer to shop via ShopSubscription
+                await prisma.shopSubscription.create({
+                    data: {
+                        customerId: newCustomer.customerId,
+                        shopId: shop.clerkOrgId,
+                    },
+                });
+
+                return { success: true, customer: newCustomer, shop: shop };
+            })
+        );
+
+        const message = skippedCount > 0 
+            ? `Customers subscribed successfully (skipped ${skippedCount})`
+            : "Customers subscribed successfully";
 
         return withCORS(
             Response.json({
                 success: true,
-                customer: newCustomer,
-                shop: shop,
-                message: "Code claimed successfully",
-            },
-                { status: 201 }
-            )
+                customers: results,
+                message,
+            }, { status: 201 })
         );
     } catch (err: string | unknown) {
         return withCORS(
