@@ -111,13 +111,13 @@ function Hero() {
   return (
     <section id="#hero" className="flex h-screen items-center justify-center flex-col text-center px-4">
 
-      <div className="flex self-start justify-center items-center border rounded-full my-4">
+      <Link href="/updates" className="flex self-start justify-center items-center border rounded-full my-4">
         <span className="text-xs text-primary font-bold font-mono flex items-center justify-center bg-secondary/50 rounded-full px-2 gap-2">
           <BadgeAlert size={14} className="animate-pulse" />
           <h1>{lang.hero.updatesBadge}</h1>
         </span>
         <h1 className="text-xs font-mono font-bold px-2">{lang.hero.updateVersion}</h1>
-      </div>
+      </Link>
 
       <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold">{lang.hero.title}<span className="text-primary">{lang.hero.titleExtension}</span></h1>
       <p className="mb-6 self-center md:self-end font-mono text-primary text-sm md:text-base">{lang.hero.tagline}</p>
