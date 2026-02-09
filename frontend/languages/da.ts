@@ -10,7 +10,7 @@ export const da = {
   },
   hero: {
     updatesBadge: "Opdateringer!",
-    updateVersion: "v0.1 Udgivet!",
+    updateVersion: "CSV Migrationsfunktion tilføjet",
     title: "HyggeHub",
     titleExtension: ".io",
     tagline: "Underret Din Målgruppe. Øjeblikkeligt.",

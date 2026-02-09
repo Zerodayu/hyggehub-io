@@ -10,7 +10,7 @@ export const en = {
   },
   hero: {
     updatesBadge: "Updates!",
-    updateVersion: "v0.1 Released!",
+    updateVersion: "CSV Migration feature added",
     title: "HyggeHub",
     titleExtension: ".io",
     tagline: "Notify Your Crowd. Instantly.",
