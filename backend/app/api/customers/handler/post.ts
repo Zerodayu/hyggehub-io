@@ -3,82 +3,113 @@ import { withCORS } from "@/cors";
 import prisma from "@/prisma/PrismaClient";
 
 export async function POST(req: NextRequest) {
-    try {
-        const body = await req.json();
-        
-        // Support both single object and array
-        const customersData = Array.isArray(body) ? body : [body];
-        
-        let skippedCount = 0;
-        
-        const results = await Promise.all(
-            customersData.map(async ({ name, phone, shopCode, birthday }) => {
-                if (!name || !phone || !shopCode) {
-                    return { success: false, error: "Missing name, phone, or shopCode" };
-                }
+  try {
+    const body = await req.json();
 
-                // Find shop by code
-                const shop = await prisma.shops.findUnique({
-                    where: { code: shopCode },
-                });
+    // Support both single object and array
+    const customersData = Array.isArray(body) ? body : [body];
 
-                if (!shop) {
-                    return { success: false, error: "Shop code does not exist" };
-                }
+    let skippedCount = 0;
 
-                // Check if customer with same name and phone already exists and is subscribed to this shop
-                const existingCustomer = await prisma.customers.findFirst({
-                    where: {
-                        name,
-                        phone,
-                        shops: {
-                            some: {
-                                shopId: shop.clerkOrgId
-                            }
-                        }
-                    }
-                });
+    const results = await Promise.all(
+      customersData.map(async ({ name, phone, shopCode, birthday }) => {
+        if (!name || !phone || !shopCode) {
+          return { success: false, error: "Missing name, phone, or shopCode" };
+        }
 
-                if (existingCustomer) {
-                    skippedCount++;
-                    return { success: true, skipped: true };
-                }
+        // Find shop by code
+        const shop = await prisma.shops.findUnique({
+          where: { code: shopCode },
+        });
 
-                // Create new customer
-                const newCustomer = await prisma.customers.create({
-                    data: { 
-                        name, 
-                        phone,
-                        birthday // Add birthday field to the customer record
-                    },
-                });
+        if (!shop) {
+          return { success: false, error: "Shop code does not exist" };
+        }
 
-                // Link customer to shop via ShopSubscription
-                await prisma.shopSubscription.create({
-                    data: {
-                        customerId: newCustomer.customerId,
-                        shopId: shop.clerkOrgId,
-                    },
-                });
+        // Check if customer with phone already exists (regardless of shop)
+        const existingCustomer = await prisma.customers.findUnique({
+          where: { phone },
+          include: {
+            shops: {
+              where: {
+                shopId: shop.clerkOrgId,
+              },
+            },
+          },
+        });
 
-                return { success: true, customer: newCustomer, shop: shop };
-            })
-        );
+        // If customer exists and is already subscribed to this shop, skip
+        if (existingCustomer && existingCustomer.shops.length > 0) {
+          skippedCount++;
+          return {
+            success: true,
+            skipped: true,
+            message: "Customer already subscribed to this shop",
+          };
+        }
 
-        const message = skippedCount > 0 
-            ? `Customers subscribed successfully (skipped ${skippedCount})`
-            : "Customers subscribed successfully";
+        // If customer exists but not subscribed to this shop, just create subscription
+        if (existingCustomer) {
+          await prisma.shopSubscription.create({
+            data: {
+              customerId: existingCustomer.customerId,
+              shopId: shop.clerkOrgId,
+            },
+          });
+          return {
+            success: true,
+            customer: existingCustomer,
+            shop: shop,
+            message: "Existing customer subscribed to shop",
+          };
+        }
 
-        return withCORS(
-            Response.json({
-                success: true,
-                customers: results,
-                message,
-            }, { status: 201 })
-        );
-    } catch (err: string | unknown) {
-        return withCORS(
-            Response.json({ success: false, error: (err as Error).message || "Internal Server Error" }, { status: 500 })
-        );
-    }
+        // Create new customer
+        const newCustomer = await prisma.customers.create({
+          data: {
+            name,
+            phone,
+            birthday, // Add birthday field to the customer record
+          },
+        });
+
+        // Link customer to shop via ShopSubscription
+        await prisma.shopSubscription.create({
+          data: {
+            customerId: newCustomer.customerId,
+            shopId: shop.clerkOrgId,
+          },
+        });
+
+        return { success: true, customer: newCustomer, shop: shop };
+      }),
+    );
+
+    const message =
+      skippedCount > 0
+        ? `Customers subscribed successfully (skipped ${skippedCount})`
+        : "Customers subscribed successfully";
+
+    return withCORS(
+      Response.json(
+        {
+          success: true,
+          customers: results,
+          message,
+        },
+        { status: 201 },
+      ),
+    );
+  } catch (err: string | unknown) {
+    return withCORS(
+      Response.json(
+        {
+          success: false,
+          error: (err as Error).message || "Internal Server Error",
+        },
+        { status: 500 },
+      ),
+    );
+  }
 }
+
