@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Breadcrumb,
@@ -7,22 +7,21 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Button } from '@/components/ui/button'
-import { useRouter, useParams } from 'next/navigation'
-import { ChevronRight, Store, Ungroup } from 'lucide-react'
-import MigrateSteps from "@/components/migrate-steps"
-import { useShop } from '@/hooks/contexts/shop-context';
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { useRouter, useParams } from "next/navigation";
+import { ChevronRight, Store, Ungroup } from "lucide-react";
+import MigrateSteps from "@/components/migrate-steps";
+import { useShop } from "@/hooks/contexts/shop-context";
 
-export default async function Page() {
+export default function Page() {
   const router = useRouter();
   const params = useParams();
   const slug = params.slug as string;
-  const { shopCode, shopName } = useShop();
+  const { shopCode } = useShop();
 
   return (
     <section className="flex flex-col items-center justify-start min-h-screen p-6 gap-6">
-
       {/* breadcrumb start */}
       <div className="flex w-full items-center justify-start">
         <Breadcrumb>
@@ -31,7 +30,7 @@ export default async function Page() {
               <BreadcrumbLink asChild>
                 <Button
                   variant="link"
-                  className='font-mono text-muted-foreground'
+                  className="font-mono text-muted-foreground"
                   onClick={() => router.push(`/shops/${slug}`)}
                 >
                   <Store />
@@ -43,8 +42,8 @@ export default async function Page() {
               <ChevronRight />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
-              <BreadcrumbPage className='font-mono'>
-                <span className='flex items-center gap-2 text-primary'>
+              <BreadcrumbPage className="font-mono">
+                <span className="flex items-center gap-2 text-primary">
                   <Ungroup size={16} />
                   Migrate
                 </span>
@@ -57,9 +56,8 @@ export default async function Page() {
       {/* breadcrumb end */}
 
       <div className="flex w-full px-8 sm:min-w-lg flex-col items-center justify-start gap-6">
-        <MigrateSteps shopCode={shopCode}/>
+        <MigrateSteps shopCode={shopCode} />
       </div>
-
     </section>
-  )
+  );
 }

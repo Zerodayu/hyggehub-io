@@ -1,17 +1,30 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   formatBytes,
   useFileUpload,
   type FileMetadata,
   type FileWithPreview,
-} from '@/hooks/use-file-upload';
-import { Alert, AlertContent, AlertDescription, AlertIcon, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+} from "@/hooks/use-file-upload";
+import {
+  Alert,
+  AlertContent,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+} from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   CloudUpload,
   Download,
@@ -26,13 +39,13 @@ import {
   TriangleAlert,
   Upload,
   VideoIcon,
-} from 'lucide-react';
-import { toAbsoluteUrl } from '@/lib/helpers';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { toAbsoluteUrl } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
 
 interface FileUploadItem extends FileWithPreview {
   progress: number;
-  status: 'uploading' | 'completed' | 'error';
+  status: "uploading" | "completed" | "error";
   error?: string;
 }
 
@@ -47,9 +60,9 @@ interface TableUploadProps {
 }
 
 export default function TableUpload({
-  maxFiles = 10,
+  maxFiles = 1,
   maxSize = 50 * 1024 * 1024, // 50MB
-  accept = '*',
+  accept = "*",
   multiple = true,
   className,
   onFilesChange,
@@ -77,7 +90,9 @@ export default function TableUpload({
     initialFiles: [],
     onFilesChange: (newFiles) => {
       const newUploadFiles = newFiles.map((file) => {
-        const existingFile = uploadFiles.find((existing) => existing.id === file.id);
+        const existingFile = uploadFiles.find(
+          (existing) => existing.id === file.id,
+        );
 
         if (existingFile) {
           return {
@@ -88,7 +103,7 @@ export default function TableUpload({
           return {
             ...file,
             progress: 0,
-            status: 'uploading' as const,
+            status: "uploading" as const,
           };
         }
       });
@@ -98,9 +113,15 @@ export default function TableUpload({
 
   // Call onFilesChange only when upload completes
   useEffect(() => {
-    const allCompleted = uploadFiles.length > 0 && uploadFiles.every(f => f.status === 'completed');
+    const allCompleted =
+      uploadFiles.length > 0 &&
+      uploadFiles.every((f) => f.status === "completed");
     if (allCompleted) {
-      const completedFiles = uploadFiles.map(({ id, file, preview }) => ({ id, file, preview }));
+      const completedFiles = uploadFiles.map(({ id, file, preview }) => ({
+        id,
+        file,
+        preview,
+      }));
       onFilesChange?.(completedFiles);
     }
   }, [uploadFiles]); // Remove onFilesChange from dependencies
@@ -112,7 +133,7 @@ export default function TableUpload({
     const interval = setInterval(() => {
       setUploadFiles((prev) =>
         prev.map((file) => {
-          if (file.status !== 'uploading') return file;
+          if (file.status !== "uploading") return file;
 
           const increment = Math.random() * 15 + 5; // 5-20% increment
           const newProgress = Math.min(file.progress + increment, 100);
@@ -123,8 +144,10 @@ export default function TableUpload({
             return {
               ...file,
               progress: 100,
-              status: shouldFail ? ('error' as const) : ('completed' as const),
-              error: shouldFail ? 'Upload failed. Please try again.' : undefined,
+              status: shouldFail ? ("error" as const) : ("completed" as const),
+              error: shouldFail
+                ? "Upload failed. Please try again."
+                : undefined,
             };
           }
 
@@ -144,46 +167,58 @@ export default function TableUpload({
   const retryUpload = (fileId: string) => {
     setUploadFiles((prev) =>
       prev.map((file) =>
-        file.id === fileId ? { ...file, progress: 0, status: 'uploading' as const, error: undefined } : file,
+        file.id === fileId
+          ? {
+              ...file,
+              progress: 0,
+              status: "uploading" as const,
+              error: undefined,
+            }
+          : file,
       ),
     );
   };
 
   const getFileIcon = (file: File | FileMetadata) => {
     const type = file instanceof File ? file.type : file.type;
-    if (type.includes('csv')) return <FileBracesCorner className="size-4" />;
-    if (type.startsWith('image/')) return <ImageIcon className="size-4" />;
-    if (type.startsWith('video/')) return <VideoIcon className="size-4" />;
-    if (type.startsWith('audio/')) return <HeadphonesIcon className="size-4" />;
-    if (type.includes('pdf')) return <FileTextIcon className="size-4" />;
-    if (type.includes('word') || type.includes('doc')) return <FileTextIcon className="size-4" />;
-    if (type.includes('excel') || type.includes('sheet')) return <FileSpreadsheetIcon className="size-4" />;
-    if (type.includes('zip') || type.includes('rar')) return <FileArchiveIcon className="size-4" />;
+    if (type.includes("csv")) return <FileBracesCorner className="size-4" />;
+    if (type.startsWith("image/")) return <ImageIcon className="size-4" />;
+    if (type.startsWith("video/")) return <VideoIcon className="size-4" />;
+    if (type.startsWith("audio/")) return <HeadphonesIcon className="size-4" />;
+    if (type.includes("pdf")) return <FileTextIcon className="size-4" />;
+    if (type.includes("word") || type.includes("doc"))
+      return <FileTextIcon className="size-4" />;
+    if (type.includes("excel") || type.includes("sheet"))
+      return <FileSpreadsheetIcon className="size-4" />;
+    if (type.includes("zip") || type.includes("rar"))
+      return <FileArchiveIcon className="size-4" />;
     return <FileTextIcon className="size-4" />;
   };
 
   const getFileTypeLabel = (file: File | FileMetadata) => {
     const type = file instanceof File ? file.type : file.type;
-    if (type.includes('csv')) return 'CSV';
-    if (type.startsWith('image/')) return 'Image';
-    if (type.startsWith('video/')) return 'Video';
-    if (type.startsWith('audio/')) return 'Audio';
-    if (type.includes('pdf')) return 'PDF';
-    if (type.includes('word') || type.includes('doc')) return 'Word';
-    if (type.includes('excel') || type.includes('sheet')) return 'Excel';
-    if (type.includes('zip') || type.includes('rar')) return 'Archive';
-    if (type.includes('json')) return 'JSON';
-    if (type.includes('text')) return 'Text';
-    return 'File';
+    if (type.includes("csv")) return "CSV";
+    if (type.startsWith("image/")) return "Image";
+    if (type.startsWith("video/")) return "Video";
+    if (type.startsWith("audio/")) return "Audio";
+    if (type.includes("pdf")) return "PDF";
+    if (type.includes("word") || type.includes("doc")) return "Word";
+    if (type.includes("excel") || type.includes("sheet")) return "Excel";
+    if (type.includes("zip") || type.includes("rar")) return "Archive";
+    if (type.includes("json")) return "JSON";
+    if (type.includes("text")) return "Text";
+    return "File";
   };
 
   return (
-    <div className={cn('w-full space-y-4', className)}>
+    <div className={cn("w-full space-y-4", className)}>
       {/* Upload Area */}
       <div
         className={cn(
-          'relative rounded-lg border border-dashed p-6 text-center transition-colors',
-          isDragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-muted-foreground/50',
+          "relative rounded-lg border border-dashed p-6 text-center transition-colors",
+          isDragging
+            ? "border-primary bg-primary/5"
+            : "border-muted-foreground/25 hover:border-muted-foreground/50",
         )}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -195,8 +230,10 @@ export default function TableUpload({
         <div className="flex flex-col items-center gap-4">
           <div
             className={cn(
-              'flex h-12 w-12 items-center justify-center rounded-full bg-muted transition-colors',
-              isDragging ? 'border-primary bg-primary/10' : 'border-muted-foreground/25',
+              "flex h-12 w-12 items-center justify-center rounded-full bg-muted transition-colors",
+              isDragging
+                ? "border-primary bg-primary/10"
+                : "border-muted-foreground/25",
             )}
           >
             <Upload className="h-5 w-5 text-muted-foreground" />
@@ -204,7 +241,7 @@ export default function TableUpload({
 
           <div className="space-y-2">
             <p className="text-sm font-medium">
-              Drop files here or{' '}
+              Drop files here or{" "}
               <button
                 type="button"
                 onClick={openFileDialog}
@@ -214,7 +251,8 @@ export default function TableUpload({
               </button>
             </p>
             <p className="text-xs text-muted-foreground">
-              Maximum file size: {formatBytes(maxSize)} • Maximum files: {maxFiles}
+              Maximum file size: {formatBytes(maxSize)} • Maximum files:{" "}
+              {maxFiles}
             </p>
           </div>
         </div>
@@ -224,7 +262,9 @@ export default function TableUpload({
       {uploadFiles.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium">Files ({uploadFiles.length})</h3>
+            <h3 className="text-sm font-medium">
+              Files ({uploadFiles.length})
+            </h3>
             <div className="flex gap-2">
               <Button onClick={openFileDialog} variant="outline" size="sm">
                 <CloudUpload />
@@ -244,7 +284,9 @@ export default function TableUpload({
                   <TableHead className="h-9">Name</TableHead>
                   <TableHead className="h-9">Type</TableHead>
                   <TableHead className="h-9">Size</TableHead>
-                  <TableHead className="h-9 w-[100px] text-end">Actions</TableHead>
+                  <TableHead className="h-9 w-[100px] text-end">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -254,13 +296,16 @@ export default function TableUpload({
                       <div className="flex items-center gap-1">
                         <div
                           className={cn(
-                            'size-8 shrink-0 relative flex items-center justify-center text-muted-foreground/80',
+                            "size-8 shrink-0 relative flex items-center justify-center text-muted-foreground/80",
                           )}
                         >
-                          {fileItem.status === 'uploading' ? (
+                          {fileItem.status === "uploading" ? (
                             <div className="relative">
                               {/* Circular progress background */}
-                              <svg className="size-8 -rotate-90" viewBox="0 0 32 32">
+                              <svg
+                                className="size-8 -rotate-90"
+                                viewBox="0 0 32 32"
+                              >
                                 <circle
                                   cx="16"
                                   cy="16"
@@ -297,8 +342,12 @@ export default function TableUpload({
                         </div>
                         <p className="flex items-center gap-1 truncate text-sm font-medium">
                           {fileItem.file.name}
-                          {fileItem.status === 'error' && (
-                            <Badge variant="destructive" size="sm" appearance="light">
+                          {fileItem.status === "error" && (
+                            <Badge
+                              variant="destructive"
+                              size="sm"
+                              appearance="light"
+                            >
                               Error
                             </Badge>
                           )}
@@ -326,7 +375,7 @@ export default function TableUpload({
                             </Link>
                           </Button>
                         )} */}
-                        {fileItem.status === 'error' ? (
+                        {fileItem.status === "error" ? (
                           <Button
                             onClick={() => retryUpload(fileItem.id)}
                             variant="secondary"
