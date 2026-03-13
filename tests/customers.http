@@ -1,46 +1,82 @@
-###
+### 
+
+
 ### 👥 CUSTOMERS API TESTS
+
+
 ### Base endpoint: /api/customers
-###
+
+
+### 
+
+
 ### This file contains tests for customer management endpoints.
+
+
 ### Update the variables below and run requests with :Rest run
-###
+
+
+### 
+
+
 ### Authentication required:
+
+
 ### - x-api-key: Global API key
-###
+
+
+### 
+
+
 ### Note: This endpoint handles both single customer and bulk customer subscriptions.
+
+
 ### The handler creates ShopSubscription entries linking customers to shops.
-###
+
+
+### 
+
 
 ### ============================================
+
+
 ### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
+
+
 ### ============================================
 
-@baseUrl = http://localhost:3000
 @apiKey = your-api-key-here
-@shopCode = TESTSHOP123
-@customerName = John Doe
-@customerPhone = +1234567890
-@customerBirthday = 1990-01-15
+@baseUrl = http://localhost:3000
+@customer2Birthday = 1985-05-20
 @customer2Name = Jane Smith
 @customer2Phone = +19876543210
-@customer2Birthday = 1985-05-20
 @customer3Name = Bob Johnson
 @customer3Phone = +15555555555
+@customerBirthday = 1990-01-15
+@customerName = John Doe
+@customerPhone = +1234567890
 @invalidPhone = 1234567890
 @invalidShopCode = INVALID_999
+@shopCode = TESTSHOP123
 
 
 ### ============================================
+
+
 ### POST - Subscribe Customer(s) to Shop
+
+
 ### ============================================
+
 
 ### add-single-customer-with-birthday
+
 # Expected: 200 OK
 # Creates/links customer to shop with birthday
 # Handler: backend/app/api/customers/handler/post.ts:6
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {
@@ -48,14 +84,16 @@ Content-Type: application/json
   "phone": "{{customerPhone}}",
   "shopCode": "{{shopCode}}",
   "birthday": "{{customerBirthday}}"
-}
+r
 
 
 ### add-single-customer-without-birthday
+
 # Expected: 200 OK
 # Creates/links customer to shop without birthday (optional field)
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {
@@ -66,25 +104,27 @@ Content-Type: application/json
 
 
 ### add-bulk-customers
+
 # Expected: 200 OK
 # Creates/links multiple customers to shop
 # Array format for bulk operations
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 [
   {
+    "birthday": "{{customerBirthday}}",
     "name": "{{customerName}}",
     "phone": "{{customerPhone}}",
-    "shopCode": "{{shopCode}}",
-    "birthday": "{{customerBirthday}}"
+    "shopCode": "{{shopCode}}"
   },
   {
+    "birthday": "{{customer2Birthday}}",
     "name": "{{customer2Name}}",
     "phone": "{{customer2Phone}}",
-    "shopCode": "{{shopCode}}",
-    "birthday": "{{customer2Birthday}}"
+    "shopCode": "{{shopCode}}"
   },
   {
     "name": "{{customer3Name}}",
@@ -95,18 +135,20 @@ Content-Type: application/json
 
 
 ### add-bulk-customers-mixed-data
+
 # Expected: 200 OK
 # Tests: Some customers with birthday, some without
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 [
   {
+    "birthday": "{{customerBirthday}}",
     "name": "{{customerName}}",
     "phone": "{{customerPhone}}",
-    "shopCode": "{{shopCode}}",
-    "birthday": "{{customerBirthday}}"
+    "shopCode": "{{shopCode}}"
   },
   {
     "name": "{{customer2Name}}",
@@ -117,11 +159,13 @@ Content-Type: application/json
 
 
 ### add-customer-existing-phone
+
 # Expected: 200 OK (Links existing customer to shop)
 # Tests: Adding customer with existing phone number (unique identifier)
 # Should link existing customer to the shop if not already linked
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {
@@ -132,10 +176,12 @@ Content-Type: application/json
 
 
 ### add-customer-invalid-phone
+
 # Expected: 400 Bad Request
 # Tests: Invalid phone format (must be E.164 format)
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {
@@ -146,10 +192,12 @@ Content-Type: application/json
 
 
 ### add-customer-missing-name
+
 # Expected: 400 Bad Request
 # Tests: Missing required name field
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {
@@ -159,10 +207,12 @@ Content-Type: application/json
 
 
 ### add-customer-missing-phone
+
 # Expected: 400 Bad Request
 # Tests: Missing required phone field
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {
@@ -172,10 +222,12 @@ Content-Type: application/json
 
 
 ### add-customer-missing-shopcode
+
 # Expected: 400 Bad Request
 # Tests: Missing required shopCode field
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {
@@ -185,10 +237,12 @@ Content-Type: application/json
 
 
 ### add-customer-invalid-shopcode
+
 # Expected: 404 Not Found or 400 Bad Request
 # Tests: Non-existent shop code
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {
@@ -199,30 +253,36 @@ Content-Type: application/json
 
 
 ### add-customer-empty-body
+
 # Expected: 400 Bad Request
 # Tests: Empty request body
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 {}
 
 
 ### add-bulk-customers-empty-array
+
 # Expected: 400 Bad Request
 # Tests: Empty array for bulk operation
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 []
 
 
 ### add-bulk-customers-partial-failure
+
 # Expected: Partial success (some customers added, some failed)
 # Tests: Bulk operation with some invalid entries
-POST {{baseUrl}}/api/customers
-x-api-key: {{apiKey}}
+
+POST {{baseUrl}}/api/customers HTTP/1.1
+X-Api-Key: {{apiKey}}
 Content-Type: application/json
 
 [
