@@ -125,7 +125,7 @@ export default function ShopCardSection() {
         ToastSuccessPopup({
           queryClient,
           orgId: organization?.id,
-          message: `Message sent to ${data.messages?.length || 0} subscribers`,
+          message: `Message sent to ${data.totalSent || 0} subscriber(s)`,
         });
       } else {
         ToastErrorPopup({
