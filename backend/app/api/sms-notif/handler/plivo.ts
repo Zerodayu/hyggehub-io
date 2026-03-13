@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { validateSenderName } from "@/lib/senderNameValidator";
 
 const authId = process.env.PLIVO_AUTH_ID;
-const authToken = process.env.PLIVO_AUTH_TOKEN;
+const plivoAuthToken = process.env.PLIVO_AUTH_TOKEN;
 const defaultPhoneNumber = process.env.PLIVO_PHONE_NUMBER;
 
 // Add interface for request body
@@ -17,7 +17,7 @@ interface SmsRequestBody {
 export async function POST(request: NextRequest) {
   try {
     // Validate environment variables
-    if (!authId || !authToken) {
+    if (!authId || !plivoAuthToken) {
       console.error("Missing Plivo credentials");
       return withCORS(
         NextResponse.json(
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     // Determine sender ID (alphanumeric or phone number)
     let sender = defaultPhoneNumber;
-    
+
     if (senderName) {
       // Validate sender name format if provided
       const validation = validateSenderName(senderName);
@@ -84,15 +84,16 @@ export async function POST(request: NextRequest) {
     if (!sender) {
       return withCORS(
         NextResponse.json(
-          { 
-            error: "No sender ID provided. Either provide 'senderName' or set PLIVO_PHONE_NUMBER environment variable" 
+          {
+            error:
+              "No sender ID provided. Either provide 'senderName' or set PLIVO_PHONE_NUMBER environment variable",
           },
           { status: 400 },
         ),
       );
     }
 
-    const client = new plivo.Client(authId, authToken);
+    const client = new plivo.Client(authId, plivoAuthToken);
 
     try {
       // Send SMS to all phone numbers
@@ -124,11 +125,16 @@ export async function POST(request: NextRequest) {
         .map((result, index) => ({
           result,
           index,
-          phone: phoneNumbers[index]
+          phone: phoneNumbers[index],
         }))
         .filter(
-          (item): item is { result: PromiseRejectedResult; index: number; phone: string } =>
-            item.result.status === "rejected",
+          (
+            item,
+          ): item is {
+            result: PromiseRejectedResult;
+            index: number;
+            phone: string;
+          } => item.result.status === "rejected",
         )
         .map((item) => ({
           phone: item.phone,
