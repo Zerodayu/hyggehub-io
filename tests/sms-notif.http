@@ -1,0 +1,258 @@
+###
+### 📱 SMS NOTIFICATIONS API TESTS
+### Base endpoint: /api/sms-notif
+###
+### This file contains tests for SMS notification endpoints using Twilio.
+### Update the variables below and run requests with :Rest run
+###
+### Authentication required:
+### - x-api-key: Global API key
+###
+### Note: Phone numbers must be in E.164 format (+[country code][number])
+### Example: +14155552671 (US), +442071838750 (UK), +8613800138000 (China)
+###
+
+### ============================================
+### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
+### ============================================
+
+@baseUrl = http://localhost:3000
+@apiKey = your-api-key-here
+@phoneNumber = +1234567890
+@phone2 = +19876543210
+@phone3 = +15555555555
+@phone4 = +14155552671
+@smsBody = Hello from HyggeHub! Thank you for subscribing to our updates.
+@smsSender = HyggeHub
+@shortMessage = Thanks!
+@longMessage = This is a longer message to test SMS handling with more content. It includes multiple sentences and should still be delivered successfully via Twilio's SMS service. This tests the character limit handling.
+@invalidPhone = 1234567890
+@invalidPhone2 = not-a-phone
+@emptyMessage = 
+
+
+### ============================================
+### POST - Send SMS Notification
+### ============================================
+
+### send-sms-single-recipient-with-sender
+# Expected: 200 OK
+# Sends SMS to single recipient with custom sender name
+# Handler: backend/app/api/sms-notif/handler/send-sms.ts:7
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{phoneNumber}}",
+  "body": "{{smsBody}}",
+  "senderName": "{{smsSender}}"
+}
+
+
+### send-sms-single-recipient-without-sender
+# Expected: 200 OK
+# Sends SMS without custom sender name (uses Twilio default)
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{phoneNumber}}",
+  "body": "{{smsBody}}"
+}
+
+
+### send-sms-multiple-recipients
+# Expected: 200 OK
+# Sends SMS to multiple recipients (array format)
+# Returns success/failure status for each recipient
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": [
+    "{{phoneNumber}}",
+    "{{phone2}}",
+    "{{phone3}}"
+  ],
+  "body": "{{smsBody}}"
+}
+
+
+### send-sms-multiple-recipients-with-sender
+# Expected: 200 OK
+# Sends SMS to multiple recipients with custom sender
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": [
+    "{{phoneNumber}}",
+    "{{phone2}}",
+    "{{phone3}}",
+    "{{phone4}}"
+  ],
+  "body": "{{smsBody}}",
+  "senderName": "{{smsSender}}"
+}
+
+
+### send-sms-short-message
+# Expected: 200 OK
+# Tests: Very short message content
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{phoneNumber}}",
+  "body": "{{shortMessage}}"
+}
+
+
+### send-sms-long-message
+# Expected: 200 OK (or may be split into multiple SMS)
+# Tests: Long message content (may exceed single SMS limit)
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{phoneNumber}}",
+  "body": "{{longMessage}}"
+}
+
+
+### send-sms-invalid-phone-format
+# Expected: 400 Bad Request
+# Tests: Phone number not in E.164 format
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{invalidPhone}}",
+  "body": "{{smsBody}}"
+}
+
+
+### send-sms-invalid-phone-string
+# Expected: 400 Bad Request
+# Tests: Invalid phone number (non-numeric)
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{invalidPhone2}}",
+  "body": "{{smsBody}}"
+}
+
+
+### send-sms-missing-body
+# Expected: 400 Bad Request
+# Tests: Missing required body field
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{phoneNumber}}"
+}
+
+
+### send-sms-empty-body
+# Expected: 400 Bad Request
+# Tests: Empty message body
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{phoneNumber}}",
+  "body": "{{emptyMessage}}"
+}
+
+
+### send-sms-missing-recipient
+# Expected: 400 Bad Request
+# Tests: Missing required to field
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "body": "{{smsBody}}"
+}
+
+
+### send-sms-empty-recipients-array
+# Expected: 400 Bad Request
+# Tests: Empty array for recipients
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": [],
+  "body": "{{smsBody}}"
+}
+
+
+### send-sms-mixed-valid-invalid-recipients
+# Expected: 200 OK (partial success)
+# Tests: Some valid recipients, some invalid
+# Should return success for valid, failure for invalid
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": [
+    "{{phoneNumber}}",
+    "{{invalidPhone}}",
+    "{{phone2}}"
+  ],
+  "body": "{{smsBody}}"
+}
+
+
+### send-sms-empty-request
+# Expected: 400 Bad Request
+# Tests: Completely empty request body
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{}
+
+
+### send-sms-null-sender
+# Expected: 200 OK
+# Tests: Explicitly null sender name (should use default)
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{phoneNumber}}",
+  "body": "{{smsBody}}",
+  "senderName": null
+}
+
+
+### send-sms-empty-sender
+# Expected: 200 OK
+# Tests: Empty string sender name (should use default)
+POST {{baseUrl}}/api/sms-notif
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "to": "{{phoneNumber}}",
+  "body": "{{smsBody}}",
+  "senderName": ""
+}

@@ -1,0 +1,219 @@
+###
+### 👤 USERS API TESTS
+### Base endpoint: /api/users
+###
+### This file contains tests for all user management endpoints.
+### Update the variables below and run requests with :Rest run
+###
+### Authentication required:
+### - x-api-key: Global API key
+### - x-clerk-user-id: User's Clerk ID (for most endpoints)
+###
+
+### ============================================
+### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
+### ============================================
+
+@baseUrl = http://localhost:3000
+@apiKey = your-api-key-here
+@userId = user_xxxxxxxxxxxxx
+@shopCode = TESTSHOP123
+@birthday = 1990-01-15
+@invalidShopCode = INVALID_999
+@invalidUserId = user_invalid
+@invalidDate = not-a-date
+
+
+### ============================================
+### GET - Get User's Organizations
+### ============================================
+
+### get-user-orgs
+# Expected: 200 OK
+# Returns: Array of organizations with user's role and membership info
+# Handler: backend/app/api/users/handlers/get.ts:7
+GET {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+x-clerk-user-id: {{userId}}
+
+
+### get-user-orgs-missing-auth
+# Expected: 401 Unauthorized
+# Tests: Missing x-clerk-user-id header
+GET {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+
+
+### get-user-orgs-invalid-user
+# Expected: 404 Not Found or empty array
+# Tests: Non-existent user ID
+GET {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+x-clerk-user-id: {{invalidUserId}}
+
+
+### ============================================
+### PATCH - Add Shop Code to User
+### ============================================
+
+### add-shop-code
+# Expected: 200 OK
+# Creates/updates shop subscription for user
+# Updates Clerk user metadata and ShopSubscription table
+# Handler: backend/app/api/users/handlers/patch.ts:8
+PATCH {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "shopCode": "{{shopCode}}"
+}
+
+
+### add-shop-code-invalid
+# Expected: 400 Bad Request
+# Tests: Non-existent shop code validation
+PATCH {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "shopCode": "{{invalidShopCode}}"
+}
+
+
+### add-shop-code-missing-userid
+# Expected: 400 Bad Request
+# Tests: Missing required userId field
+PATCH {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "shopCode": "{{shopCode}}"
+}
+
+
+### add-shop-code-missing-shopcode
+# Expected: 400 Bad Request
+# Tests: Missing required shopCode field
+PATCH {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}"
+}
+
+
+### ============================================
+### PUT - Update User Birthday
+### ============================================
+
+### update-birthday
+# Expected: 200 OK
+# Updates user's birthday in Clerk publicMetadata
+# Handler: backend/app/api/users/handlers/put.ts:7
+PUT {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "birthday": "{{birthday}}"
+}
+
+
+### update-birthday-null
+# Expected: 200 OK
+# Tests: Removing birthday (setting to null)
+PUT {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "birthday": null
+}
+
+
+### update-birthday-invalid-format
+# Expected: 400 Bad Request
+# Tests: Invalid date format validation
+PUT {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "birthday": "{{invalidDate}}"
+}
+
+
+### update-birthday-missing-userid
+# Expected: 400 Bad Request
+# Tests: Missing required userId field
+PUT {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "birthday": "{{birthday}}"
+}
+
+
+### ============================================
+### DELETE - Remove Shop Code from User
+### ============================================
+
+### remove-shop-code
+# Expected: 200 OK
+# Removes shop code from user's Clerk metadata
+# Handler: backend/app/api/users/handlers/delete.ts:7
+DELETE {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "shopCode": "{{shopCode}}"
+}
+
+
+### remove-shop-code-nonexistent
+# Expected: 404 Not Found or 400 Bad Request
+# Tests: Removing shop code that doesn't exist
+DELETE {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "shopCode": "{{invalidShopCode}}"
+}
+
+
+### remove-shop-code-missing-userid
+# Expected: 400 Bad Request
+# Tests: Missing required userId field
+DELETE {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "shopCode": "{{shopCode}}"
+}
+
+
+### remove-shop-code-missing-shopcode
+# Expected: 400 Bad Request
+# Tests: Missing required shopCode field
+DELETE {{baseUrl}}/api/users
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}"
+}

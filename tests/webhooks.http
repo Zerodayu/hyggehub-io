@@ -1,0 +1,371 @@
+###
+### 🔗 CLERK WEBHOOKS API TESTS
+### Base endpoint: /api/webhooks/clerk-sync
+###
+### This file contains tests for Clerk webhook integration endpoints.
+### Update the variables below and run requests with :Rest run
+###
+### Authentication required:
+### - x-api-key: Global API key
+### - Webhook signature verification (handled by Clerk SDK)
+###
+### IMPORTANT: These tests simulate Clerk webhook events.
+### In production, these requests come from Clerk's servers with proper signatures.
+### Manual testing may fail signature verification - use for structure reference.
+###
+### Supported Events:
+### - user.created      → Creates user in database
+### - user.updated      → Updates user in database
+### - user.deleted      → Deletes user from database
+### - organization.created → Creates shop in database
+### - organization.updated → Updates shop in database
+### - organization.deleted → Deletes shop from database
+###
+
+### ============================================
+### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
+### ============================================
+
+@baseUrl = http://localhost:3000
+@apiKey = your-api-key-here
+@userId = user_2abcdefghijk1234567
+@userEmail = john.doe@example.com
+@userFirstName = John
+@userLastName = Doe
+@userImageUrl = https://img.clerk.com/user_123
+@orgId = org_2xyz9876543210abcdef
+@orgName = Test Shop
+@orgSlug = test-shop
+@orgImageUrl = https://img.clerk.com/org_456
+@timestamp = 1640995200000
+
+
+### ============================================
+### USER EVENTS
+### ============================================
+
+### webhook-user-created
+# Expected: 200 OK
+# Creates a new user in the database
+# Handler: backend/app/api/webhooks/clerk-sync/handlers/user-created.ts
+# Note: Signature verification may fail in manual testing
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "user.created",
+  "data": {
+    "id": "{{userId}}",
+    "email_addresses": [
+      {
+        "email_address": "{{userEmail}}",
+        "id": "email_123"
+      }
+    ],
+    "first_name": "{{userFirstName}}",
+    "last_name": "{{userLastName}}",
+    "image_url": "{{userImageUrl}}",
+    "created_at": {{timestamp}},
+    "updated_at": {{timestamp}}
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-user-updated
+# Expected: 200 OK
+# Updates existing user in the database
+# Handler: backend/app/api/webhooks/clerk-sync/handlers/user-updated.ts
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "user.updated",
+  "data": {
+    "id": "{{userId}}",
+    "email_addresses": [
+      {
+        "email_address": "{{userEmail}}",
+        "id": "email_123"
+      }
+    ],
+    "first_name": "{{userFirstName}}",
+    "last_name": "{{userLastName}}",
+    "image_url": "{{userImageUrl}}",
+    "updated_at": {{timestamp}}
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-user-updated-email-change
+# Expected: 200 OK
+# Tests: User email address change
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "user.updated",
+  "data": {
+    "id": "{{userId}}",
+    "email_addresses": [
+      {
+        "email_address": "newemail@example.com",
+        "id": "email_456"
+      }
+    ],
+    "first_name": "{{userFirstName}}",
+    "last_name": "{{userLastName}}",
+    "image_url": "{{userImageUrl}}",
+    "updated_at": {{timestamp}}
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-user-deleted
+# Expected: 200 OK
+# Deletes user from the database
+# Handler: backend/app/api/webhooks/clerk-sync/handlers/user-deleted.ts
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "user.deleted",
+  "data": {
+    "id": "{{userId}}",
+    "deleted": true
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### ============================================
+### ORGANIZATION EVENTS
+### ============================================
+
+### webhook-org-created
+# Expected: 200 OK
+# Creates a new shop/organization in the database
+# Handler: backend/app/api/webhooks/clerk-sync/handlers/org-created.ts
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "organization.created",
+  "data": {
+    "id": "{{orgId}}",
+    "name": "{{orgName}}",
+    "slug": "{{orgSlug}}",
+    "image_url": "{{orgImageUrl}}",
+    "created_at": {{timestamp}},
+    "updated_at": {{timestamp}},
+    "public_metadata": {},
+    "private_metadata": {}
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-org-created-with-metadata
+# Expected: 200 OK
+# Tests: Organization creation with custom metadata
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "organization.created",
+  "data": {
+    "id": "{{orgId}}",
+    "name": "{{orgName}}",
+    "slug": "{{orgSlug}}",
+    "image_url": "{{orgImageUrl}}",
+    "created_at": {{timestamp}},
+    "updated_at": {{timestamp}},
+    "public_metadata": {
+      "shopCode": "SHOP123",
+      "phoneNo": "+1234567890"
+    },
+    "private_metadata": {}
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-org-updated
+# Expected: 200 OK
+# Updates existing shop/organization in the database
+# Handler: backend/app/api/webhooks/clerk-sync/handlers/org-updated.ts
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "organization.updated",
+  "data": {
+    "id": "{{orgId}}",
+    "name": "{{orgName}}",
+    "slug": "{{orgSlug}}",
+    "image_url": "{{orgImageUrl}}",
+    "updated_at": {{timestamp}},
+    "public_metadata": {
+      "shopCode": "UPDATEDSHOP",
+      "phoneNo": "+9876543210"
+    }
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-org-updated-name-change
+# Expected: 200 OK
+# Tests: Organization name change
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "organization.updated",
+  "data": {
+    "id": "{{orgId}}",
+    "name": "Updated Shop Name",
+    "slug": "updated-shop-name",
+    "image_url": "{{orgImageUrl}}",
+    "updated_at": {{timestamp}}
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-org-deleted
+# Expected: 200 OK
+# Deletes shop/organization from the database
+# Handler: backend/app/api/webhooks/clerk-sync/handlers/org-deleted.ts
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "organization.deleted",
+  "data": {
+    "id": "{{orgId}}",
+    "deleted": true
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### ============================================
+### ERROR CASES
+### ============================================
+
+### webhook-invalid-event-type
+# Expected: 400 Bad Request or ignored
+# Tests: Unsupported event type
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "unsupported.event",
+  "data": {},
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-missing-event-type
+# Expected: 400 Bad Request
+# Tests: Missing type field
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "data": {
+    "id": "{{userId}}"
+  },
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-missing-data
+# Expected: 400 Bad Request
+# Tests: Missing data field
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "user.created",
+  "object": "event",
+  "timestamp": {{timestamp}}
+}
+
+
+### webhook-empty-body
+# Expected: 400 Bad Request
+# Tests: Empty request body
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{}
+
+
+### webhook-malformed-json
+# Expected: 400 Bad Request
+# Tests: Invalid JSON structure
+# Note: This will fail to parse before reaching the handler
+POST {{baseUrl}}/api/webhooks/clerk-sync
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "type": "user.created",
+  "data": {
+    "id": "{{userId}}",
+  }
+}
+
+
+### ============================================
+### NOTES FOR PRODUCTION TESTING
+### ============================================
+
+### Production Webhook Setup:
+# 1. Configure webhook endpoint in Clerk Dashboard
+#    URL: https://your-domain.com/api/webhooks/clerk-sync
+#
+# 2. Select events to monitor:
+#    - user.created
+#    - user.updated
+#    - user.deleted
+#    - organization.created
+#    - organization.updated
+#    - organization.deleted
+#
+# 3. Clerk will automatically send properly signed requests
+#
+# 4. Webhook signature is verified in the handler using:
+#    verifyWebhook() from @clerk/nextjs/webhooks
+#
+# 5. Test webhooks from Clerk Dashboard's webhook testing tool
+#
+# 6. Monitor webhook delivery and failures in Clerk Dashboard

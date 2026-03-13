@@ -1,0 +1,320 @@
+###
+### 🏢 ORGANIZATIONS API TESTS
+### Base endpoint: /api/orgs
+###
+### This file contains tests for all organization/shop management endpoints.
+### Update the variables below and run requests with :Rest run
+###
+### Authentication required:
+### - x-api-key: Global API key
+### - x-clerk-org-id: Organization's Clerk ID (required for most endpoints)
+### - x-clerk-user-id: User's Clerk ID (required for PUT endpoint)
+###
+
+### ============================================
+### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
+### ============================================
+
+@baseUrl = http://localhost:3000
+@apiKey = your-api-key-here
+@userId = user_xxxxxxxxxxxxx
+@orgId = org_xxxxxxxxxxxxx
+@shopCode = NEWSHOP456
+@phoneNumber = +1234567890
+@messageTitle = Spring Sale
+@messageBody = Get 20% off this weekend!
+@messageExpires = 2026-12-31T23:59:59Z
+@messageId = msg_xxxxxxxxxxxxx
+@customerId = cust_xxxxxxxxxxxxx
+@deleteTypeCustomer = customer
+@deleteTypeMessage = message
+@invalidOrgId = org_invalid
+@invalidMessageId = msg_invalid
+@invalidCustomerId = cust_invalid
+
+
+### ============================================
+### GET - Get Organization Info and Customers
+### ============================================
+
+### get-org-info
+# Expected: 200 OK
+# Returns: Shop details, messages, and connected customers
+# Handler: backend/app/api/orgs/handlers/get.ts:8
+GET {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### get-org-info-missing-auth
+# Expected: 401 Unauthorized
+# Tests: Missing x-clerk-org-id header
+GET {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+
+
+### get-org-info-invalid-org
+# Expected: 404 Not Found
+# Tests: Non-existent organization ID
+GET {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{invalidOrgId}}
+
+
+### ============================================
+### POST - Add New Message to Shop
+### ============================================
+
+### add-message-with-expiry
+# Expected: 200 OK
+# Creates a new ShopMessage with expiration date
+# Handler: backend/app/api/orgs/handlers/post.ts:7
+POST {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "title": "{{messageTitle}}",
+  "message": "{{messageBody}}",
+  "expiresAt": "{{messageExpires}}"
+}
+
+
+### add-message-without-expiry
+# Expected: 200 OK
+# Creates a new ShopMessage without expiration (never expires)
+POST {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "title": "{{messageTitle}}",
+  "message": "{{messageBody}}"
+}
+
+
+### add-message-missing-title
+# Expected: 400 Bad Request
+# Tests: Missing required title field
+POST {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "message": "{{messageBody}}"
+}
+
+
+### add-message-missing-message
+# Expected: 400 Bad Request
+# Tests: Missing required message field
+POST {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "title": "{{messageTitle}}"
+}
+
+
+### add-message-missing-org-id
+# Expected: 401 Unauthorized
+# Tests: Missing x-clerk-org-id header
+POST {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "title": "{{messageTitle}}",
+  "message": "{{messageBody}}"
+}
+
+
+### ============================================
+### PUT - Update Shop Code, Phone Number, and/or Messages
+### ============================================
+
+### update-shop-code-only
+# Expected: 200 OK
+# Updates shop code in Clerk organization metadata
+# Handler: backend/app/api/orgs/handlers/put.ts:11
+PUT {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-user-id: {{userId}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "shopCode": "{{shopCode}}"
+}
+
+
+### update-phone-only
+# Expected: 200 OK
+# Updates phone number in Clerk organization metadata
+PUT {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-user-id: {{userId}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "phoneNo": "{{phoneNumber}}"
+}
+
+
+### update-message
+# Expected: 200 OK
+# Updates an existing ShopMessage
+PUT {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-user-id: {{userId}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "messageUpdate": {
+    "id": "{{messageId}}",
+    "title": "{{messageTitle}}",
+    "message": "{{messageBody}}",
+    "expiresAt": "{{messageExpires}}"
+  }
+}
+
+
+### update-all-fields
+# Expected: 200 OK
+# Updates shop code, phone number, and message simultaneously
+PUT {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-user-id: {{userId}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "shopCode": "{{shopCode}}",
+  "phoneNo": "{{phoneNumber}}",
+  "messageUpdate": {
+    "id": "{{messageId}}",
+    "title": "{{messageTitle}}",
+    "message": "{{messageBody}}"
+  }
+}
+
+
+### update-missing-user-id
+# Expected: 401 Unauthorized
+# Tests: Missing x-clerk-user-id header
+PUT {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{
+  "shopCode": "{{shopCode}}"
+}
+
+
+### update-missing-org-id
+# Expected: 401 Unauthorized
+# Tests: Missing x-clerk-org-id header
+PUT {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-user-id: {{userId}}
+Content-Type: application/json
+
+{
+  "shopCode": "{{shopCode}}"
+}
+
+
+### update-empty-body
+# Expected: 400 Bad Request
+# Tests: No fields provided to update
+PUT {{baseUrl}}/api/orgs
+x-api-key: {{apiKey}}
+x-clerk-user-id: {{userId}}
+x-clerk-org-id: {{orgId}}
+Content-Type: application/json
+
+{}
+
+
+### ============================================
+### DELETE - Delete Customer or Message
+### ============================================
+
+### delete-customer
+# Expected: 200 OK
+# Removes customer from shop (deletes ShopSubscription and Customer records)
+# Handler: backend/app/api/orgs/handlers/del.ts:10
+DELETE {{baseUrl}}/api/orgs?type={{deleteTypeCustomer}}&customerId={{customerId}}
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### delete-message
+# Expected: 200 OK
+# Deletes a ShopMessage
+DELETE {{baseUrl}}/api/orgs?type={{deleteTypeMessage}}&messageId={{messageId}}
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### delete-customer-invalid-id
+# Expected: 404 Not Found
+# Tests: Deleting non-existent customer
+DELETE {{baseUrl}}/api/orgs?type={{deleteTypeCustomer}}&customerId={{invalidCustomerId}}
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### delete-message-invalid-id
+# Expected: 404 Not Found
+# Tests: Deleting non-existent message
+DELETE {{baseUrl}}/api/orgs?type={{deleteTypeMessage}}&messageId={{invalidMessageId}}
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### delete-missing-type
+# Expected: 400 Bad Request
+# Tests: Missing type query parameter
+DELETE {{baseUrl}}/api/orgs?customerId={{customerId}}
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### delete-missing-customer-id
+# Expected: 400 Bad Request
+# Tests: type=customer but missing customerId parameter
+DELETE {{baseUrl}}/api/orgs?type={{deleteTypeCustomer}}
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### delete-missing-message-id
+# Expected: 400 Bad Request
+# Tests: type=message but missing messageId parameter
+DELETE {{baseUrl}}/api/orgs?type={{deleteTypeMessage}}
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### delete-invalid-type
+# Expected: 400 Bad Request
+# Tests: Invalid type value (not 'customer' or 'message')
+DELETE {{baseUrl}}/api/orgs?type=invalid&id=123
+x-api-key: {{apiKey}}
+x-clerk-org-id: {{orgId}}
+
+
+### delete-missing-org-id
+# Expected: 401 Unauthorized
+# Tests: Missing x-clerk-org-id header
+DELETE {{baseUrl}}/api/orgs?type={{deleteTypeCustomer}}&customerId={{customerId}}
+x-api-key: {{apiKey}}

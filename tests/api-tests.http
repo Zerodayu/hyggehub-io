@@ -1,0 +1,84 @@
+###
+### 📚 API TESTS INDEX
+### HyggeHub API Testing Suite
+###
+### This file serves as a quick reference to all available API test files.
+### Use rest.nvim in LazyVim to execute these tests.
+###
+### 📖 HOW TO USE:
+### 1. Open any .http file in this directory
+### 2. Update the variables section at the top
+### 3. Place cursor on any request
+### 4. Run :Rest run (or :Rest run [request-name] for named requests)
+### 5. View results with :Rest open
+###
+### 📋 AVAILABLE TEST FILES:
+###
+### 👤 users.http          - User management endpoints
+###    GET    /api/users             - Get user's organizations
+###    PATCH  /api/users             - Add shop code to user
+###    PUT    /api/users             - Update user birthday
+###    DELETE /api/users             - Remove shop code from user
+###
+### 🏢 orgs.http           - Organization/Shop management endpoints
+###    GET    /api/orgs              - Get organization info and customers
+###    POST   /api/orgs              - Add new message to shop
+###    PUT    /api/orgs              - Update shop code/phone/messages
+###    DELETE /api/orgs              - Delete customer or message
+###
+### 👥 customers.http      - Customer management endpoints
+###    POST   /api/customers         - Subscribe customer(s) to shop
+###
+### 📱 sms-notif.http      - SMS notification endpoints
+###    POST   /api/sms-notif         - Send SMS to recipient(s)
+###
+### 🔗 webhooks.http       - Clerk webhook integration endpoints
+###    POST   /api/webhooks/clerk-sync - Handle Clerk events
+###
+### 🔧 REST.NVIM COMMANDS:
+###
+### :Rest run                    - Run request under cursor
+### :Rest run [request-name]     - Run specific named request
+### :Rest last                   - Re-run last request
+### :Rest open                   - Open results pane
+### :Rest logs                   - View logs
+### :Rest env show               - Show current .env file
+### :Rest env select             - Select .env file
+### :Rest env set [path]         - Set specific .env file
+###
+### 🔐 AUTHENTICATION:
+###
+### All endpoints require:
+### - x-api-key header (global API key)
+###
+### Most endpoints also require:
+### - x-clerk-user-id header (user context)
+### - x-clerk-org-id header (organization context)
+###
+### 📝 VARIABLE MANAGEMENT:
+###
+### Each test file has a variables section at the top:
+### @baseUrl = http://localhost:3000
+### @apiKey = your-api-key-here
+### @userId = user_xxxxxxxxxxxxx
+###
+### Simply update these values once, and all requests will use them.
+###
+### 💡 TIPS:
+###
+### - Use ### to separate requests
+### - Name requests with ### [name] for easy access
+### - Use {{variable}} syntax for variable substitution
+### - Add # @lang=lua above script blocks for Lua scripting
+### - Check response in split pane after running requests
+### - Use :Rest last to quickly re-run the previous request
+###
+### 🚀 QUICK START:
+###
+### 1. Update API key and base URL in each test file
+### 2. Get your Clerk user ID and org ID from your dev console
+### 3. Open users.http and try running the first request
+### 4. Check the results pane to see the response
+###
+### Happy testing! 🎉
+###
