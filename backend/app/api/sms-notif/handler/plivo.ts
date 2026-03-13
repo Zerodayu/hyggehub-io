@@ -1,11 +1,11 @@
-import { Twilio } from "twilio";
+import * as plivo from "plivo";
 import { withCORS } from "@/cors";
 import { NextRequest, NextResponse } from "next/server";
 import { validateSenderName } from "@/lib/senderNameValidator";
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
+const authId = process.env.PLIVO_AUTH_ID;
+const authToken = process.env.PLIVO_AUTH_TOKEN;
+const defaultPhoneNumber = process.env.PLIVO_PHONE_NUMBER;
 
 // Add interface for request body
 interface SmsRequestBody {
@@ -17,11 +17,11 @@ interface SmsRequestBody {
 export async function POST(request: NextRequest) {
   try {
     // Validate environment variables
-    if (!accountSid || !authToken || !messagingServiceSid) {
-      console.error("Missing Twilio credentials");
+    if (!authId || !authToken) {
+      console.error("Missing Plivo credentials");
       return withCORS(
         NextResponse.json(
-          { error: "Missing required Twilio environment variables" },
+          { error: "Missing required Plivo environment variables" },
           { status: 500 },
         ),
       );
@@ -64,9 +64,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate sender name format if provided
-    let formattedSenderName = senderName;
+    // Determine sender ID (alphanumeric or phone number)
+    let sender = defaultPhoneNumber;
+    
     if (senderName) {
+      // Validate sender name format if provided
       const validation = validateSenderName(senderName);
 
       if (!validation.isValid) {
@@ -75,26 +77,36 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      formattedSenderName = validation.formattedName;
+      sender = validation.formattedName;
     }
 
-    const client = new Twilio(accountSid, authToken);
+    // Validate that we have a sender (either senderName or fallback)
+    if (!sender) {
+      return withCORS(
+        NextResponse.json(
+          { 
+            error: "No sender ID provided. Either provide 'senderName' or set PLIVO_PHONE_NUMBER environment variable" 
+          },
+          { status: 400 },
+        ),
+      );
+    }
+
+    const client = new plivo.Client(authId, authToken);
 
     try {
       // Send SMS to all phone numbers
       const results = await Promise.allSettled(
         phoneNumbers.map(async (phone) => {
-          const messageParams = {
-            body: messageBody,
-            to: phone,
-            messagingServiceSid,
-            ...(formattedSenderName && { from: formattedSenderName }),
-          };
+          const response = await client.messages.create({
+            src: sender,
+            dst: phone,
+            text: messageBody,
+          });
 
-          const message = await client.messages.create(messageParams);
           return {
             phone,
-            messageSid: message.sid,
+            messageUuid: response.messageUuid,
             status: "success",
           };
         }),
@@ -130,21 +142,21 @@ export async function POST(request: NextRequest) {
           totalFailed: failed.length,
           successful,
           failed,
-          senderName: formattedSenderName,
+          senderName: sender,
           message:
             failed.length === 0
               ? `SMS sent successfully to ${successful.length} recipient(s)`
               : `SMS sent to ${successful.length} recipient(s), failed for ${failed.length}`,
         }),
       );
-    } catch (twilioError: unknown) {
-      console.error("Twilio API error:", twilioError);
+    } catch (plivoError: unknown) {
+      console.error("Plivo API error:", plivoError);
       return withCORS(
         NextResponse.json(
           {
-            error: "Twilio API error",
-            code: (twilioError as Error).name,
-            details: (twilioError as Error).message,
+            error: "Plivo API error",
+            code: (plivoError as Error).name,
+            details: (plivoError as Error).message,
           },
           { status: 500 },
         ),
