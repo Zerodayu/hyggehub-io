@@ -1,11 +1,11 @@
-import * as plivo from "plivo";
+import Telnyx from "telnyx";
 import { withCORS } from "@/cors";
 import { NextRequest, NextResponse } from "next/server";
 import { validateSenderName } from "@/lib/senderNameValidator";
 
-const authId = process.env.PLIVO_AUTH_ID;
-const plivoAuthToken = process.env.PLIVO_AUTH_TOKEN;
-const defaultPhoneNumber = process.env.PLIVO_PHONE_NUMBER;
+const telnyxApiKey = process.env.TELNYX_API_KEY;
+const defaultPhoneNumber = process.env.TELNYX_PHONE_NUMBER;
+const messagingProfileId = process.env.TELNYX_MESSAGING_PROFILE_ID;
 
 // Add interface for request body
 interface SmsRequestBody {
@@ -17,11 +17,11 @@ interface SmsRequestBody {
 export async function POST(request: NextRequest) {
   try {
     // Validate environment variables
-    if (!authId || !plivoAuthToken) {
-      console.error("Missing Plivo credentials");
+    if (!telnyxApiKey || !messagingProfileId) {
+      console.error("Missing Telnyx credentials");
       return withCORS(
         NextResponse.json(
-          { error: "Missing required Plivo environment variables" },
+          { error: "Missing required Telnyx environment variables" },
           { status: 500 },
         ),
       );
@@ -86,28 +86,29 @@ export async function POST(request: NextRequest) {
         NextResponse.json(
           {
             error:
-              "No sender ID provided. Either provide 'senderName' or set PLIVO_PHONE_NUMBER environment variable",
+              "No sender ID provided. Either provide 'senderName' or set TELNYX_PHONE_NUMBER environment variable",
           },
           { status: 400 },
         ),
       );
     }
 
-    const client = new plivo.Client(authId, plivoAuthToken);
+    const client = new Telnyx(telnyxApiKey);
 
     try {
       // Send SMS to all phone numbers
       const results = await Promise.allSettled(
         phoneNumbers.map(async (phone) => {
-          const response = await client.messages.create({
-            src: sender,
-            dst: phone,
+          const response = await client.messages.send({
+            from: sender,
+            to: phone,
             text: messageBody,
+            messaging_profile_id: messagingProfileId,
           });
 
           return {
             phone,
-            messageUuid: response.messageUuid,
+            messageId: response.data?.id,
             status: "success",
           };
         }),
@@ -155,14 +156,14 @@ export async function POST(request: NextRequest) {
               : `SMS sent to ${successful.length} recipient(s), failed for ${failed.length}`,
         }),
       );
-    } catch (plivoError: unknown) {
-      console.error("Plivo API error:", plivoError);
+    } catch (telnyxError: unknown) {
+      console.error("Telnyx API error:", telnyxError);
       return withCORS(
         NextResponse.json(
           {
-            error: "Plivo API error",
-            code: (plivoError as Error).name,
-            details: (plivoError as Error).message,
+            error: "Telnyx API error",
+            code: (telnyxError as Error).name,
+            details: (telnyxError as Error).message,
           },
           { status: 500 },
         ),
