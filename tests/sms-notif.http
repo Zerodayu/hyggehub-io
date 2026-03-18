@@ -2,30 +2,32 @@
 ### 📱 SMS NOTIFICATIONS API TESTS
 ### Base endpoint: /api/sms-notif
 ###
-### This file contains tests for SMS notification endpoints using Twilio.
+### This file contains tests for SMS notification endpoints using Telnyx.
 ### Update the variables below and run requests with :Rest run
 ###
 ### Authentication required:
 ### - x-api-key: Global API key
 ###
 ### Note: Phone numbers must be in E.164 format (+[country code][number])
-### Example: +14155552671 (US), +442071838750 (UK), +8613800138000 (China)
+### Example: +14155552671 (US), +442071838750 (UK), +4512345678 (Denmark)
 ###
 
 ### ============================================
 ### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
 ### ============================================
 
-@baseUrl = http://localhost:3000
-@apiKey = your-api-key-here
-@phoneNumber = +1234567890
+@baseUrl = http://localhost:3001
+@apiKey = Nhenta1-net
+# valid test number
+@phoneNumber = +4542349115
+
 @phone2 = +19876543210
 @phone3 = +15555555555
 @phone4 = +14155552671
 @smsBody = Hello from HyggeHub! Thank you for subscribing to our updates.
 @smsSender = HyggeHub
 @shortMessage = Thanks!
-@longMessage = This is a longer message to test SMS handling with more content. It includes multiple sentences and should still be delivered successfully via Twilio's SMS service. This tests the character limit handling.
+@longMessage = This is a longer message to test SMS handling with more content. It includes multiple sentences and should still be delivered successfully via Telnyx's SMS service. This tests the character limit handling.
 @invalidPhone = 1234567890
 @invalidPhone2 = not-a-phone
 @emptyMessage = 
@@ -38,7 +40,7 @@
 ### send-sms-single-recipient-with-sender
 # Expected: 200 OK
 # Sends SMS to single recipient with custom sender name
-# Handler: backend/app/api/sms-notif/handler/send-sms.ts:7
+# Handler: backend/app/api/sms-notif/handler/telnyx.ts:17
 POST {{baseUrl}}/api/sms-notif
 x-api-key: {{apiKey}}
 Content-Type: application/json
@@ -52,7 +54,7 @@ Content-Type: application/json
 
 ### send-sms-single-recipient-without-sender
 # Expected: 200 OK
-# Sends SMS without custom sender name (uses Twilio default)
+# Sends SMS without custom sender name (uses Telnyx default phone number if configured)
 POST {{baseUrl}}/api/sms-notif
 x-api-key: {{apiKey}}
 Content-Type: application/json
@@ -232,7 +234,7 @@ Content-Type: application/json
 
 ### send-sms-null-sender
 # Expected: 200 OK
-# Tests: Explicitly null sender name (should use default)
+# Tests: Explicitly null sender name (should use default phone number if TELNYX_PHONE_NUMBER is configured)
 POST {{baseUrl}}/api/sms-notif
 x-api-key: {{apiKey}}
 Content-Type: application/json
@@ -246,7 +248,7 @@ Content-Type: application/json
 
 ### send-sms-empty-sender
 # Expected: 200 OK
-# Tests: Empty string sender name (should use default)
+# Tests: Empty string sender name (should use default phone number if TELNYX_PHONE_NUMBER is configured)
 POST {{baseUrl}}/api/sms-notif
 x-api-key: {{apiKey}}
 Content-Type: application/json
