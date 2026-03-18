@@ -1,1 +1,1 @@
-export { POST } from "./handler/send-sms"
+export { POST } from "./handler/telnyx"
