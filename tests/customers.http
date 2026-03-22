@@ -38,26 +38,12 @@
 
 
 ### ============================================
-
-
-### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
-
-
+### ENVIRONMENT VARIABLES
 ### ============================================
-
-@apiKey = your-api-key-here
-@baseUrl = http://localhost:3000
-@customer2Birthday = 1985-05-20
-@customer2Name = Jane Smith
-@customer2Phone = +19876543210
-@customer3Name = Bob Johnson
-@customer3Phone = +15555555555
-@customerBirthday = 1990-01-15
-@customerName = John Doe
-@customerPhone = +1234567890
-@invalidPhone = 1234567890
-@invalidShopCode = INVALID_999
-@shopCode = TESTSHOP123
+### Variables are loaded from tests/.http-client.env.json
+### Copy tests/.http-client.env.json.example to tests/.http-client.env.json
+### and fill in your values. See tests/README.md for setup instructions.
+### ============================================
 
 
 ### ============================================

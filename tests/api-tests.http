@@ -6,11 +6,15 @@
 ### Use rest.nvim in LazyVim to execute these tests.
 ###
 ### 📖 HOW TO USE:
-### 1. Open any .http file in this directory
-### 2. Update the variables section at the top
-### 3. Place cursor on any request
-### 4. Run :Rest run (or :Rest run [request-name] for named requests)
-### 5. View results with :Rest open
+### 1. Copy tests/.http-client.env.json.example to tests/.http-client.env.json
+### 2. Fill in your API keys and IDs in the .http-client.env.json file
+### 3. Open any .http file in this directory
+### 4. Place cursor on any request
+### 5. Run :Rest run (or :Rest run [request-name] for named requests)
+### 6. View results with :Rest open
+### 7. Variables will be automatically loaded from your environment file
+###
+### See tests/README.md for detailed setup instructions.
 ###
 ### 📋 AVAILABLE TEST FILES:
 ###
@@ -57,12 +61,11 @@
 ###
 ### 📝 VARIABLE MANAGEMENT:
 ###
-### Each test file has a variables section at the top:
-### @baseUrl = http://localhost:3000
-### @apiKey = your-api-key-here
-### @userId = user_xxxxxxxxxxxxx
+### Variables are now loaded from tests/.http-client.env.json
+### Copy tests/.http-client.env.json.example to tests/.http-client.env.json
+### and fill in your actual values. This keeps your API keys secure!
 ###
-### Simply update these values once, and all requests will use them.
+### See tests/README.md for detailed setup instructions.
 ###
 ### 💡 TIPS:
 ###
@@ -75,8 +78,8 @@
 ###
 ### 🚀 QUICK START:
 ###
-### 1. Update API key and base URL in each test file
-### 2. Get your Clerk user ID and org ID from your dev console
+### 1. Copy tests/.http-client.env.json.example to tests/.http-client.env.json
+### 2. Fill in your API key, Clerk user ID, and org ID
 ### 3. Open users.http and try running the first request
 ### 4. Check the results pane to see the response
 ###

@@ -36,6 +36,10 @@
 # env files (can opt-in for committing if needed)
 */.env*
 
+# test environment files
+tests/.env
+tests/http-client.env.json
+
 # vercel
 */.vercel
 

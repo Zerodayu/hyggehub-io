@@ -12,25 +12,12 @@
 ###
 
 ### ============================================
-### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
+### ENVIRONMENT VARIABLES
 ### ============================================
-
-@baseUrl = http://localhost:3000
-@apiKey = your-api-key-here
-@userId = user_xxxxxxxxxxxxx
-@orgId = org_xxxxxxxxxxxxx
-@shopCode = NEWSHOP456
-@phoneNumber = +1234567890
-@messageTitle = Spring Sale
-@messageBody = Get 20% off this weekend!
-@messageExpires = 2026-12-31T23:59:59Z
-@messageId = msg_xxxxxxxxxxxxx
-@customerId = cust_xxxxxxxxxxxxx
-@deleteTypeCustomer = customer
-@deleteTypeMessage = message
-@invalidOrgId = org_invalid
-@invalidMessageId = msg_invalid
-@invalidCustomerId = cust_invalid
+### Variables are loaded from tests/.http-client.env.json
+### Copy tests/.http-client.env.json.example to tests/.http-client.env.json
+### and fill in your values. See tests/README.md for setup instructions.
+### ============================================
 
 
 ### ============================================

@@ -23,21 +23,12 @@
 ###
 
 ### ============================================
-### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
+### ENVIRONMENT VARIABLES
 ### ============================================
-
-@baseUrl = http://localhost:3000
-@apiKey = your-api-key-here
-@userId = user_2abcdefghijk1234567
-@userEmail = john.doe@example.com
-@userFirstName = John
-@userLastName = Doe
-@userImageUrl = https://img.clerk.com/user_123
-@orgId = org_2xyz9876543210abcdef
-@orgName = Test Shop
-@orgSlug = test-shop
-@orgImageUrl = https://img.clerk.com/org_456
-@timestamp = 1640995200000
+### Variables are loaded from tests/.http-client.env.json
+### Copy tests/.http-client.env.json.example to tests/.http-client.env.json
+### and fill in your values. See tests/README.md for setup instructions.
+### ============================================
 
 
 ### ============================================

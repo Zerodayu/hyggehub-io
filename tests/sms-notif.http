@@ -13,24 +13,12 @@
 ###
 
 ### ============================================
-### VARIABLES - UPDATE THESE FOR YOUR ENVIRONMENT
+### ENVIRONMENT VARIABLES
 ### ============================================
-
-@baseUrl = http://localhost:3001
-@apiKey = Nhenta1-net
-# valid test number
-@phoneNumber = +4542349115
-
-@phone2 = +19876543210
-@phone3 = +15555555555
-@phone4 = +14155552671
-@smsBody = Hello from HyggeHub! Thank you for subscribing to our updates.
-@smsSender = HyggeHub
-@shortMessage = Thanks!
-@longMessage = This is a longer message to test SMS handling with more content. It includes multiple sentences and should still be delivered successfully via Telnyx's SMS service. This tests the character limit handling.
-@invalidPhone = 1234567890
-@invalidPhone2 = not-a-phone
-@emptyMessage = 
+### Variables are loaded from tests/.http-client.env.json
+### Copy tests/.http-client.env.json.example to tests/.http-client.env.json
+### and fill in your values. See tests/README.md for setup instructions.
+### ============================================ 
 
 
 ### ============================================
