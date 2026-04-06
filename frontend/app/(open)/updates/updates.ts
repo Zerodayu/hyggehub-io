@@ -5,9 +5,11 @@ export const updates = [
     date: "2026-04-03",
     description: "Patches of  Version 1.0.0",
     changes: {
-      // added: ["CSV Migration for the shops"],
+      added: [
+        // "CSV Migration for the shops"
+      ],
       changed: [
-        "SMS provider (Twilio => Telnyx",
+        "SMS provider (Twilio => Telnyx)",
         // "Improved loading times",
         // "Updated user interface design"
       ],
@@ -60,4 +62,3 @@ export const updates = [
     },
   },
 ];
-
