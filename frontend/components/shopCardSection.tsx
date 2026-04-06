@@ -28,7 +28,7 @@ import {
   formatDateForDatabase,
   formatDateForDisplay,
 } from "@/utils/save-as-date";
-import { formatMessage } from "@/lib/twilio-sms"; // Import the message template function
+import { formatMessage } from "@/lib/template-sms"; // Import the message template function
 import CalendarPickerInput from "./calendarPicker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
