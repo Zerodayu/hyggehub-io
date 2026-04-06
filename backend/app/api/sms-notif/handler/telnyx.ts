@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const client = new Telnyx(telnyxApiKey);
+    const client = new Telnyx({ apiKey: telnyxApiKey });
 
     try {
       // Send SMS to all phone numbers
