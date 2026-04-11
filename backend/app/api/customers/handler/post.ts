@@ -9,12 +9,42 @@ export async function POST(req: NextRequest) {
     // Support both single object and array
     const customersData = Array.isArray(body) ? body : [body];
 
+    if (!customersData.length) {
+      return withCORS(
+        Response.json(
+          {
+            success: false,
+            error: "No customers provided",
+          },
+          { status: 400 },
+        ),
+      );
+    }
+
+    const invalidCustomerIndex = customersData.findIndex(
+      (customer) =>
+        !customer?.name?.toString().trim() ||
+        !customer?.phone?.toString().trim(),
+    );
+
+    if (invalidCustomerIndex !== -1) {
+      return withCORS(
+        Response.json(
+          {
+            success: false,
+            error: `Missing required fields: name and phone (row ${invalidCustomerIndex + 1})`,
+          },
+          { status: 400 },
+        ),
+      );
+    }
+
     let skippedCount = 0;
 
     const results = await Promise.all(
       customersData.map(async ({ name, phone, shopCode, birthday }) => {
-        if (!name || !phone || !shopCode) {
-          return { success: false, error: "Missing name, phone, or shopCode" };
+        if (!shopCode) {
+          return { success: false, error: "Missing shopCode" };
         }
 
         // Find shop by code
@@ -112,4 +142,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
