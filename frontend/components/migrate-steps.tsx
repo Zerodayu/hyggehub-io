@@ -148,31 +148,60 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
     );
   };
 
-  const handleValidate = () => {
-    if (parsedData) {
-      const selectedHeaders = parsedData.headers.filter((_, index) =>
-        selectedColumns.has(index),
-      );
-      const selectedData = parsedData.rows.map((row) => {
+  const canProceedFromMappingStep = () =>
+    areAllHeadersMapped() && hasRequiredMappings() && hasValidRequiredRows();
+
+  const hasRequiredMappings = () => {
+    if (!parsedData) return false;
+
+    const mappedFields = parsedData.headers
+      .filter((_, index) => selectedColumns.has(index))
+      .map((header) => headerMapping[header])
+      .filter(Boolean);
+
+    return mappedFields.includes("name") && mappedFields.includes("phone");
+  };
+
+  const getValidatedSelectedData = () => {
+    if (!parsedData) return [];
+
+    const selectedHeaders = parsedData.headers.filter((_, index) =>
+      selectedColumns.has(index),
+    );
+
+    return parsedData.rows
+      .map((row) => {
         const obj: any = {};
         selectedHeaders.forEach((header) => {
           const originalIndex = parsedData.headers.indexOf(header);
           const mappedHeader = headerMapping[header] || header;
-          // Add country code prefix to phone numbers
           if (mappedHeader === "phone") {
             const phoneValue = row[originalIndex];
-            obj[mappedHeader] = formatToInternational(phoneCountryCode, phoneValue);
+            obj[mappedHeader] = formatToInternational(
+              phoneCountryCode,
+              phoneValue,
+            );
           } else {
             obj[mappedHeader] = row[originalIndex];
           }
         });
-        // Add shopCode to each object
         if (shopCode) {
           obj.shopCode = shopCode;
         }
         return obj;
+      })
+      .filter((row) => {
+        const name = String(row?.name ?? "").trim();
+        const phone = String(row?.phone ?? "").trim();
+        return name !== "" && phone !== "";
       });
+  };
 
+  const hasValidRequiredRows = () => getValidatedSelectedData().length > 0;
+
+  const handleValidate = () => {
+    if (parsedData) {
+      const selectedData = getValidatedSelectedData();
       setJsonData(selectedData);
       nextStep();
     }
@@ -438,7 +467,10 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                           const mappedHeader = headerMapping[header] || header;
                           if (mappedHeader === "phone") {
                             const phoneValue = row[originalIndex];
-                            obj[mappedHeader] = formatToInternational(phoneCountryCode, phoneValue);
+                            obj[mappedHeader] = formatToInternational(
+                              phoneCountryCode,
+                              phoneValue,
+                            );
                           } else {
                             obj[mappedHeader] = row[originalIndex];
                           }
@@ -464,7 +496,7 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
                   variant="outline"
                   className="font-semibold"
                   onClick={handleValidate}
-                  disabled={!areAllHeadersMapped()}
+                  disabled={!canProceedFromMappingStep()}
                 >
                   Next
                   <ArrowRight />
@@ -523,4 +555,3 @@ export default function MigrateSteps({ shopCode }: MigrateStepsProps) {
     </Stepper>
   );
 }
-
