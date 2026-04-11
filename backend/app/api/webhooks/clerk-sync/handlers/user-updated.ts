@@ -1,5 +1,5 @@
-import prisma from "@/prisma/PrismaClient"
-import type { ClerkUserEventData } from "@/lib/types"
+import prisma from "@/prisma/PrismaClient";
+import type { ClerkUserEventData } from "@/lib/types";
 
 export async function handleUserUpdated(data: ClerkUserEventData) {
   const { id, username, email_addresses, public_metadata, image_url } = data;
@@ -14,8 +14,8 @@ export async function handleUserUpdated(data: ClerkUserEventData) {
   await prisma.users.update({
     where: { clerkId: id },
     data: {
-      username: username ?? existingUser?.username ?? '',
-      email: email_addresses?.[0]?.email_address ?? existingUser?.email ?? '',
+      username: username ?? existingUser?.username ?? "",
+      email: email_addresses?.[0]?.email_address ?? existingUser?.email ?? "",
       bdate: birthday ?? existingUser?.bdate,
       avatarUrl: image_url ?? existingUser?.avatarUrl ?? null, // <-- Update image URL
     },
@@ -34,11 +34,11 @@ export async function handleUserUpdated(data: ClerkUserEventData) {
     where: { code: { in: newShopCodes } },
     select: { clerkOrgId: true, code: true },
   });
-  const newOrgIds = shops.map(s => s.clerkOrgId);
+  const newOrgIds = shops.map((s) => s.clerkOrgId);
 
   // Find subscriptions to remove
-  const currentOrgIds = existingUser?.shops.map(sub => sub.shopId) ?? [];
-  const toRemove = currentOrgIds.filter(orgId => !newOrgIds.includes(orgId));
+  const currentOrgIds = existingUser?.shops.map((sub) => sub.shopId) ?? [];
+  const toRemove = currentOrgIds.filter((orgId) => !newOrgIds.includes(orgId));
 
   // Remove subscriptions for removed codes
   for (const shopId of toRemove) {
@@ -50,8 +50,15 @@ export async function handleUserUpdated(data: ClerkUserEventData) {
   // Optionally, add new subscriptions for added codes (if not already present)
   for (const shopId of newOrgIds) {
     if (!currentOrgIds.includes(shopId)) {
-      await prisma.shopSubscription.create({
-        data: { userId: id, shopId },
+      await prisma.shopSubscription.upsert({
+        where: {
+          userId_shopId: {
+            userId: id,
+            shopId,
+          },
+        },
+        update: {},
+        create: { userId: id, shopId },
       });
     }
   }

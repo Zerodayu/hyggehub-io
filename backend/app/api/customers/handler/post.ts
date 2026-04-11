@@ -2,12 +2,6 @@ import { NextRequest } from "next/server";
 import { withCORS } from "@/cors";
 import prisma from "@/prisma/PrismaClient";
 
-const isUniqueConstraintError = (error: unknown) =>
-  typeof error === "object" &&
-  error !== null &&
-  "code" in error &&
-  (error as { code?: string }).code === "P2002";
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -86,32 +80,26 @@ export async function POST(req: NextRequest) {
 
         // If customer exists but not subscribed to this shop, just create subscription
         if (existingCustomer) {
-          try {
-            await prisma.shopSubscription.create({
-              data: {
+          await prisma.shopSubscription.upsert({
+            where: {
+              customerId_shopId: {
                 customerId: existingCustomer.customerId,
                 shopId: shop.clerkOrgId,
               },
-            });
-            return {
-              success: true,
-              customer: existingCustomer,
-              shop: shop,
-              message: "Existing customer subscribed to shop",
-            };
-          } catch (error) {
-            if (isUniqueConstraintError(error)) {
-              skippedCount++;
-              return {
-                success: true,
-                skipped: true,
-                customer: existingCustomer,
-                shop: shop,
-                message: "Customer already subscribed to this shop",
-              };
-            }
-            throw error;
-          }
+            },
+            update: {},
+            create: {
+              customerId: existingCustomer.customerId,
+              shopId: shop.clerkOrgId,
+            },
+          });
+
+          return {
+            success: true,
+            customer: existingCustomer,
+            shop: shop,
+            message: "Existing customer subscribed to shop",
+          };
         }
 
         // Create new customer
@@ -123,27 +111,20 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        // Link customer to shop via ShopSubscription (idempotent for race safety)
-        try {
-          await prisma.shopSubscription.create({
-            data: {
+        // Link customer to shop via ShopSubscription (idempotent and race-safe)
+        await prisma.shopSubscription.upsert({
+          where: {
+            customerId_shopId: {
               customerId: newCustomer.customerId,
               shopId: shop.clerkOrgId,
             },
-          });
-        } catch (error) {
-          if (isUniqueConstraintError(error)) {
-            skippedCount++;
-            return {
-              success: true,
-              skipped: true,
-              customer: newCustomer,
-              shop: shop,
-              message: "Customer already subscribed to this shop",
-            };
-          }
-          throw error;
-        }
+          },
+          update: {},
+          create: {
+            customerId: newCustomer.customerId,
+            shopId: shop.clerkOrgId,
+          },
+        });
 
         return { success: true, customer: newCustomer, shop: shop };
       }),
