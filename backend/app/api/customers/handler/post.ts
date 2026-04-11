@@ -2,6 +2,12 @@ import { NextRequest } from "next/server";
 import { withCORS } from "@/cors";
 import prisma from "@/prisma/PrismaClient";
 
+const isUniqueConstraintError = (error: unknown) =>
+  typeof error === "object" &&
+  error !== null &&
+  "code" in error &&
+  (error as { code?: string }).code === "P2002";
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -80,18 +86,32 @@ export async function POST(req: NextRequest) {
 
         // If customer exists but not subscribed to this shop, just create subscription
         if (existingCustomer) {
-          await prisma.shopSubscription.create({
-            data: {
-              customerId: existingCustomer.customerId,
-              shopId: shop.clerkOrgId,
-            },
-          });
-          return {
-            success: true,
-            customer: existingCustomer,
-            shop: shop,
-            message: "Existing customer subscribed to shop",
-          };
+          try {
+            await prisma.shopSubscription.create({
+              data: {
+                customerId: existingCustomer.customerId,
+                shopId: shop.clerkOrgId,
+              },
+            });
+            return {
+              success: true,
+              customer: existingCustomer,
+              shop: shop,
+              message: "Existing customer subscribed to shop",
+            };
+          } catch (error) {
+            if (isUniqueConstraintError(error)) {
+              skippedCount++;
+              return {
+                success: true,
+                skipped: true,
+                customer: existingCustomer,
+                shop: shop,
+                message: "Customer already subscribed to this shop",
+              };
+            }
+            throw error;
+          }
         }
 
         // Create new customer
@@ -103,13 +123,27 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        // Link customer to shop via ShopSubscription
-        await prisma.shopSubscription.create({
-          data: {
-            customerId: newCustomer.customerId,
-            shopId: shop.clerkOrgId,
-          },
-        });
+        // Link customer to shop via ShopSubscription (idempotent for race safety)
+        try {
+          await prisma.shopSubscription.create({
+            data: {
+              customerId: newCustomer.customerId,
+              shopId: shop.clerkOrgId,
+            },
+          });
+        } catch (error) {
+          if (isUniqueConstraintError(error)) {
+            skippedCount++;
+            return {
+              success: true,
+              skipped: true,
+              customer: newCustomer,
+              shop: shop,
+              message: "Customer already subscribed to this shop",
+            };
+          }
+          throw error;
+        }
 
         return { success: true, customer: newCustomer, shop: shop };
       }),
