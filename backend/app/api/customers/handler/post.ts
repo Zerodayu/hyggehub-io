@@ -9,12 +9,42 @@ export async function POST(req: NextRequest) {
     // Support both single object and array
     const customersData = Array.isArray(body) ? body : [body];
 
+    if (!customersData.length) {
+      return withCORS(
+        Response.json(
+          {
+            success: false,
+            error: "No customers provided",
+          },
+          { status: 400 },
+        ),
+      );
+    }
+
+    const invalidCustomerIndex = customersData.findIndex(
+      (customer) =>
+        !customer?.name?.toString().trim() ||
+        !customer?.phone?.toString().trim(),
+    );
+
+    if (invalidCustomerIndex !== -1) {
+      return withCORS(
+        Response.json(
+          {
+            success: false,
+            error: `Missing required fields: name and phone (row ${invalidCustomerIndex + 1})`,
+          },
+          { status: 400 },
+        ),
+      );
+    }
+
     let skippedCount = 0;
 
     const results = await Promise.all(
       customersData.map(async ({ name, phone, shopCode, birthday }) => {
-        if (!name || !phone || !shopCode) {
-          return { success: false, error: "Missing name, phone, or shopCode" };
+        if (!shopCode) {
+          return { success: false, error: "Missing shopCode" };
         }
 
         // Find shop by code
@@ -50,12 +80,20 @@ export async function POST(req: NextRequest) {
 
         // If customer exists but not subscribed to this shop, just create subscription
         if (existingCustomer) {
-          await prisma.shopSubscription.create({
-            data: {
+          await prisma.shopSubscription.upsert({
+            where: {
+              customerId_shopId: {
+                customerId: existingCustomer.customerId,
+                shopId: shop.clerkOrgId,
+              },
+            },
+            update: {},
+            create: {
               customerId: existingCustomer.customerId,
               shopId: shop.clerkOrgId,
             },
           });
+
           return {
             success: true,
             customer: existingCustomer,
@@ -73,9 +111,16 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        // Link customer to shop via ShopSubscription
-        await prisma.shopSubscription.create({
-          data: {
+        // Link customer to shop via ShopSubscription (idempotent and race-safe)
+        await prisma.shopSubscription.upsert({
+          where: {
+            customerId_shopId: {
+              customerId: newCustomer.customerId,
+              shopId: shop.clerkOrgId,
+            },
+          },
+          update: {},
+          create: {
             customerId: newCustomer.customerId,
             shopId: shop.clerkOrgId,
           },
@@ -112,4 +157,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
