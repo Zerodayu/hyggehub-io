@@ -3,11 +3,12 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useId, useState } from "react";
-import { ChevronsUpDown, Check, Key, Ticket, Send } from "lucide-react";
+import { ChevronsUpDown, Check, Key, Ticket, Send, CircleCheck } from "lucide-react";
 import { cn, removeSpaces } from "@/lib/utils";
 import { countryCodes, formatForDisplay, formatToInternational, validatePhoneNumber, getMaxLength } from "@/utils/country-code";
 import CalendarPickerInput from '@/components/calendarPicker';
 import { formatDateForDatabase } from '@/utils/save-as-date';
+import { activeLang } from "@/languages/lang";
 import {
     Popover,
     PopoverContent,
@@ -36,12 +37,15 @@ import { ToastSuccessPopup, ToastErrorPopup } from "@/components/sonnerShowHandl
 import { useQueryClient } from "@tanstack/react-query";
 
 
+const lang = activeLang;
+
 export default function Page() {
     const [countryCode, setCountryCode] = useState(countryCodes[0].value);
     const [phoneNo, setPhoneNo] = useState("");
     const [shopCode, setShopCode] = useState("");
     const [name, setName] = useState("");
     const [birthday, setBirthday] = useState("");
+    const [isSuccess, setIsSuccess] = useState(false);
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
@@ -58,10 +62,11 @@ export default function Page() {
             setShopCode("");
             setBirthday("");
             setCountryCode(countryCodes[0].value);
+            setIsSuccess(true);
         },
         onError: (error: Error | { response?: { data?: { error?: string } } }) => {
             ToastErrorPopup({
-                message: 'response' in error && error.response?.data?.error || "Failed to claim code.",
+                message: ('response' in error && error.response?.data?.error) || lang.claim.failed,
             });
         },
     });
@@ -72,7 +77,7 @@ export default function Page() {
         // Validate phone number before submitting
         if (!validatePhoneNumber(phoneNo, countryCode)) {
             ToastErrorPopup({
-                message: "Please enter a valid phone number.",
+                message: lang.claim.invalidPhone,
             });
             return;
         }
@@ -95,70 +100,90 @@ export default function Page() {
             <Card className="w-auto">
                 <CardHeader>
                     <CardTitle className='flex gap-2 font-mono text-lg'>
-                        Claim Shop Codes
+                        {lang.claim.title}
                     </CardTitle>
-                    <CardDescription>Register your phone number to claim codes and receive exclusive offers.</CardDescription>
+                    <CardDescription>{lang.claim.subtitle}</CardDescription>
                     <CardAction>
                         <Ticket size={40} />
                     </CardAction>
                 </CardHeader>
-                <form onSubmit={handleSubmit}>
-                    <CardContent className='space-y-4'>
-                        <div className="w-full space-y-2 py-2">
-                            <Label>Your username/name</Label>
-                            <Input
-                                placeholder="Enter username or name"
-                                type="text"
-                                className='text-foreground font-mono'
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                                disabled={mutation.isPending}
-                            />
+                {isSuccess ? (
+                    <CardContent className='space-y-4 pb-8'>
+                        <div className="flex flex-col items-center justify-center text-center py-6">
+                            <CircleCheck className="h-12 w-12 text-green-500" />
+                            <p className="mt-4 font-mono font-bold text-xl">{lang.claim.successTitle}</p>
+                            <p className="mt-2 text-muted-foreground">{lang.claim.successSubtitle}</p>
                         </div>
-                        <InputStartSelectDemo
-                            value={countryCode}
-                            setValue={setCountryCode}
-                            phoneNo={phoneNo}
-                            setPhoneNo={setPhoneNo}
-                            disabled={mutation.isPending}
-                        />
-                        <div className="w-full py-2">
-                            <Label className="text-foreground text-sm font-medium">Your Birthday</Label>
-                            <CalendarPickerInput
-                                value={birthday}
-                                onChange={setBirthday}
-                                disabled={mutation.isPending}
-                            />
-                        </div>
-
-                        <div className="flex-1 w-auto h-0.5 rounded bg-border shadow-sm" />
-                        <div className="w-full space-y-2 py-2">
-                            <Label>Shop code</Label>
-                            <div className="relative">
+                        <Button
+                            type="button"
+                            className="w-full font-mono"
+                            onClick={() => setIsSuccess(false)}
+                        >
+                            {lang.claim.successButton}
+                        </Button>
+                    </CardContent>
+                ) : (
+                    <form onSubmit={handleSubmit}>
+                        <CardContent className='space-y-4'>
+                            <div className="w-full space-y-2 py-2">
+                                <Label>{lang.claim.nameLabel}</Label>
                                 <Input
-                                    placeholder="Enter shop code"
+                                    placeholder={lang.claim.namePlaceholder}
                                     type="text"
                                     className='text-foreground font-mono'
-                                    value={shopCode}
-                                    onChange={e => setShopCode(removeSpaces(e.target.value))}
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
                                     disabled={mutation.isPending}
                                 />
-                                <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 peer-disabled:opacity-50">
-                                    <Key size={16} aria-hidden="true" />
+                            </div>
+                            <InputStartSelectDemo
+                                value={countryCode}
+                                setValue={setCountryCode}
+                                phoneNo={phoneNo}
+                                setPhoneNo={setPhoneNo}
+                                disabled={mutation.isPending}
+                            />
+                            <div className="w-full py-2">
+                                <Label className="text-foreground text-sm font-medium">
+                                    {lang.claim.birthdayLabel}
+                                </Label>
+                                <CalendarPickerInput
+                                    value={birthday}
+                                    onChange={setBirthday}
+                                    disabled={mutation.isPending}
+                                />
+                                <p className="text-sm text-muted-foreground">{lang.claim.birthdayHint}</p>
+                            </div>
+
+                            <div className="flex-1 w-auto h-0.5 rounded bg-border shadow-sm" />
+                            <div className="w-full space-y-2 py-2">
+                                <Label>{lang.claim.cafeCodeLabel}</Label>
+                                <div className="relative">
+                                    <Input
+                                        placeholder={lang.claim.cafeCodePlaceholder}
+                                        type="text"
+                                        className='text-foreground font-mono'
+                                        value={shopCode}
+                                        onChange={e => setShopCode(removeSpaces(e.target.value))}
+                                        disabled={mutation.isPending}
+                                    />
+                                    <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 peer-disabled:opacity-50">
+                                        <Key size={16} aria-hidden="true" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </CardContent>
-                    <CardFooter className='flex flex-col items-start'>
-                        <Label className="text-sm text-muted-foreground mb-2">
-                            The phone number you provide will be used for verification and to send you exclusive offers. We respect your privacy and will not share your information with third parties.
-                        </Label>
-                        <Button type="submit" className="w-full font-mono" disabled={mutation.isPending}>
-                            {mutation.isPending ? "Submitting..." : "Submit"}
-                            <Send />
-                        </Button>
-                    </CardFooter>
-                </form>
+                        </CardContent>
+                        <CardFooter className='flex flex-col items-start'>
+                            <Label className="text-sm text-muted-foreground mb-2">
+                                {lang.claim.privacyText}
+                            </Label>
+                            <Button type="submit" className="w-full font-mono" disabled={mutation.isPending}>
+                                {mutation.isPending ? lang.claim.submitting : lang.claim.submit}
+                                <Send />
+                            </Button>
+                        </CardFooter>
+                    </form>
+                )}
             </Card>
         </section>
     );
@@ -201,7 +226,7 @@ const InputStartSelectDemo = ({
 
     return (
         <div className="w-full space-y-2 py-2">
-            <Label htmlFor={id}>Input with country code select</Label>
+            <Label htmlFor={id}>{lang.claim.phoneLabel}</Label>
             <div className="flex rounded-md shadow-xs">
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
@@ -214,15 +239,15 @@ const InputStartSelectDemo = ({
                         >
                             {value
                                 ? countryCodes.find((code) => code.value === value)?.label
-                                : "Select country code..."}
+                                : lang.claim.countryCodePlaceholder}
                             <ChevronsUpDown className="opacity-50 ml-2 h-4 w-4" />
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="p-0">
                         <Command>
-                            <CommandInput placeholder="Search code..." className="h-9" disabled={disabled} />
+                            <CommandInput placeholder={lang.claim.countryCodeSearchPlaceholder} className="h-9" disabled={disabled} />
                             <CommandList>
-                                <CommandEmpty>No country found.</CommandEmpty>
+                                <CommandEmpty>{lang.claim.countryCodeNotFound}</CommandEmpty>
                                 <CommandGroup>
                                     {countryCodes.map((code) => (
                                         <CommandItem
@@ -256,7 +281,7 @@ const InputStartSelectDemo = ({
                 <Input
                     id={id}
                     type="tel"
-                    placeholder="Enter number"
+                    placeholder={lang.claim.phonePlaceholder}
                     className="-ms-px rounded-l-none text-foreground font-mono"
                     value={phoneNo}
                     onChange={handlePhoneChange}

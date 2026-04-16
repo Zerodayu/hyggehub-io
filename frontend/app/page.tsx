@@ -142,7 +142,7 @@ function Hero() {
       </Link>
 
       <p className="text-s self-end font-mono font-bold tracking-widest text-muted-foreground">
-        {lang.brand.full}
+        — {lang.brand.full}
       </p>
       <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold tracking-tight">
         {lang.hero.title}
@@ -287,7 +287,7 @@ function Pricing() {
 function Promo() {
   return (
     <section id="promo" className="flex flex-col p-12 justify-center w-full">
-      <div className="py-20 bg-linear-to-tr from-secondary/50 to-background rounded-md">
+      <div className="py-20 bg-linear-to-tr from-secondary/50 to-background rounded-b-md">
         <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
           <h2 className="font-mono text-primary font-bold text-4xl md:text-6xl mb-4 max-w-6xl tracking-tighter">
             {lang.promo.headline}
