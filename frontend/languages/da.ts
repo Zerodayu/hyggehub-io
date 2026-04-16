@@ -1,4 +1,9 @@
 export const da = {
+  brand: {
+    name: "HyggeHub",
+    tld: ".io",
+    full: "HyggeHub.io",
+  },
   navbar: {
     features: "Funktioner",
     setup: "Opsætning",
@@ -6,17 +11,16 @@ export const da = {
     faq: "FAQ",
     claim: "Indløs",
     shops: "Butikker",
-    signIn: "Log ind"
+    signIn: "Log ind",
   },
   hero: {
     updatesBadge: "Opdateringer!",
     updateVersion: "CSV Migrationsfunktion tilføjet",
-    title: "HyggeHub",
-    titleExtension: ".io",
-    tagline: "Underret Din Målgruppe. Øjeblikkeligt.",
-    description: "Engager kunder med personaliserede notifikationer — fra fødselsdagstilbud til nye tilbud og happy hour-advarsler.",
-    getStarted: "Kom i Gang",
-    claimCodes: "Indløs Koder"
+    title: "Fulde borde i aften.",
+    tagline: "Send et SMS til alle dine stamkunder.",
+    description: "98% læser din SMS. 20% ser dit Instagram.",
+    getStarted: "Prøv gratis i 30 dage",
+    claimCodes: "Indløs koder",
   },
   partners: {
     shops: [
@@ -25,97 +29,110 @@ export const da = {
       "Bagericaféet",
       "Café i København",
       "Kaffebar i Malmö",
-      "Café i Skåne"
-    ]
+      "Café i Skåne",
+    ],
   },
   features: {
-    title: "— Funktioner",
+    title: "— Outcomes",
     list: [
       {
-        name: "Øjeblikkelige Notifikationer",
-        description: "Hold dine følgere informeret med realtids-advarsler om særlige tilbud, begivenheder og kampagner."
+        name: "Tomt bord kl. 18? Fyldt 19.",
+        description:
+          "Send en SMS til dine stamkunder når du har huller, og få gæster ind samme aften.",
       },
       {
-        name: "Fødselsdagstilbud",
-        description: "Send automatisk personaliserede fødselsdagsbeskeder og særlige tilbud for at styrke kundeloyaliteten."
+        name: "Kunder der kommer hvert år.",
+        description:
+          "Automatiske fødselsdags-SMS'er der får gæsterne til at komme tilbage.",
       },
       {
-        name: "Butiks Dashboard",
-        description: "Administrer din butiksprofil, spor følgeraktivitet og overvåg alle dine notifikationskampagner ét sted."
+        name: "Overblik på 30 sekunder.",
+        description:
+          "Se følgere, kampagner og aktivitet samlet ét sted.",
       },
       {
-        name: "Sikker Platform",
-        description: "End-to-end kryptering og overholdelse af databeskyttelsesregler for ro i sindet."
+        name: "GDPR? Klaret.",
+        description:
+          "Samtykke og datahåndtering gjort enkelt, så du kan fokusere på driften.",
       },
       {
-        name: "Følgerstyring",
-        description: "Organiser kundeoplysninger og præferencer for målrettet, personaliseret beskedudveksling."
+        name: "Din egen kundeliste.",
+        description:
+          "Gem stamkunder og send til de rigtige, ikke 'alle'.",
       },
       {
-        name: "Planlagte Kampagner",
-        description: "Planlæg og automatiser kampagnemeddelelser eller happy hour-advarsler til at blive sendt på optimale tidspunkter."
-      }
-    ]
+        name: "Happy hour på autopilot.",
+        description:
+          "Planlæg én gang, så sender vi på de rigtige tidspunkter.",
+      },
+    ],
   },
   demo: {
     title: "— Sådan Fungerer Det",
     steps: [
       {
         title: "Trin Et",
-        description: "Opret din butiksprofil"
+        description: "Opret din butiksprofil",
       },
       {
         title: "Trin To",
-        description: "Indstil dine notifikationspræferencer"
+        description: "Indstil dine notifikationspræferencer",
       },
       {
         title: "Trin Tre",
-        description: "Lad kunder følge din butik gennem QR-kode"
+        description: "Lad kunder følge din butik gennem QR-kode",
       },
       {
         title: "Trin Fire",
-        description: "Begynd at sende notifikationer til dine følgere"
-      }
-    ]
+        description: "Begynd at sende notifikationer til dine følgere",
+      },
+    ],
   },
   pricing: {
     title: "— Prisplaner",
-    supportText: "Starter Plan har 30 dages gratis prøveperiode"
+    supportText: "Starter Plan har 30 dages gratis prøveperiode",
   },
   faq: {
     title: "— FAQ",
     questions: [
       {
         question: "Hvad er HyggeHub?",
-        answer: "HyggeHub er en notifikationsplatform, der gør det muligt for butikker og virksomheder at engagere kunder med personaliserede notifikationer om særlige tilbud, fødselsdagsdeals, happy hour-advarsler og nye kampagner."
+        answer:
+          "HyggeHub er en notifikationsplatform, der gør det muligt for butikker og virksomheder at engagere kunder med personaliserede notifikationer om særlige tilbud, fødselsdagsdeals, happy hour-advarsler og nye kampagner.",
       },
       {
         question: "Hvordan følger kunder min butik?",
-        answer: "Kunder kan følge din butik ved at scanne en QR-kode, som du viser på din lokation. Når de scanner den, begynder de at modtage dine notifikationer om tilbud og begivenheder."
+        answer:
+          "Kunder kan følge din butik ved at scanne en QR-kode, som du viser på din lokation. Når de scanner den, begynder de at modtage dine notifikationer om tilbud og begivenheder.",
       },
       {
         question: "Hvilke typer notifikationer kan jeg sende?",
-        answer: "Du kan sende forskellige typer notifikationer, herunder fødselsdagstilbud, happy hour-advarsler, særlige kampagner, nye tilbud og begivenhedsannonceringer for at holde dine følgere engagerede."
+        answer:
+          "Du kan sende forskellige typer notifikationer, herunder fødselsdagstilbud, happy hour-advarsler, særlige kampagner, nye tilbud og begivenhedsannonceringer for at holde dine følgere engagerede.",
       },
       {
         question: "Er kundedata sikre?",
-        answer: "Ja, HyggeHub bruger end-to-end kryptering og overholder databeskyttelsesregler for at sikre, at alle kundeoplysninger er beskyttede og sikre."
+        answer:
+          "Ja, HyggeHub bruger end-to-end kryptering og overholder databeskyttelsesregler for at sikre, at alle kundeoplysninger er beskyttede og sikre.",
       },
       {
         question: "Kan jeg planlægge notifikationer på forhånd?",
-        answer: "Absolut! Du kan planlægge og automatisere kampagnemeddelelser eller happy hour-advarsler til at blive sendt på optimale tidspunkter ved hjælp af vores planlagte kampagnefunktion."
+        answer:
+          "Absolut! Du kan planlægge og automatisere kampagnemeddelelser eller happy hour-advarsler til at blive sendt på optimale tidspunkter ved hjælp af vores planlagte kampagnefunktion.",
       },
       {
         question: "Hvordan administrerer jeg mine følgere?",
-        answer: "Gennem Butiks Dashboard kan du organisere kundeoplysninger, spore følgeraktivitet, administrere præferencer for målrettet beskedudveksling og overvåge alle dine notifikationskampagner ét sted."
-      }
-    ]
+        answer:
+          "Gennem Butiks Dashboard kan du organisere kundeoplysninger, spore følgeraktivitet, administrere præferencer for målrettet beskedudveksling og overvåge alle dine notifikationskampagner ét sted.",
+      },
+    ],
   },
   cta: {
-    title: "De første 50 kunder får Growth-planen for evigt til 799 USD! Begrænset tilbud.",
+    title:
+      "De første 50 kunder får Growth-planen for evigt til 799 USD! Begrænset tilbud.",
     description: "Forbedr din oplevelse med vores premium-tjenester",
     registerNow: "Registrer Nu",
-    comparePlans: "Sammenlign Planer"
+    comparePlans: "Sammenlign Planer",
   },
   footer: {
     copyright: "© copyright HyggeHub.io",
@@ -125,7 +142,7 @@ export const da = {
       home: "Hjem",
       claim: "Indløs",
       updates: "Opdateringer",
-      signIn: "Log ind"
+      signIn: "Log ind",
     },
     contacts: {
       title: "— Kontakter",
@@ -134,13 +151,13 @@ export const da = {
       twitter: "Twitter",
       linkedin: "LinkedIn",
       email: "support@hyggehub.io",
-      phone: "+45 42349115"
+      phone: "+45 42349115",
     },
     legal: {
       title: "— Juridisk",
       privacyPolicy: "Privatlivspolitik",
       termsOfService: "Servicevilkår",
-      cookiePolicy: "Cookie-politik"
-    }
-  }
+      cookiePolicy: "Cookie-politik",
+    },
+  },
 };

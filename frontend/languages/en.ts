@@ -1,4 +1,9 @@
 export const en = {
+  brand: {
+    name: "HyggeHub",
+    tld: ".io",
+    full: "HyggeHub.io",
+  },
   navbar: {
     features: "Features",
     setup: "Setup",
@@ -11,12 +16,11 @@ export const en = {
   hero: {
     updatesBadge: "Updates!",
     updateVersion: "CSV Migration feature added",
-    title: "HyggeHub",
-    titleExtension: ".io",
-    tagline: "Notify Your Crowd. Instantly.",
-    description: "Engage customers with personalized notifications — from birthday offers to new deals and happy hour alerts.",
-    getStarted: "Get Started",
-    claimCodes: "Claim Codes"
+    title: "Full tables tonight.",
+    tagline: "Send an SMS to all your regulars.",
+    description: "98% read your SMS. 20% see your Instagram.",
+    getStarted: "Try free for 30 days",
+    claimCodes: "Redeem codes"
   },
   partners: {
     shops: [
@@ -29,31 +33,31 @@ export const en = {
     ]
   },
   features: {
-    title: "— Features",
+    title: "— Outcomes",
     list: [
       {
-        name: "Instant Notifications",
-        description: "Keep your followers informed with real-time alerts about special offers, events, and promotions."
+        name: "Empty table at 6? Full by 7.",
+        description: "Send a text to your regulars when you have gaps and pull people in tonight."
       },
       {
-        name: "Birthday Offers",
-        description: "Automatically send personalized birthday messages and special offers to enhance customer loyalty."
+        name: "Regulars every year.",
+        description: "Automatic birthday texts that bring guests back."
       },
       {
-        name: "Shop Dashboard",
-        description: "Manage your shop profile, track follower activity, and oversee all your notification campaigns in one place."
+        name: "See it in 30 seconds.",
+        description: "Followers, campaigns, and activity in one place."
       },
       {
-        name: "Secure Platform",
-        description: "End-to-end encryption and compliance with data privacy regulations for peace of mind."
+        name: "GDPR? Sorted.",
+        description: "Consent and data handling made simple so you can focus on the day-to-day."
       },
       {
-        name: "Follower Management",
-        description: "Organize customer information and preferences for targeted, personalized messaging."
+        name: "Your own customer list.",
+        description: "Keep your regulars and message the right people, not \"everyone\"."
       },
       {
-        name: "Scheduled Campaigns",
-        description: "Plan and automate promotional messages or happy hour alerts to be sent at optimal times."
+        name: "Happy hour on autopilot.",
+        description: "Schedule once, we send at the right times."
       }
     ]
   },
