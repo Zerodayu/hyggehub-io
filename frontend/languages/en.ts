@@ -66,25 +66,28 @@ export const en = {
     steps: [
       {
         title: "Step One",
-        description: "Create your shop profile"
+        description: "Create your profile in 2 minutes"
       },
       {
         title: "Step Two",
-        description: "Setup your notification preferences"
+        description: "Customers scan the QR"
       },
       {
         title: "Step Three",
-        description: "Let Customers follow your shop through QR code"
-      },
-      {
-        title: "Step Four",
-        description: "Start sending notifications to your followers"
+        description: "Send offers, 98% see it"
       }
     ]
   },
   pricing: {
     title: "— Pricing Plans",
-    supportText: "Starter Plan have 30 days free trial"
+    supportText: "Starter Plan have 30 days free trial",
+    mostPopular: "MOST POPULAR",
+    perMonth: "/month",
+    cta: "Try free for 30 days",
+  },
+  promo: {
+    headline: "Fill empty tables with one text.",
+    subhead: "Customers see it. You get bookings.",
   },
   faq: {
     title: "— FAQ",
@@ -114,12 +117,6 @@ export const en = {
         answer: "Through the Shop Dashboard, you can organize customer information, track follower activity, manage preferences for targeted messaging, and oversee all your notification campaigns in one place."
       }
     ]
-  },
-  cta: {
-    title: "First 50 customers get the Growth plan forever at 125 USD! Limited time offer.",
-    description: "Elevate your experience with our premium services",
-    registerNow: "Register Now",
-    comparePlans: "Compare Plans"
   },
   footer: {
     copyright: "© copyright HyggeHub.io",

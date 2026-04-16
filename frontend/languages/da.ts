@@ -72,25 +72,28 @@ export const da = {
     steps: [
       {
         title: "Trin Et",
-        description: "Opret din butiksprofil",
+        description: "Opret profil på 2 min",
       },
       {
         title: "Trin To",
-        description: "Indstil dine notifikationspræferencer",
+        description: "Kunder scanner QR",
       },
       {
         title: "Trin Tre",
-        description: "Lad kunder følge din butik gennem QR-kode",
-      },
-      {
-        title: "Trin Fire",
-        description: "Begynd at sende notifikationer til dine følgere",
+        description: "Send tilbud, 98% ser det",
       },
     ],
   },
   pricing: {
     title: "— Prisplaner",
     supportText: "Starter Plan har 30 dages gratis prøveperiode",
+    mostPopular: "MEST POPULÆR",
+    perMonth: "/md",
+    cta: "Prøv gratis i 30 dage",
+  },
+  promo: {
+    headline: "Fyld tomme borde med én SMS.",
+    subhead: "Kunder ser den. Du får bookinger.",
   },
   faq: {
     title: "— FAQ",
@@ -126,13 +129,6 @@ export const da = {
           "Gennem Butiks Dashboard kan du organisere kundeoplysninger, spore følgeraktivitet, administrere præferencer for målrettet beskedudveksling og overvåge alle dine notifikationskampagner ét sted.",
       },
     ],
-  },
-  cta: {
-    title:
-      "De første 50 kunder får Growth-planen for evigt til 799 USD! Begrænset tilbud.",
-    description: "Forbedr din oplevelse med vores premium-tjenester",
-    registerNow: "Registrer Nu",
-    comparePlans: "Sammenlign Planer",
   },
   footer: {
     copyright: "© copyright HyggeHub.io",
