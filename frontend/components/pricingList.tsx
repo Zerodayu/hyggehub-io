@@ -1,14 +1,9 @@
-'use client'
+"use client";
 
-import { usePlans } from '@clerk/nextjs/experimental'
+import { usePlans } from "@clerk/nextjs/experimental";
 import { Button } from "@/components/ui/button";
-import { useState } from 'react';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { activeLang } from "@/languages/lang";
 
 type Currency = "DKK" | "USD";
@@ -37,12 +32,19 @@ const dkkTiers = [
 ] as const;
 
 export default function DynamicPricingPlans() {
-  const { data, isLoading, hasNextPage, fetchNext, hasPreviousPage, fetchPrevious } = usePlans({
-    for: 'organization',
+  const {
+    data,
+    isLoading,
+    hasNextPage,
+    fetchNext,
+    hasPreviousPage,
+    fetchPrevious,
+  } = usePlans({
+    for: "organization",
     pageSize: 3,
   });
 
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>('DKK');
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency>("DKK");
 
   if (selectedCurrency === "USD" && isLoading) {
     return (
@@ -53,10 +55,14 @@ export default function DynamicPricingPlans() {
   }
 
   return (
-    <Tabs defaultValue="DKK" className="w-full" onValueChange={(value) => setSelectedCurrency(value as Currency)}>
+    <Tabs
+      defaultValue="DKK"
+      className="w-full"
+      onValueChange={(value) => setSelectedCurrency(value as Currency)}
+    >
       {/* Currency selector */}
       <div className="flex justify-center mb-8">
-        <TabsList className='font-mono font-bold'>
+        <TabsList className="font-mono font-bold">
           <TabsTrigger value="DKK">DKK</TabsTrigger>
           <TabsTrigger value="USD">USD</TabsTrigger>
         </TabsList>
@@ -68,10 +74,11 @@ export default function DynamicPricingPlans() {
             return (
               <div
                 key={tier.name}
-                className={`relative flex flex-col flex-wrap px-4 p-6 ${index === 1
-                  ? "bg-primary text-primary-foreground rounded-lg shadow-lg scale-105 border border-primary"
-                  : "bg-background rounded-lg shadow-sm border border-muted"
-                  }`}
+                className={`relative flex flex-col flex-wrap px-4 p-6 ${
+                  index === 1
+                    ? "bg-primary text-primary-foreground rounded-lg shadow-lg scale-105 border border-primary"
+                    : "bg-background rounded-lg shadow-sm border border-muted"
+                }`}
               >
                 {index === 1 && (
                   <div className="absolute -top-4 left-0 right-0 flex justify-center">
@@ -81,22 +88,35 @@ export default function DynamicPricingPlans() {
                   </div>
                 )}
                 <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                <span className='flex flex-wrap items-end my-4'>
-                  <p className="text-3xl font-bold">
-                    {tier.price}
-                  </p>
-                  <p className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} text-base font-normal`}>
+                <span className="flex flex-wrap items-end my-4">
+                  <p className="text-3xl font-bold">{tier.price}</p>
+                  <p
+                    className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} text-base font-normal`}
+                  >
                     {lang.pricing.perMonth}
                   </p>
                 </span>
-                <p className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} my-6`}>
+                <p
+                  className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} my-6`}
+                >
                   {tier.description}
                 </p>
                 <ul className="space-y-3 mb-8">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-center">
-                      <svg className={`h-5 w-5 ${index !== 1 ? "text-green-500" : ""} mr-2`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      <svg
+                        className={`h-5 w-5 ${index !== 1 ? "text-green-500" : ""} mr-2`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        ></path>
                       </svg>
                       {feature}
                     </li>
@@ -122,10 +142,11 @@ export default function DynamicPricingPlans() {
             return (
               <div
                 key={plan.id}
-                className={`relative flex flex-col flex-wrap px-4 p-6 ${index === 1
-                  ? "bg-primary text-primary-foreground rounded-lg shadow-lg scale-105 border border-primary"
-                  : "bg-background rounded-lg shadow-sm border border-muted"
-                  }`}
+                className={`relative flex flex-col flex-wrap px-4 p-6 ${
+                  index === 1
+                    ? "bg-primary text-primary-foreground rounded-lg shadow-lg scale-105 border border-primary"
+                    : "bg-background rounded-lg shadow-sm border border-muted"
+                }`}
               >
                 {index === 1 && (
                   <div className="absolute -top-4 left-0 right-0 flex justify-center">
@@ -135,22 +156,40 @@ export default function DynamicPricingPlans() {
                   </div>
                 )}
                 <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <span className='flex flex-wrap items-end my-4'>
-                  <p className="text-3xl font-bold">
-                    {displayPrice}
-                  </p>
-                  <p className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} text-base font-normal`}>
+                <span className="flex flex-wrap items-end my-4">
+                  <p className="text-3xl font-bold">{displayPrice}</p>
+                  <p
+                    className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} text-base font-normal`}
+                  >
                     {lang.pricing.perMonth}
                   </p>
                 </span>
-                <p className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} my-6`}>
-                  {plan.description || (index === 0 ? "Perfect for small local shops" : index === 1 ? "For growing establishments" : "For multiple locations")}
+                <p
+                  className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} my-6`}
+                >
+                  {plan.description ||
+                    (index === 0
+                      ? "Perfect for small local shops"
+                      : index === 1
+                        ? "For growing establishments"
+                        : "For multiple locations")}
                 </p>
                 <ul className="space-y-3 mb-8">
-                  {plan.features.map(feature => (
+                  {plan.features.map((feature) => (
                     <li key={feature.id} className="flex items-center">
-                      <svg className={`h-5 w-5 ${index !== 1 ? "text-green-500" : ""} mr-2`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      <svg
+                        className={`h-5 w-5 ${index !== 1 ? "text-green-500" : ""} mr-2`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        ></path>
                       </svg>
                       {feature.name}
                     </li>
@@ -170,8 +209,16 @@ export default function DynamicPricingPlans() {
 
       {selectedCurrency === "USD" && (
         <div className="flex justify-center gap-4 mt-8">
-          {hasPreviousPage && <Button onClick={() => fetchPrevious()} variant="outline" size="sm">Previous</Button>}
-          {hasNextPage && <Button onClick={() => fetchNext()} variant="outline" size="sm">Next</Button>}
+          {hasPreviousPage && (
+            <Button onClick={() => fetchPrevious()} variant="outline" size="sm">
+              Previous
+            </Button>
+          )}
+          {hasNextPage && (
+            <Button onClick={() => fetchNext()} variant="outline" size="sm">
+              Next
+            </Button>
+          )}
         </div>
       )}
     </Tabs>
