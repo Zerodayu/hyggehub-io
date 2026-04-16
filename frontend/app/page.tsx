@@ -144,7 +144,7 @@ function Hero() {
       <p className="text-s self-end font-mono font-bold tracking-widest text-muted-foreground">
         — {lang.brand.full}
       </p>
-      <h1 className="text-4xl sm:text-6xl md:text-8xl font-mono font-bold tracking-tight">
+      <h1 className="text-4xl text-center sm:text-6xl md:text-8xl font-mono font-bold tracking-tight">
         {lang.hero.title}
       </h1>
       <h2 className="mt-4 text-lg sm:text-xl md:text-2xl font-mono font-bold text-primary max-w-3xl">
@@ -153,7 +153,7 @@ function Hero() {
       <p className="mt-4 text-sm md:text-lg text-muted-foreground max-w-2xl">
         {lang.hero.description}
       </p>
-      <div className="flex flex-col sm:flex-row mt-6 gap-4">
+      <div className="flex flex-col sm:flex-row mt-6 gap-4 items-center justify-center">
         <Link href="/sign-in" className="w-full">
           <Button className="text-xs font-mono font-bold">
             <SquareArrowOutUpRight className="h-4 w-4" />
@@ -286,8 +286,11 @@ function Pricing() {
 
 function Promo() {
   return (
-    <section id="promo" className="flex flex-col p-12 justify-center w-full">
-      <div className="py-20 bg-linear-to-tr from-secondary/50 to-background rounded-b-md">
+    <section
+      id="promo"
+      className="flex flex-col p-12 pl-0 justify-center w-full"
+    >
+      <div className="py-20 bg-linear-to-tr from-secondary/50 to-background rounded-r-md outline outline-muted-foreground">
         <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
           <h2 className="font-mono text-primary font-bold text-4xl md:text-6xl mb-4 max-w-6xl tracking-tighter">
             {lang.promo.headline}
