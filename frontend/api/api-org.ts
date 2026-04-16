@@ -1,7 +1,31 @@
-import api from "@/lib/axios";
+import api from "@/lib/api";
+
+type OrgResponse = {
+  shop?: {
+    code?: string;
+    name?: string;
+    shopNum?: string;
+    messages?: Array<{
+      id: string;
+      createdAt: string;
+      title: string;
+      value: string;
+      expiresAt: string | null;
+    }>;
+  };
+  connectedCustomers?: Customer[];
+};
+
+type Customer = {
+  customerId: string;
+  name: string;
+  phone: string;
+  birthday?: string;
+  createdAt?: string;
+};
 
 export async function getOrg(clerkOrgId: string) {
-  const res = await api.get('/api/orgs', {
+  const res = await api.get<OrgResponse>('/api/orgs', {
     headers: {
       'x-clerk-org-id': clerkOrgId
     }
@@ -12,7 +36,7 @@ export async function getOrg(clerkOrgId: string) {
 
 // Create a new function specifically for customers if you need more granular control
 export async function getOrgCustomers(clerkOrgId: string) {
-  const res = await api.get('/api/orgs', {
+  const res = await api.get<OrgResponse>('/api/orgs', {
     headers: {
       'x-clerk-org-id': clerkOrgId
     }

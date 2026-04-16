@@ -13,7 +13,7 @@ This document provides essential guidelines for AI coding agents working on the 
 - **State Management**: TanStack Query v5 (React Query) + React Hook Form
 - **Authentication**: Clerk
 - **Validation**: Zod v4
-- **HTTP Client**: Axios
+- **HTTP Client**: Fetch (Bun/Next)
 - **Icons**: Lucide React
 - **Animations**: Framer Motion
 - **Notifications**: Sonner
@@ -154,14 +154,14 @@ import { cn } from "@/lib/utils"
 
 **API Layer Structure**:
 
-- Centralized axios instance in `/lib/axios.ts`
+- Centralized API client in `/lib/api.ts`
 - API functions in `/api/` directory organized by domain
-- Always use the centralized `api` instance from `@/lib/axios`
+- Always use the centralized `api` instance from `@/lib/api`
 
 **API Function Pattern**:
 
 ```typescript
-import api from "@/lib/axios";
+import api from "@/lib/api";
 
 export async function getResource(clerkOrgId: string) {
   const res = await api.get("/api/resource", {
@@ -195,8 +195,8 @@ export async function updateResource({
 
 - `x-clerk-org-id`: Organization ID (required for most endpoints)
 - `x-clerk-user-id`: User ID (required for mutations)
-- `x-api-key`: Set globally in axios instance
-- `x-vercel-protection-bypass`: Set globally in axios instance
+- `x-api-key`: Set globally in API client
+- `x-vercel-protection-bypass`: Set globally in API client
 
 ### State Management
 

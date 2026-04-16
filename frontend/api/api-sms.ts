@@ -1,4 +1,4 @@
-import api from "@/lib/axios";
+import api from "@/lib/api";
 
 // Define interface for customer data
 interface Customer {
@@ -8,6 +8,13 @@ interface Customer {
   birthday?: string;
   createdAt?: string;
 }
+
+type SmsNotifResponse = {
+  success: boolean;
+  message?: string;
+  error?: string;
+  totalSent?: number;
+};
 
 /**
  * Send SMS to all users subscribed to a shop
@@ -21,7 +28,7 @@ export async function sendSmsToShopSubscribers({
 }: { 
   orgId: string, 
   message: string
-}) {
+}): Promise<SmsNotifResponse> {
   try {
     // First, get all customer phone numbers and shop details for this shop
     const orgResponse = await api.get('/api/orgs', {
@@ -30,8 +37,9 @@ export async function sendSmsToShopSubscribers({
       }
     });
     
-    const customers: Customer[] = orgResponse.data.connectedCustomers || [];
-    const shopCode = orgResponse.data.shop?.code;
+    const customers: Customer[] =
+      (orgResponse.data as { connectedCustomers?: Customer[] }).connectedCustomers || [];
+    const shopCode = (orgResponse.data as { shop?: { code?: string } }).shop?.code;
     
     // Extract phone numbers from customers
     const phoneNumbers = customers
@@ -53,7 +61,7 @@ export async function sendSmsToShopSubscribers({
     }
     
     // Call the SMS notification endpoint with shopCode as senderName
-    const response = await api.post('/api/sms-notif', {
+    const response = await api.post<SmsNotifResponse>('/api/sms-notif', {
       to: phoneNumbers,
       body: message,
       senderName: shopCode // Always use shopCode as senderName
@@ -84,9 +92,9 @@ export async function sendSmsToCustomer({
   phoneNumber: string,
   message: string,
   senderName?: string
-}) {
+}): Promise<SmsNotifResponse> {
   try {
-    const response = await api.post('/api/sms-notif', {
+    const response = await api.post<SmsNotifResponse>('/api/sms-notif', {
       to: phoneNumber,
       body: message,
       senderName
