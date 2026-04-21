@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "bun --bun next dev --turbopack",
-    "build": "next build --turbopack",
+    "dev": "dotenvx run -- next dev --turbopack",
+    "build": "dotenvx run -- next build --turbopack",
     "start": "next start",
     "lint": "eslint"
   },
@@ -12,6 +12,7 @@
     "@base-ui/react": "^1.1.0",
     "@clerk/elements": "^0.24.7",
     "@clerk/nextjs": "^6.37.2",
+    "@dotenvx/dotenvx-ops": "^0.37.9",
     "@hookform/resolvers": "^5.2.2",
     "@internationalized/date": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.12",
