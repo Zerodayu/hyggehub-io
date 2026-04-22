@@ -81,6 +81,12 @@ export const en = {
       },
     ],
   },
+  screens: {
+    kicker: "PRODUCT DEMO",
+    title: "See it in action",
+    description:
+      "Desktop for managing campaigns, phone for the customer experience.",
+  },
   pricing: {
     title: "— Pricing Plans",
     supportText: "Starter Plan have 30 days free trial",

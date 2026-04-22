@@ -84,6 +84,11 @@ export const da = {
       },
     ],
   },
+  screens: {
+    kicker: "PRODUKTDEMO",
+    title: "Se det i brug",
+    description: "Desktop til kampagner, telefon til kundeoplevelsen.",
+  },
   pricing: {
     title: "— Prisplaner",
     supportText: "Starter Plan har 30 dages gratis prøveperiode",
