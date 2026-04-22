@@ -45,6 +45,7 @@ export default function Page() {
       <Navbar />
       <Hero />
       <div className="w-full [&>section:nth-child(odd)]:bg-muted/50">
+        <Screens />
         <Features />
         <Demo />
         <Pricing />
@@ -170,6 +171,58 @@ function Hero() {
       {/* <div className="w-full mt-12"> */}
       {/*   <Partners /> */}
       {/* </div> */}
+    </section>
+  );
+}
+
+function Screens() {
+  return (
+    <section className="relative w-full py-16 sm:py-20 overflow-x-clip">
+      <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10">
+            <p className="font-mono text-xs font-bold tracking-widest text-muted-foreground">
+              {lang.screens.kicker}
+            </p>
+            <h2 className="mt-3 font-mono text-3xl font-bold tracking-tight sm:text-4xl">
+              {lang.screens.title}
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
+              {lang.screens.description}
+            </p>
+          </div>
+
+          <div className="relative">
+            <div className="relative overflow-hidden">
+              <Image
+                src="/homepage/demo-desktop.png"
+                alt="Desktop demo"
+                width={1600}
+                height={900}
+                className="h-auto w-full"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="mt-6 flex justify-center md:mt-0 md:absolute md:bottom-6 md:right-6 lg:right-10">
+              <div className="w-50 sm:w-60 md:w-55 lg:w-70 xl:w-[320px]">
+                <div className="overflow-hidden">
+                  <Image
+                    src="/homepage/demo-phone.png"
+                    alt="Phone demo"
+                    width={900}
+                    height={1800}
+                    className="h-auto w-full"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-12 h-px w-full bg-border/60" />
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -328,7 +381,7 @@ function Faq() {
 
 function Footer() {
   return (
-    <footer className="w-full">
+    <footer>
       <div className="px-8 py-20 w-full relative overflow-hidden">
         <div className=" mx-auto text-sm text-neutral-500 flex sm:flex-row flex-col justify-between items-start md:px-8">
           <div>
@@ -345,7 +398,7 @@ function Footer() {
                   decoding="async"
                   data-nimg="1"
                   src="/HyggeHub-logo.svg"
-                  className="rounded size-[2rem]"
+                  className="rounded size-8"
                 />
                 <span className="font-bold text-xl text-foreground">
                   {lang.brand.name}
