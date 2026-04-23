@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "dotenvx run --convention=nextjs next dev --turbopack -p 3001",
     "build": "dotenvx run -f .env.production -- prisma generate && next build --turbopack",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "eslint"
   },
   "dependencies": {
