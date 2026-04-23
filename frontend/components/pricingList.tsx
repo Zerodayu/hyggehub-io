@@ -1,65 +1,59 @@
 "use client";
 
-import { usePlans } from "@clerk/nextjs/experimental";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { activeLang } from "@/languages/lang";
 
-type Currency = "DKK" | "USD";
+import pricingList from "@/languages/pricing-list.json";
+
+type CurrencyKey = "#dkk" | "#usd";
+type PlanName = "Starter" | "Pro" | "Max";
+
+type PricingTier = {
+  name: PlanName;
+  price: string;
+  features: string[];
+};
 
 const lang = activeLang;
 
-const dkkTiers = [
-  {
-    name: "Starter",
-    price: "499 kr",
-    description: "Til én butik.",
-    features: ["Butikker", "Beskedskabeloner", "Notifikationer", "QR-kode"],
-  },
-  {
-    name: "Pro",
-    price: "999 kr",
-    description: "Til travle steder.",
-    features: ["Butikker", "Beskedskabeloner", "Notifikationer", "QR-kode"],
-  },
-  {
-    name: "Max",
-    price: "2.499 kr",
-    description: "Til flere lokationer.",
-    features: ["Butikker", "Beskedskabeloner", "Notifikationer", "QR-kode"],
-  },
-] as const;
+const planOrder: PlanName[] = ["Starter", "Pro", "Max"];
+
+function splitPrice(price: string): { main: string; period: string } {
+  const idx = price.lastIndexOf("/");
+  if (idx === -1) return { main: price, period: lang.pricing.perMonth };
+
+  return {
+    main: price.slice(0, idx),
+    period: price.slice(idx),
+  };
+}
+
+function getTiers(currencyKey: CurrencyKey): PricingTier[] {
+  const tiersByName = pricingList[currencyKey] as Record<
+    string,
+    { price: string; features: string[] }
+  >;
+
+  return planOrder
+    .map((name) => {
+      const tier = tiersByName?.[name];
+      if (!tier) return null;
+      return {
+        name,
+        price: tier.price,
+        features: tier.features,
+      };
+    })
+    .filter((v): v is PricingTier => v !== null);
+}
 
 export default function DynamicPricingPlans() {
-  const {
-    data,
-    isLoading,
-    hasNextPage,
-    fetchNext,
-    hasPreviousPage,
-    fetchPrevious,
-  } = usePlans({
-    for: "organization",
-    pageSize: 3,
-  });
-
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>("DKK");
-
-  if (selectedCurrency === "USD" && isLoading) {
-    return (
-      <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  const dkkTiers = getTiers("#dkk");
+  const usdTiers = getTiers("#usd");
 
   return (
-    <Tabs
-      defaultValue="DKK"
-      className="w-full"
-      onValueChange={(value) => setSelectedCurrency(value as Currency)}
-    >
+    <Tabs defaultValue="DKK" className="w-full">
       {/* Currency selector */}
       <div className="flex justify-center mb-8">
         <TabsList className="font-mono font-bold">
@@ -71,6 +65,7 @@ export default function DynamicPricingPlans() {
       <TabsContent value="DKK">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-4">
           {dkkTiers.map((tier, index) => {
+            const { main, period } = splitPrice(tier.price);
             return (
               <div
                 key={tier.name}
@@ -89,18 +84,13 @@ export default function DynamicPricingPlans() {
                 )}
                 <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
                 <span className="flex flex-wrap items-end my-4">
-                  <p className="text-3xl font-bold">{tier.price}</p>
+                  <p className="text-3xl font-bold">{main}</p>
                   <p
                     className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} text-base font-normal`}
                   >
-                    {lang.pricing.perMonth}
+                    {period || lang.pricing.perMonth}
                   </p>
                 </span>
-                <p
-                  className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} my-6`}
-                >
-                  {tier.description}
-                </p>
                 <ul className="space-y-3 mb-8">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-center">
@@ -136,12 +126,11 @@ export default function DynamicPricingPlans() {
 
       <TabsContent value="USD">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-4">
-          {data.map((plan, index) => {
-            const displayPrice = `${plan.fee.currencySymbol}${plan.fee.amountFormatted}`;
-
+          {usdTiers.map((tier, index) => {
+            const { main, period } = splitPrice(tier.price);
             return (
               <div
-                key={plan.id}
+                key={tier.name}
                 className={`relative flex flex-col flex-wrap px-4 p-6 ${
                   index === 1
                     ? "bg-primary text-primary-foreground rounded-lg shadow-lg scale-105 border border-primary"
@@ -155,28 +144,18 @@ export default function DynamicPricingPlans() {
                     </span>
                   </div>
                 )}
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
                 <span className="flex flex-wrap items-end my-4">
-                  <p className="text-3xl font-bold">{displayPrice}</p>
+                  <p className="text-3xl font-bold">{main}</p>
                   <p
                     className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} text-base font-normal`}
                   >
-                    {lang.pricing.perMonth}
+                    {period || lang.pricing.perMonth}
                   </p>
                 </span>
-                <p
-                  className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} my-6`}
-                >
-                  {plan.description ||
-                    (index === 0
-                      ? "Perfect for small local shops"
-                      : index === 1
-                        ? "For growing establishments"
-                        : "For multiple locations")}
-                </p>
                 <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature) => (
-                    <li key={feature.id} className="flex items-center">
+                  {tier.features.map((feature) => (
+                    <li key={feature} className="flex items-center">
                       <svg
                         className={`h-5 w-5 ${index !== 1 ? "text-green-500" : ""} mr-2`}
                         fill="none"
@@ -191,7 +170,7 @@ export default function DynamicPricingPlans() {
                           d="M5 13l4 4L19 7"
                         ></path>
                       </svg>
-                      {feature.name}
+                      {feature}
                     </li>
                   ))}
                 </ul>
@@ -206,21 +185,6 @@ export default function DynamicPricingPlans() {
           })}
         </div>
       </TabsContent>
-
-      {selectedCurrency === "USD" && (
-        <div className="flex justify-center gap-4 mt-8">
-          {hasPreviousPage && (
-            <Button onClick={() => fetchPrevious()} variant="outline" size="sm">
-              Previous
-            </Button>
-          )}
-          {hasNextPage && (
-            <Button onClick={() => fetchNext()} variant="outline" size="sm">
-              Next
-            </Button>
-          )}
-        </div>
-      )}
     </Tabs>
   );
 }

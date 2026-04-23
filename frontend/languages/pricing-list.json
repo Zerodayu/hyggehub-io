@@ -1,0 +1,65 @@
+{
+  "#usd": {
+    "Starter": {
+      "price": "$389.00/month",
+      "features": [
+        "2 Shops",
+        "4 Message Templates",
+        "500/month Notifications",
+        "QR Template"
+      ]
+    },
+
+    "Pro": {
+      "price": "$549.00/month",
+      "features": [
+        "4 Shops",
+        "6 Message Templates",
+        "1000/month Notifications",
+        "Custom Qr"
+      ]
+    },
+
+    "Max": {
+      "price": "$700.00/month",
+      "features": [
+        "Unli Shops",
+        "10 Message Templates",
+        "3000/month Notifications",
+        "Custom Qr"
+      ]
+    }
+  },
+
+  "#dkk": {
+    "Starter": {
+      "price": "499.00 kr/month",
+      "features": [
+        "2 Butikker",
+        "4 Beskedskabeloner",
+        "500/month Notifikationer",
+        "QR Template"
+      ]
+    },
+
+    "Pro": {
+      "price": "549.00 kr/month",
+      "features": [
+        "4 Butikker",
+        "6 Beskedskabeloner",
+        "1000/month Notifikationer",
+        "Custom Qr"
+      ]
+    },
+
+    "Max": {
+      "price": "$700.00 kr/month",
+      "features": [
+        "Unli Butikker",
+        "10 Beskedskabeloner",
+        "3000/month Notifikationer",
+        "Custom Qr"
+      ]
+    }
+  }
+}
