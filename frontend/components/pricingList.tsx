@@ -47,7 +47,8 @@ export default function DynamicPricingPlans() {
               const splitIdx = tier.price.indexOf("/");
               const main =
                 splitIdx === -1 ? tier.price : tier.price.slice(0, splitIdx);
-              const period = splitIdx === -1 ? undefined : tier.price.slice(splitIdx);
+              const period =
+                splitIdx === -1 ? undefined : tier.price.slice(splitIdx);
 
               return (
                 <div

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "dotenvx run -- next dev --turbopack -p 3001",
-    "build": "dotenvx run -- prisma generate && next build --turbopack",
+    "dev": "dotenvx run --convention=nextjs next dev --turbopack -p 3001",
+    "build": "dotenvx run --convention=nextjs prisma generate && next build --turbopack",
     "start": "next start",
     "lint": "eslint"
   },
