@@ -34,7 +34,13 @@
 */.pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-*/.env*
+# dotenvx
+.env.keys*
+.env.*.keys
+
+# optional unsafe/local envs
+.env.local
+.env.*.local
 
 # test environment files
 tests/.env

@@ -8,8 +8,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
     return (
         <ShopProvider
-            shopCode={shopData?.shopCode ?? undefined}
-            shopName={shopData?.shopName ?? undefined}
+            shopCode={shopData?.shopCode ?? null}
+            shopName={shopData?.shopName ?? null}
         >
             {children}
         </ShopProvider>

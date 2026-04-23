@@ -1,4 +1,10 @@
-import api from "@/lib/axios";
+import api from "@/lib/api";
+
+type ClaimShopCodeResponse = {
+  message?: string;
+  error?: string;
+  success?: boolean;
+};
 
 export async function claimShopCode({
   customers,
@@ -31,6 +37,9 @@ export async function claimShopCode({
     shopCode,
   }));
 
-  const res = await api.post("/api/customers", customersWithShopCode);
+  const res = await api.post<ClaimShopCodeResponse>(
+    "/api/customers",
+    customersWithShopCode,
+  );
   return res.data;
 }

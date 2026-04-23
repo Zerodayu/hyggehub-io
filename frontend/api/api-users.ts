@@ -1,4 +1,4 @@
-import api from "@/lib/axios";
+import api from "@/lib/api";
 
 /**
  * Gets user information including organization memberships

@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 3001",
-    "build": "prisma generate && next build --turbopack",
+    "dev": "dotenvx run --convention=nextjs next dev --turbopack -p 3001",
+    "build": "dotenvx run -f .env.production -- prisma generate && next build --turbopack",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.32.2",
+    "@dotenvx/dotenvx-ops": "^0.37.9",
     "@prisma/client": "^6.16.2",
     "bcrypt-ts": "^7.1.0",
     "class-variance-authority": "^0.7.1",

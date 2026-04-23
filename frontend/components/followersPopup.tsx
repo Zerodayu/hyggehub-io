@@ -52,7 +52,7 @@ export default function FollowersList() {
   const deleteMutation = useMutation({
     mutationFn: ({ orgId, customerId }: { orgId: string, customerId: string }) =>
       deleteCustomerApi({ orgId, customerId }),
-    onSuccess: (variables) => {
+    onSuccess: (_data, variables: { orgId: string; customerId: string }) => {
       // Invalidate and refetch customers after deletion
       queryClient.invalidateQueries({ queryKey: ["customers", organization?.id] })
 
