@@ -2,5 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "ignoreCommand": "if [ \"$VERCEL_ENV\" != \"production\" ] && git diff --quiet HEAD^ HEAD ./; then exit 0; else exit 1; fi",
   "installCommand": "bun install",
-  "buildCommand": "dotenvx run --convention=nextjs next build --turbopack"
+  "buildCommand": "dotenvx run -f .env.production -- next build --turbopack"
 }

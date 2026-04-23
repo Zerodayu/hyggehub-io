@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "dotenvx run --convention=nextjs next dev --turbopack -p 3001",
-    "build": "dotenvx run --convention=nextjs prisma generate && next build --turbopack",
+    "build": "dotenvx run --convention=nextjs -- prisma generate && next build --turbopack",
     "start": "next start",
     "lint": "eslint"
   },
