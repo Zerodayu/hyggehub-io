@@ -1,7 +1,7 @@
 {
   "#usd": {
     "Starter": {
-      "price": "$389.00/month",
+      "price": "$46.75/month",
       "features": [
         "2 Shops",
         "4 Message Templates",
@@ -11,7 +11,7 @@
     },
 
     "Pro": {
-      "price": "$549.00/month",
+      "price": "$78.00/month",
       "features": [
         "4 Shops",
         "6 Message Templates",
@@ -21,7 +21,7 @@
     },
 
     "Max": {
-      "price": "$700.00/month",
+      "price": "$157.00/month",
       "features": [
         "Unli Shops",
         "10 Message Templates",
@@ -33,7 +33,7 @@
 
   "#dkk": {
     "Starter": {
-      "price": "499.00 kr/month",
+      "price": "299.00 kr/month",
       "features": [
         "2 Butikker",
         "4 Beskedskabeloner",
@@ -43,7 +43,7 @@
     },
 
     "Pro": {
-      "price": "549.00 kr/month",
+      "price": "499.00 kr/month",
       "features": [
         "4 Butikker",
         "6 Beskedskabeloner",
@@ -53,7 +53,7 @@
     },
 
     "Max": {
-      "price": "$700.00 kr/month",
+      "price": "999.00 kr/month",
       "features": [
         "Unli Butikker",
         "10 Beskedskabeloner",

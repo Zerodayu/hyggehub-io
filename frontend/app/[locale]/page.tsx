@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { activeLang } from "@/languages/lang";
-import { Button } from "@/components/ui/button";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
 import DynamicPricingPlans from "@/components/pricingList";
-import { Marquee } from "@/components/ui/marquee";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import {
   Stepper,
   StepperDescription,
@@ -16,28 +17,23 @@ import {
   StepperTitle,
   StepperTrigger,
 } from "@/components/ui/stepper";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Tickets,
-  Mail,
+  BadgeAlert,
   Bell,
+  Calendar,
   Gift,
   Key,
-  Shield,
-  Users,
-  Calendar,
-  SquareArrowOutUpRight,
-  BadgeAlert,
+  Mail,
   Phone,
+  Shield,
+  SquareArrowOutUpRight,
+  Tickets,
+  Users,
 } from "lucide-react";
-
-// Language configuration
-const lang = activeLang;
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Page() {
   return (
@@ -58,11 +54,12 @@ export default function Page() {
 }
 
 function Navbar() {
+  const t = useTranslations();
   const navs = [
-    { name: lang.navbar.features, href: "#features" },
-    { name: lang.navbar.setup, href: "#demo" },
-    { name: lang.navbar.pricing, href: "#pricing" },
-    { name: lang.navbar.faq, href: "#faq" },
+    { name: t("navbar.features"), href: "#features" },
+    { name: t("navbar.setup"), href: "#demo" },
+    { name: t("navbar.pricing"), href: "#pricing" },
+    { name: t("navbar.faq"), href: "#faq" },
   ];
 
   return (
@@ -90,7 +87,7 @@ function Navbar() {
               variant="link"
               className="font-mono font-bold text-background"
             >
-              {lang.navbar.claim}
+              {t("navbar.claim")}
             </Button>
           </Link>
 
@@ -101,7 +98,7 @@ function Navbar() {
                   variant="link"
                   className="font-mono font-bold text-background"
                 >
-                  {lang.navbar.shops}
+                  {t("navbar.shops")}
                 </Button>
               </Link>
             </SignedIn>
@@ -112,7 +109,7 @@ function Navbar() {
                   variant="link"
                   className="font-mono font-bold text-background"
                 >
-                  {lang.navbar.signIn}
+                  {t("navbar.signIn")}
                 </Button>
               </Link>
             </SignedOut>
@@ -124,6 +121,8 @@ function Navbar() {
 }
 
 function Hero() {
+  const t = useTranslations();
+
   return (
     <section
       id="hero"
@@ -135,36 +134,36 @@ function Hero() {
       >
         <span className="text-xs text-primary font-bold font-mono flex items-center justify-center bg-secondary/50 rounded-full px-2 gap-2">
           <BadgeAlert size={14} className="animate-pulse" />
-          <span>{lang.hero.updatesBadge}</span>
+          <span>{t("hero.updatesBadge")}</span>
         </span>
         <span className="text-xs font-mono font-bold px-2">
-          {lang.hero.updateVersion}
+          {t("hero.updateVersion")}
         </span>
       </Link>
 
       <p className="text-s self-end font-mono font-bold tracking-widest text-muted-foreground">
-        — {lang.brand.full}
+        — {t("brand.full")}
       </p>
       <h1 className="text-4xl text-center sm:text-6xl md:text-8xl font-mono font-bold tracking-tight">
-        {lang.hero.title}
+        {t("hero.title")}
       </h1>
       <h2 className="mt-4 text-lg sm:text-xl md:text-2xl font-mono font-bold text-primary max-w-3xl">
-        {lang.hero.tagline}
+        {t("hero.tagline")}
       </h2>
       <p className="mt-4 text-sm md:text-lg text-muted-foreground max-w-2xl">
-        {lang.hero.description}
+        {t("hero.description")}
       </p>
       <div className="flex flex-col sm:flex-row mt-6 gap-4 items-center justify-center">
         <Link href="/sign-in" className="w-full">
           <Button className="text-xs font-mono font-bold">
             <SquareArrowOutUpRight className="h-4 w-4" />
-            {lang.hero.getStarted}
+            {t("hero.getStarted")}
           </Button>
         </Link>
         <Link href="/claim" className="w-full">
           <Button variant="outline" className="text-xs font-mono font-bold">
             <Tickets className="h-4 w-4" />
-            {lang.hero.claimCodes}
+            {t("hero.claimCodes")}
           </Button>
         </Link>
       </div>
@@ -176,19 +175,21 @@ function Hero() {
 }
 
 function Screens() {
+  const t = useTranslations();
+
   return (
     <section className="relative w-full py-16 sm:py-20 overflow-x-clip">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-10">
             <p className="font-mono text-xs font-bold tracking-widest text-muted-foreground">
-              {lang.screens.kicker}
+              {t("screens.kicker")}
             </p>
             <h2 className="mt-3 font-mono text-3xl font-bold tracking-tight sm:text-4xl">
-              {lang.screens.title}
+              {t("screens.title")}
             </h2>
             <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
-              {lang.screens.description}
+              {t("screens.description")}
             </p>
           </div>
 
@@ -227,43 +228,23 @@ function Screens() {
   );
 }
 
-function Partners() {
-  return (
-    <section className="relative flex w-full items-center justify-center bg-secondary">
-      <Marquee repeat={4} className="[--duration:60s] gap-16">
-        <ShopsMap />
-      </Marquee>
-    </section>
-  );
-}
-
-function ShopsMap() {
-  return (
-    <div className="flex w-full items-center justify-between">
-      {lang.partners.shops.map((shopName, id) => (
-        <span
-          key={id}
-          className="font-mono text-primary font-bold text-2xl mx-18"
-        >
-          {shopName}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 function Features() {
   const featureIcons = [Bell, Gift, Key, Shield, Users, Calendar];
+  const t = useTranslations();
+  const list = t.raw("features.list") as Array<{
+    name: string;
+    description: string;
+  }>;
 
   return (
     <section id="features" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">
-          {lang.features.title}
+          {t("features.title")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {lang.features.list.map((feat, index) => {
-            const IconComponent = featureIcons[index];
+          {list.map((feat, index) => {
+            const IconComponent = featureIcons[index] ?? Bell;
             return (
               <div
                 key={index}
@@ -282,16 +263,22 @@ function Features() {
 }
 
 function Demo() {
+  const t = useTranslations();
+  const steps = t.raw("demo.steps") as Array<{
+    title: string;
+    description: string;
+  }>;
+
   return (
     <section id="demo" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">
-          {lang.demo.title}
+          {t("demo.title")}
         </h2>
         <div className="flex w-full justify-center items-center">
           <div className="flex w-full space-y-8 items-center justify-center">
             <Stepper defaultValue={2} orientation="vertical">
-              {lang.demo.steps.map((stepData, index) => (
+              {steps.map((stepData, index) => (
                 <StepperItem
                   key={index + 1}
                   step={index + 1}
@@ -308,7 +295,7 @@ function Demo() {
                       </StepperDescription>
                     </div>
                   </StepperTrigger>
-                  {index < lang.demo.steps.length - 1 && (
+                  {index < steps.length - 1 && (
                     <StepperSeparator className="absolute inset-y-0 top-[calc(1.5rem+0.125rem)] left-3 -order-1 m-0 -translate-x-1/2 group-data-[orientation=horizontal]/stepper:w-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=horizontal]/stepper:flex-none group-data-[orientation=vertical]/stepper:h-[calc(100%-1.5rem-0.25rem)]" />
                   )}
                 </StepperItem>
@@ -322,15 +309,17 @@ function Demo() {
 }
 
 function Pricing() {
+  const t = useTranslations();
+
   return (
     <section id="pricing" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold font-mono mb-12">
-          {lang.pricing.title}
+          {t("pricing.title")}
         </h2>
         <DynamicPricingPlans />
         <p className="text-center mt-8 text-muted-foreground">
-          {lang.pricing.supportText}
+          {t("pricing.supportText")}
         </p>
       </div>
     </section>
@@ -338,6 +327,8 @@ function Pricing() {
 }
 
 function Promo() {
+  const t = useTranslations();
+
   return (
     <section
       id="promo"
@@ -346,10 +337,10 @@ function Promo() {
       <div className="py-20 bg-linear-to-tr from-secondary/50 to-background rounded-r-md outline outline-muted-foreground">
         <div className="mx-auto px-4 flex flex-col items-center justify-center text-center">
           <h2 className="font-mono text-primary font-bold text-4xl md:text-6xl mb-4 max-w-6xl tracking-tighter">
-            {lang.promo.headline}
+            {t("promo.headline")}
           </h2>
           <p className="text-lg font-semibold text-muted-foreground max-w-3xl">
-            {lang.promo.subhead}
+            {t("promo.subhead")}
           </p>
         </div>
       </div>
@@ -358,13 +349,19 @@ function Promo() {
 }
 
 function Faq() {
+  const t = useTranslations();
+  const questions = t.raw("faq.questions") as Array<{
+    question: string;
+    answer: string;
+  }>;
+
   return (
     <section id="faq" className="py-20 w-full scroll-mt-30">
       <div className="container mx-auto px-4 flex flex-col">
-        <h2 className="text-4xl font-bold font-mono mb-12">{lang.faq.title}</h2>
+        <h2 className="text-4xl font-bold font-mono mb-12">{t("faq.title")}</h2>
         <div className="flex w-full justify-center items-center">
           <Accordion type="single" collapsible className="w-full lg:w-[60%]">
-            {lang.faq.questions.map((faqItem, idx) => (
+            {questions.map((faqItem, idx) => (
               <AccordionItem key={idx} value={idx.toString()}>
                 <AccordionTrigger className="text-primary font-mono font-bold">
                   {faqItem.question}
@@ -380,6 +377,8 @@ function Faq() {
 }
 
 function Footer() {
+  const t = useTranslations();
+
   return (
     <footer>
       <div className="px-8 py-20 w-full relative overflow-hidden">
@@ -401,20 +400,20 @@ function Footer() {
                   className="rounded size-8"
                 />
                 <span className="font-bold text-xl text-foreground">
-                  {lang.brand.name}
-                  {lang.brand.tld}
+                  {t("brand.name")}
+                  {t("brand.tld")}
                 </span>
               </Link>
             </div>
             <p className="mt-2 ml-2">
-              {lang.footer.copyright} {new Date().getFullYear()}.{" "}
-              {lang.footer.allRightsReserved}
+              {t("footer.copyright")} {new Date().getFullYear()}.{" "}
+              {t("footer.allRightsReserved")}
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 items-start mt-10 sm:mt-0 md:mt-0">
             <div className="flex justify-center space-y-4 flex-col w-full">
               <p className="font-bold font-mono text-primary">
-                {lang.footer.pages.title}
+                {t("footer.pages.title")}
               </p>
               <ul className="list-none space-y-4 text-foreground">
                 <li className="list-none hover:underline">
@@ -422,7 +421,7 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="#"
                   >
-                    {lang.footer.pages.home}
+                    {t("footer.pages.home")}
                   </Link>
                 </li>
                 <li className="list-none hover:underline">
@@ -430,7 +429,7 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="/claim"
                   >
-                    {lang.footer.pages.claim}
+                    {t("footer.pages.claim")}
                   </Link>
                 </li>
                 <li className="list-none hover:underline">
@@ -438,7 +437,7 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="/updates"
                   >
-                    {lang.footer.pages.updates}
+                    {t("footer.pages.updates")}
                   </Link>
                 </li>
                 <li className="list-none hover:underline">
@@ -446,14 +445,14 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="/sign-in"
                   >
-                    {lang.footer.pages.signIn}
+                    {t("footer.pages.signIn")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div className="flex justify-center space-y-4 flex-col">
               <p className="font-bold font-mono text-primary">
-                {lang.footer.contacts.title}
+                {t("footer.contacts.title")}
               </p>
               <ul className="list-none space-y-4 text-foreground">
                 <li className="list-none hover:underline">
@@ -461,7 +460,7 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="#"
                   >
-                    {lang.footer.contacts.facebook}
+                    {t("footer.contacts.facebook")}
                   </Link>
                 </li>
                 <li className="list-none hover:underline">
@@ -469,7 +468,7 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="#"
                   >
-                    {lang.footer.contacts.instagram}
+                    {t("footer.contacts.instagram")}
                   </Link>
                 </li>
                 <li className="list-none hover:underline">
@@ -477,7 +476,7 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="#"
                   >
-                    {lang.footer.contacts.twitter}
+                    {t("footer.contacts.twitter")}
                   </Link>
                 </li>
                 <li className="list-none hover:underline">
@@ -485,14 +484,14 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="#"
                   >
-                    {lang.footer.contacts.linkedin}
+                    {t("footer.contacts.linkedin")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div className="flex justify-center space-y-4 flex-col">
               <p className="font-bold font-mono text-primary">
-                {lang.footer.legal.title}
+                {t("footer.legal.title")}
               </p>
               <ul className="list-none space-y-4 text-foreground">
                 <li className="list-none hover:underline">
@@ -500,7 +499,7 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="#"
                   >
-                    {lang.footer.legal.privacyPolicy}
+                    {t("footer.legal.privacyPolicy")}
                   </Link>
                 </li>
                 <li className="list-none hover:underline">
@@ -508,7 +507,7 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="#"
                   >
-                    {lang.footer.legal.termsOfService}
+                    {t("footer.legal.termsOfService")}
                   </Link>
                 </li>
                 <li className="list-none hover:underline">
@@ -516,23 +515,23 @@ function Footer() {
                     className="transition-colors hover:text-text-neutral-800"
                     href="#"
                   >
-                    {lang.footer.legal.cookiePolicy}
+                    {t("footer.legal.cookiePolicy")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div className="flex justify-center space-y-4 flex-col">
               <h1 className="font-bold font-mono text-primary">
-                {lang.footer.contacts.title}
+                {t("footer.contacts.title")}
               </h1>
               <ul className="list-none space-y-4 text-foreground">
                 <li className="flex gap-2 items-center list-none hover:underline">
                   <Mail size={16} />
-                  <p>{lang.footer.contacts.email}</p>
+                  <p>{t("footer.contacts.email")}</p>
                 </li>
                 <li className="flex gap-2 items-center list-none hover:underline">
                   <Phone size={16} />
-                  <p>{lang.footer.contacts.phone}</p>
+                  <p>{t("footer.contacts.phone")}</p>
                 </li>
               </ul>
             </div>

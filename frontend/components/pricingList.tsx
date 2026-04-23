@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { activeLang } from "@/languages/lang";
 
-import pricingList from "@/languages/pricing-list.json";
+import pricingList from "@/messages/pricing-list.json";
+import { useTranslations } from "next-intl";
 
 type CurrencyKey = "#dkk" | "#usd";
 type PlanName = "Starter" | "Pro" | "Max";
@@ -15,14 +15,11 @@ type PricingTier = {
   features: string[];
 };
 
-const lang = activeLang;
-
 const planOrder: PlanName[] = ["Starter", "Pro", "Max"];
 
-function splitPrice(price: string): { main: string; period: string } {
-  const idx = price.lastIndexOf("/");
-  if (idx === -1) return { main: price, period: lang.pricing.perMonth };
-
+function splitPrice(price: string): { main: string; period?: string } {
+  const idx = price.indexOf("/");
+  if (idx === -1) return { main: price };
   return {
     main: price.slice(0, idx),
     period: price.slice(idx),
@@ -49,6 +46,7 @@ function getTiers(currencyKey: CurrencyKey): PricingTier[] {
 }
 
 export default function DynamicPricingPlans() {
+  const t = useTranslations();
   const dkkTiers = getTiers("#dkk");
   const usdTiers = getTiers("#usd");
 
@@ -78,7 +76,7 @@ export default function DynamicPricingPlans() {
                 {index === 1 && (
                   <div className="absolute -top-4 left-0 right-0 flex justify-center">
                     <span className="bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-bold outline outline-primary">
-                      {lang.pricing.mostPopular}
+                      {t("pricing.mostPopular")}
                     </span>
                   </div>
                 )}
@@ -88,7 +86,7 @@ export default function DynamicPricingPlans() {
                   <p
                     className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} text-base font-normal`}
                   >
-                    {period || lang.pricing.perMonth}
+                    {period || t("pricing.perMonth")}
                   </p>
                 </span>
                 <ul className="space-y-3 mb-8">
@@ -116,7 +114,7 @@ export default function DynamicPricingPlans() {
                   variant={index === 1 ? "secondary" : "default"}
                   className="w-full self-end"
                 >
-                  {lang.pricing.cta}
+                  {t("pricing.cta")}
                 </Button>
               </div>
             );
@@ -140,7 +138,7 @@ export default function DynamicPricingPlans() {
                 {index === 1 && (
                   <div className="absolute -top-4 left-0 right-0 flex justify-center">
                     <span className="bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-bold outline outline-primary">
-                      {lang.pricing.mostPopular}
+                      {t("pricing.mostPopular")}
                     </span>
                   </div>
                 )}
@@ -150,7 +148,7 @@ export default function DynamicPricingPlans() {
                   <p
                     className={`${index === 1 ? "text-primary-foreground/80" : "text-muted-foreground"} text-base font-normal`}
                   >
-                    {period || lang.pricing.perMonth}
+                    {period || t("pricing.perMonth")}
                   </p>
                 </span>
                 <ul className="space-y-3 mb-8">
@@ -178,7 +176,7 @@ export default function DynamicPricingPlans() {
                   variant={index === 1 ? "secondary" : "default"}
                   className="w-full self-end"
                 >
-                  {lang.pricing.cta}
+                  {t("pricing.cta")}
                 </Button>
               </div>
             );
