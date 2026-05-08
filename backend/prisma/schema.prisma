@@ -20,6 +20,11 @@ enum Role {
   members
 }
 
+enum SmsUsageStatus {
+  PENDING
+  FINAL
+}
+
 model Shops {
   shopId     String             @id @default(cuid())
   clerkOrgId String             @unique
@@ -90,4 +95,20 @@ model OrgMembers {
   user Users @relation(fields: [clerkId], references: [clerkId])
 
   @@unique([clerkId, orgId])
+}
+
+// Tracks SMS usage per org (rolling 30-day window enforcement).
+// We create a short-lived reservation (PENDING) before sending, then finalize with the
+// successful count (FINAL). Expired PENDING reservations are ignored.
+model OrgSmsUsageEvent {
+  id           String         @id @default(cuid())
+  clerkOrgId   String
+  status       SmsUsageStatus @default(PENDING)
+  count        Int            @default(0)
+  reservedUntil DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([clerkOrgId, createdAt])
+  @@index([status, reservedUntil])
 }
