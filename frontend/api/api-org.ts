@@ -14,6 +14,13 @@ type OrgResponse = {
     }>;
   };
   connectedCustomers?: Customer[];
+  smsUsage?: {
+    plan: string;
+    limit: number;
+    used: number;
+    remaining: number;
+    windowStart: string;
+  };
 };
 
 type Customer = {
